@@ -1,27 +1,32 @@
 import React, {useState} from "react"
 import axios from "axios"
 
+import config from "../config"
+
 import Emoji from "./Emoji"
 import styles from "./Styles"
 
-const {Button, Input, FormSubtext} = styles
+const {Button, Input, FormSubtext, Text} = styles
 
 const Form = () => {
     const [mail, setMail] = useState("")
-    const [res, setRes] = useState(null)
+    const [buttonText, setButtonText] = useState("Submit")
+    const [error, setError] = useState(null)
 
     const handleForm = async (event) => {
         event.preventDefault()
 
         axios
-            .post("/api/signup", {mail})
+            .post(config.apiGateway.URL + "/api/signup", {mail})
             .then(res => {
-                setRes(res.data)
                 setMail("")
+                setButtonText("Done!")
             })
             .catch(() => {
-                setRes({success: false, message: "Something went wrong. Try again later"})
+                setError(<Text>So sorry! <Emoji symbol="😥️" label="Worried Face"/> There was an error, <a style={{color: "lightyellow"}} href="mailto:moosehour@gmail.com">contact us</a> so we may help you.</Text>)
+                setButtonText("Submit")
             })
+        setButtonText("Loading...")
     }
 
     return (
@@ -34,10 +39,10 @@ const Form = () => {
                     onChange={({ target }) => setMail(target.value)}
                     placeholder="Email address"
                 />
-                <Button type="submit">Submit</Button>
+                <Button type="submit">{buttonText}</Button>
             </form>
 
-            {res && res.message}
+            {error}
 
             <FormSubtext>We will use your email just to keep you informed of the latest updates. No spam, we promise <Emoji symbol="❤️" label="Heart"/></FormSubtext>.
         </div>
