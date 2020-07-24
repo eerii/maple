@@ -5,12 +5,29 @@ export const lightTheme = {
     text: '#09183e',
     background: '#f8f8f8',
     placeholder: '#FAC172',
+    buttonPressed: '#4960F9',
+    buttonPressedRim: '#2d2d58',
+    buttonPressedText: '#f3f4f8',
 }
+
 export const darkTheme = {
     specialText: '#FAC172',
     text: '#FAFAFA',
     background: '#09183e',
     placeholder: '#c7c7d9',
+    buttonPressed: '#4960F9',
+    buttonPressedRim: '#2d2d58',
+    buttonPressedText: '#f3f4f8',
+}
+
+export const mooseTheme = {
+    specialText: '#FAC172',
+    text: '#FAFAFA',
+    background: '#4960F9',
+    placeholder: '#c7c7d9',
+    buttonPressed: '#FAC172',
+    buttonPressedRim: '#09183e',
+    buttonPressedText: '#09183e',
 }
 
 const HeaderStyle = styled.div`
@@ -42,10 +59,10 @@ const Button = styled.button`
   }
   
   &:active {
-    background: #4960F9;
-    box-shadow: 0 2px #2d2d58;
+    background: ${props => props.theme.buttonPressed};
+    box-shadow: 0 2px ${props => props.theme.buttonPressedRim};
     transform: translateY(0px);
-    color: #f3f4f8;
+    color: ${props => props.theme.buttonPressedText};
   }
 `
 
@@ -119,4 +136,4 @@ const Warning = styled.p`
 `
 
 
-export default {lightTheme, darkTheme, Button, Input, FormSubtext, MOOSE, Subtitle, Text, Warning, HeaderStyle, Link, ToggleTheme}
+export default {lightTheme, darkTheme, mooseTheme, Button, Input, FormSubtext, MOOSE, Subtitle, Text, Warning, HeaderStyle, Link, ToggleTheme}
