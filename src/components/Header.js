@@ -1,32 +1,26 @@
 import React from "react"
 import Form from "./Form"
-import Emoji from "./Emoji"
 import styles from "./Styles"
+import Emoji from "./Emoji"
 
-const {MOOSE, H1, Text, Warning} = styles
+const {MOOSE, Subtitle, Text, HeaderStyle, ToggleTheme} = styles
 
-const Banner = () => {
+const Header = ({theme, setTheme}) => {
+    const themeToggler = () => { theme === 'light' ? setTheme('dark') : setTheme('light') }
+
     return (
-        <Warning>
-            <Emoji symbol="🐣" label="Hatching Chick"/> MOOSE is in early development. Help us make it a reality by signing up today!
-        </Warning>
-    )
-}
-
-const Header = () => {
-    return (
-        <div style={{textAlign: "center"}}>
-            <Banner/>
+        <HeaderStyle>
+            <ToggleTheme onClick={themeToggler}>{ theme === 'light' ? <Emoji symbol="🌘" label="Dark Mode"/> : <Emoji symbol="☀️" label="Light Mode"/> }</ToggleTheme>
 
             <MOOSE>MOOSE</MOOSE>
-            <H1>Bank time<br/>Exchange purpose</H1>
+            <Subtitle>Bank time,<br/>Exchange purpose.</Subtitle>
 
-            <Text>MOOSE is an award-winning skill exchange platform.</Text>
-            <Text>We envision a more human way of sharing, based around time banking.</Text>
-            <Text>Join our beta programme to try it first.</Text>
+            <Text>MOOSE is an MIT award-winning mutually-beneficial skill exchange platform.</Text>
+            <Text>We believe that when you share, it should always be fair.</Text>
+            <Text>Sign up below to join MOOSE Beta.</Text>
 
             <Form/>
-        </div>
+        </HeaderStyle>
     )
 }
 

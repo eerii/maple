@@ -1,15 +1,10 @@
-import React from "react"
-
+import React, {useState} from "react"
 import Routes from "./Routes"
-
 import './index.css'
-
 
 const App = () => {
     return (
-        <div style={{backgroundColor: "#09183e", height: "100vh"}}>
-            <Routes />
-        </div>
+        <div><Routes/></div>
     )
 }
 

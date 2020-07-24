@@ -1,11 +1,35 @@
 import styled from "styled-components"
 
+export const lightTheme = {
+    specialText: '#4960F9',
+    text: '#09183e',
+    background: '#f8f8f8',
+    placeholder: '#FAC172',
+}
+export const darkTheme = {
+    specialText: '#FAC172',
+    text: '#FAFAFA',
+    background: '#09183e',
+    placeholder: '#c7c7d9',
+}
+
+const HeaderStyle = styled.div`
+  text-align: left;
+  margin-top: 0;
+  padding-left: 10vw;
+  padding-right: 10vw;
+  background: ${props => props.theme.background};
+  min-height: 100vh;
+  transition: 0.2s;
+`
+
 const Button = styled.button`
   background: #f3f4f8;
   border: none;
   border-radius: 8px;
   font-size: 18px;
   font-weight: bold;
+  color: #09183e;
   padding: 10px 20px;
   text-align: center;
   transition: 0.3s;
@@ -18,10 +42,25 @@ const Button = styled.button`
   }
   
   &:active {
-    background: #5356f5;
+    background: #4960F9;
     box-shadow: 0 2px #2d2d58;
     transform: translateY(0px);
     color: #f3f4f8;
+  }
+`
+
+const ToggleTheme = styled.button`
+  background: none;
+  border: none;
+  font-size:20px;
+  padding:12px 12px;
+  transition: 0.3s;
+  margin-top: 20px;
+  float: right;
+  border-radius: 24px;
+  
+  &:hover {
+    background-color: rgba(73,96,249,0.4);
   }
 `
 
@@ -37,39 +76,47 @@ const Input = styled.input.attrs(props => ({type: "email"}))`
   min-width: 20vw;
   
   ::placeholder {
-    color: #c7c7d9;
+    color: ${props => props.theme.placeholder};
     opacity: 1;
   }
 `
 
 const FormSubtext = styled.p`
   color: #c7c7d9;
+  opacity: ${props => props.theme.opacity};
+  transition: 0.3s;
 `
 
 const MOOSE = styled.h1`
   font-weight: bold;
-  font-size: 42px;
-  color: #f3f4f8;
-  padding-top: 3vh;
+  font-size: 60px;
+  color: ${props => props.theme.text};
+  padding-top: 15vh;
+  margin-top: 0;
 `
 
-const H1 = styled.h1`
-  color: #f3f4f8;
-  font-size: 54px;
+const Subtitle = styled.h1`
+  color: ${props => props.theme.specialText};
+  font-size: 50px;
+  padding-bottom: 20px;
 `
 
 const Text = styled.p`
-  color: #f3f4f8;
+  color: ${props => props.theme.text};
   font-size: 20px;
+`
+
+const Link = styled.a`
+  color: ${props => props.theme.specialText};
 `
 
 const Warning = styled.p`
   font-weight: bold;
-  background: #f6c09c;
+  background: #FAC172;
   color: #2a2a2a;
   padding: 10px 10px;
   margin: 0;
 `
 
 
-export default {Button, Input, FormSubtext, MOOSE, H1, Text, Warning}
+export default {lightTheme, darkTheme, Button, Input, FormSubtext, MOOSE, Subtitle, Text, Warning, HeaderStyle, Link, ToggleTheme}
