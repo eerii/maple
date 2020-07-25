@@ -17,17 +17,18 @@ const Form = () => {
     const handleForm = async (event) => {
         event.preventDefault()
 
-        axios
-            .post(config.apiGateway.URL + "/api/signup", {mail})
-            .then(res => {
-                setMail("")
-                setButtonText("Done!")
-            })
-            .catch(() => {
-                setError(<Text>So sorry! <Emoji symbol="😥️" label="Worried Face"/> There was an error, <Link href="mailto:moosehour@gmail.com">contact us</Link> so we may help you.</Text>)
-                setButtonText("Submit")
-            })
         setButtonText("Loading...")
+
+        try {
+            await axios.post(config.apiGateway.URL + "/api/signup", {mail})
+            await axios.post(config.apiGateway.URL + "/api/betausers", {mail})
+
+            setMail("")
+            setButtonText("Done!")
+        } catch {
+            setError(<Text>So sorry! <Emoji symbol="😥️" label="Worried Face"/> There was an error, <Link href="mailto:moosehour@gmail.com">contact us</Link> so we may help you.</Text>)
+            setButtonText("Submit")
+        }
     }
 
     return (
