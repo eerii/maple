@@ -18,6 +18,7 @@ const Form = () => {
         event.preventDefault()
 
         setButtonText("Loading...")
+        setError(null)
 
         try {
             await axios.post(config.apiGateway.URL + "/api/betausers", {mail})
