@@ -26,8 +26,8 @@ const Form = () => {
             setMail("")
             setButtonText("Done!")
         } catch (e) {
-            if (e.status === 409) {
-                setError(<Text>You were already registered <Emoji symbol="😊" label="Happy Face"/>! If you need to contact us, please reach to <Link href="mailto:hello@moose.exchange">hello@moose.exchange</Link> and we will be delighted to help.</Text>)
+            if (e.response.status === 409) {
+                setError(<Text>You are already registered <Emoji symbol="😊" label="Happy Face"/>! If you need to contact us, please reach to <Link href="mailto:hello@moose.exchange">hello@moose.exchange</Link> and we will be delighted to help.</Text>)
             } else {
                 setError(<Text>So sorry! <Emoji symbol="😥️" label="Worried Face"/> There was an error, <Link href="mailto:hello@moose.exchange">contact us</Link> so we may help you.</Text>)
             }
