@@ -21,7 +21,6 @@ const Form = () => {
         setError(null)
 
         try {
-            await axios.post(config.apiGateway.URL + "/api/betausers", {mail})
             await axios.post(config.apiGateway.URL + "/api/signup", {mail})
 
             setMail("")
