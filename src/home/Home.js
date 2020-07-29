@@ -1,9 +1,9 @@
 import React from "react"
-import Emoji from "./Emoji"
+import Emoji from "../components/Emoji"
 import Header from "./Header"
-import styles from "./Styles"
+import styles from "../config/Styles"
 
-const {Warning} = styles
+const { Warning } = styles
 
 const Banner = () => {
     return (

@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import WebFont from 'webfontloader';
+import App from "./App";
 
 WebFont.load({
     google: {
@@ -13,5 +13,5 @@ WebFont.load({
 
 ReactDOM.render(
     <Router>
-        <App />
+        <App/>
     </Router>, document.getElementById('root'))

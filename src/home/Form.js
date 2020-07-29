@@ -1,12 +1,12 @@
 import React, {useState} from "react"
 import axios from "axios"
 
-import config from "../config"
+import config from "../config/config"
 
-import Emoji from "./Emoji"
-import styles from "./Styles"
+import Emoji from "../components/Emoji"
+import styles from "../config/Styles"
 
-const {Button, Input, FormSubtext, Text, Link} = styles
+const { FormSubtext, Text } = styles
 
 const Form = () => {
     const [mail, setMail] = useState("")
@@ -27,9 +27,9 @@ const Form = () => {
             setButtonText("Done!")
         } catch (e) {
             if (e.response.status === 409) {
-                setError(<Text>You are already registered <Emoji symbol="😊" label="Happy Face"/>! If you need to contact us, please reach to <Link href="mailto:hello@moose.exchange">hello@moose.exchange</Link> and we will be delighted to help.</Text>)
+                setError(<Text>You are already registered <Emoji symbol="😊" label="Happy Face"/>! If you need to contact us, please reach to <a href="mailto:hello@moose.exchange">hello@moose.exchange</a> and we will be delighted to help.</Text>)
             } else {
-                setError(<Text>So sorry! <Emoji symbol="😥️" label="Worried Face"/> There was an error, <Link href="mailto:hello@moose.exchange">contact us</Link> so we may help you.</Text>)
+                setError(<Text>So sorry! <Emoji symbol="😥️" label="Worried Face"/> There was an error, <a href="mailto:hello@moose.exchange">contact us</a> so we may help you.</Text>)
             }
             setButtonText("Submit")
         }
@@ -38,14 +38,14 @@ const Form = () => {
     return (
         <div style={{paddingTop: "30px"}}>
             <form onSubmit={handleForm} onFocus={() => setShowText(true)} onBlur={() => setShowText(false)}>
-                <Input
-                    type="text"
+                <input
+                    type="email"
                     value={mail}
                     name="Mail"
                     onChange={({ target }) => setMail(target.value)}
                     placeholder="Email address"
                 />
-                <Button type="submit">{buttonText}</Button>
+                <button type="submit">{buttonText}</button>
             </form>
 
             {error}
