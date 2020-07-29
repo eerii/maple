@@ -9,7 +9,7 @@ import GlobalStyle from "./config/GlobalStyles"
 import { mooseTheme, lightTheme, darkTheme } from "./config/Styles"
 
 export default function App() {
-    const [theme, setTheme] = useState('moose')
+    const [theme, setTheme] = useState(localStorage.getItem('Theme') || 'moose')
 
     return (
         <Switch>

@@ -11,6 +11,7 @@ const Header = ({theme, setTheme}) => {
         let i = themes.indexOf(theme) + 1
         i = i >= themes.length ? 0 : i
         setTheme(themes[i])
+        localStorage.setItem("Theme", themes[i])
     }
 
     return (
