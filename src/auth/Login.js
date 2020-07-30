@@ -1,10 +1,9 @@
 import React, { useState } from "react"
 import axios from "axios"
 
-import config from "../config/config"
 import Modal from "../components/Modal"
 
-const Login = ({setLogin, setLoggedIn}) => {
+const Login = ({setLogin, setLoggedIn, setUsername}) => {
     const [user, setUser] = useState("")
     const [pass, setPass] = useState("")
     const [accept, setAccept] = useState(false) //Honeypot
@@ -18,7 +17,7 @@ const Login = ({setLogin, setLoggedIn}) => {
 
             try {
                 const login = await axios.post(
-                    config.apiGateway.URL + "/api/login", {
+                    process.env.REACT_APP_URL + "/api/login", {
                         username: user,
                         pass: pass,
                     })
@@ -30,6 +29,7 @@ const Login = ({setLogin, setLoggedIn}) => {
                 setButtonText("Done!")
                 setLogin(false)
                 setLoggedIn(true)
+                setUsername(user)
             } catch (e) {
                 setButtonText("Error")
             }

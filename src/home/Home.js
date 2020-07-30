@@ -21,7 +21,7 @@ const Home = (props) => {
     return (
         <div>
             <Banner/>
-            {props.showVideo ? <Video/> : <Header {...props}/>}
+            {props.showVideo ? <Video username={props.username}/> : <Header {...props}/>}
         </div>
     )
 }

@@ -1,41 +1,40 @@
-import config from "../config/config"
+import { createPeerConnection } from "./PeerConnection"
 
-export const connectToSocket = (token) => {
-    const socket = new WebSocket(config.apiGateway.WSS + "?Auth=" + token)
+export const connectWebSocket = (socket, token, username, stream, tracks, setTracks, remoteVideoRef) => {
+    // noinspection JSValidateTypes
+    socket.current = new WebSocket(process.env.REACT_APP_WSS + "?Auth=" + token)
 
-    // Create WebRTC connection only if the socket connection is successful.
-    socket.onopen = (event) => {
-        console.log('WebSocket Connection Open.')
-        createRTCPeerConnection()
+    socket.current.onopen = () => {
+        console.log("Websocket Connection Open")
+        console.log(stream.current)
+        createPeerConnection(socket, username, stream, tracks, setTracks, remoteVideoRef)
+        //socket.current.send(JSON.stringify({"action":"sendMessage", "data":"helloworld"}))
     }
 
-    // Handle messages recieved in socket
-    /*socket.onmessage = (event) => {
-        data = JSON.parse(event.data)
+    socket.current.onmessage = (event) => {
+        const data = JSON.parse(event.data)
 
         switch (data.type){
-            case 'candidate':
-                handleCandidate(data.data, data.id)
-                break
+            /*case 'candidate':
+                handleCandidate(jsonData.data, jsonData.id);
+                break;
             case 'offer':
-                handleOffer(data.data, data.id)
-                break
+                handleOffer(jsonData.data, jsonData.id);
+                break;
             case 'answer':
-                handleAnswer(data.data, data.id)
-                break
+                handleAnswer(jsonData.data, jsonData.id);
+                break;*/
             default:
+                console.log(data)
                 break
         }
-    }*/
-
-    socket.onerror = (event) => {
-        console.error(event)
-        console.log('WebSocket Connection Error. Make sure web socket URL is correct and web socket server is up and running at - ' + config.apiGateway.WSS)
     }
 
-    socket.onclose = (event) => {
-        console.log('WebSocket Connection Closed. Please Reload the page.')
-        //document.getElementById("sendOfferButton").disabled = true;
-        //document.getElementById("answerButton").disabled = true;
+    socket.current.onerror = (event) => {
+        console.error(event)
+    }
+
+    socket.current.onclose = () => {
+        console.log("Websocket Connection Close")
     }
 }

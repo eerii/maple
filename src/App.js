@@ -10,10 +10,13 @@ import { mooseTheme, lightTheme, darkTheme } from "./config/Styles"
 
 export default function App() {
     const [theme, setTheme] = useState(localStorage.getItem('Theme') || 'moose')
+
     const [login, setLogin] = useState(false)
     const [loggedIn, setLoggedIn] = useState(false)
     const [logout, setLogout] = useState(false)
-    const [showVideo, setShowVideo] = useState(false)
+    const [username, setUsername] = useState()
+
+    const [showVideo, setShowVideo] = useState(true)
 
     useEffect(() => {
         (async () => {
@@ -27,6 +30,7 @@ export default function App() {
                     localStorage.removeItem("Token")
                 } else {
                     setLoggedIn(true)
+                    setUsername(decoded.payload.username)
                 }
             }
         })()
@@ -37,14 +41,15 @@ export default function App() {
             localStorage.removeItem("Token")
             setLoggedIn(false)
             setLogout(false)
+            setUsername(null)
         }
     }, [logout])
 
     return (
         <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
             <GlobalStyle/>
-            <Home theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} showVideo={showVideo} setShowVideo={setShowVideo}/>}
-            {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn}/>}
+            <Home theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} showVideo={showVideo} setShowVideo={setShowVideo} username={username}/>}
+            {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername}/>}
         </ThemeProvider>
     )
 }

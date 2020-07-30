@@ -59,6 +59,11 @@ const GlobalStyle = createGlobalStyle`
       opacity: 1;
     }
   }
+  video {
+    background: #09183e;
+    border: 2px solid ${props => props.theme.specialText};
+    margin: 8px;
+  }
 `
 
 export default GlobalStyle

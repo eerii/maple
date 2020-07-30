@@ -1,8 +1,6 @@
 import React, {useState} from "react"
 import axios from "axios"
 
-import config from "../config/config"
-
 import Emoji from "../components/Emoji"
 import styles from "../config/Styles"
 
@@ -22,7 +20,7 @@ const Form = () => {
             setError(null)
 
             try {
-                await axios.post(config.apiGateway.URL + "/api/signup", {mail})
+                await axios.post(process.env.REACT_APP_URL + "/api/signup", {mail})
 
                 setMail("")
                 setButtonText("Done!")

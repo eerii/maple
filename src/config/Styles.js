@@ -118,5 +118,13 @@ const Warning = styled.p`
   margin: 0;
 `
 
+const LocalVideo = styled.video`
+  width: 20vw;
+`
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ToggleTheme}
+const RemoteVideo = styled.video`
+  width: 50vw;
+`
+
+
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ToggleTheme, LocalVideo, RemoteVideo}
