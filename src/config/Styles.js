@@ -8,6 +8,7 @@ export const lightTheme = {
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
+    buttonAlpha: 'rgba(73, 96, 249, 0.5)'
 }
 
 export const darkTheme = {
@@ -18,6 +19,7 @@ export const darkTheme = {
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
+    buttonAlpha: 'rgba(73, 96, 249, 0.5)'
 }
 
 export const mooseTheme = {
@@ -25,9 +27,10 @@ export const mooseTheme = {
     text: '#FAFAFA',
     background: '#4960F9',
     placeholder: '#c7c7d9',
-    buttonPressed: '#FAC172',
+    buttonPressed: '#fac172',
     buttonPressedRim: '#09183e',
     buttonPressedText: '#09183e',
+    buttonAlpha: 'rgba(255, 255, 255, 0.3)'
 }
 
 const Background = styled.div`
@@ -74,7 +77,7 @@ const ToggleTheme = styled.button`
   transform: translateY(0px);
   
   &:hover {
-    background-color: rgba(73,96,249,0.4);
+    background-color: ${props => props.theme.buttonAlpha};
     box-shadow: none;
     transform: translateY(0px);
   }
@@ -82,7 +85,7 @@ const ToggleTheme = styled.button`
   &:active {
     transform: translateY(0px);
     box-shadow: none;
-    background: rgba(73,96,249,0.6);
+    background: ${props => props.theme.buttonAlpha};
   }
 `
 

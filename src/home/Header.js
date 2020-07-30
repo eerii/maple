@@ -1,28 +1,16 @@
 import React from "react"
+
 import Form from "./Form"
+import Toggles from "./Toggles"
+
 import styles from "../config/Styles"
-import Emoji from "../components/Emoji"
 
-const { MOOSE, Subtitle, Text, Background, ToggleTheme } = styles
-const themes = ["light", "moose", "dark"]
+const { MOOSE, Subtitle, Text, Background} = styles
 
-const Header = ({theme, setTheme, setLogin, loggedIn, setLogout}) => {
-    const themeToggler = () => {
-        let i = themes.indexOf(theme) + 1
-        i = i >= themes.length ? 0 : i
-        setTheme(themes[i])
-        localStorage.setItem("Theme", themes[i])
-    }
-
+const Header = (props) => {
     return (
         <Background>
-            <ToggleTheme
-                onClick={themeToggler}>{ theme === 'light' ? <Emoji symbol="☀️️" label="Light Mode"/> : (theme === 'moose' ? <Emoji symbol="✨️️" label="Colorful Mode"/> : <Emoji symbol="🌙" label="Dark Mode"/>)}
-            </ToggleTheme>
-            <ToggleTheme
-                onClick={() => { loggedIn ? setLogout(true) : setLogin(true) }}>
-                {loggedIn ? <Emoji symbol="🔓" label="Log Out"/> : <Emoji symbol="🔒" label="Login"/>}
-            </ToggleTheme>
+            <Toggles {...props}/>
 
             <MOOSE>MOOSE</MOOSE>
             <Subtitle>Bank time,<br/>Exchange purpose.</Subtitle>

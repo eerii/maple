@@ -1,8 +1,10 @@
 import React from "react"
+
 import Emoji from "../components/Emoji"
 import Header from "./Header"
-import styles from "../config/Styles"
+import Video from "../video/Video"
 
+import styles from "../config/Styles"
 const { Warning } = styles
 
 const Banner = () => {
@@ -14,12 +16,12 @@ const Banner = () => {
     )
 }
 
-const Home = ({theme, setTheme, setLogin, loggedIn, setLogout}) => {
+const Home = (props) => {
 
     return (
         <div>
             <Banner/>
-            <Header theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout}/>
+            {props.showVideo ? <Video/> : <Header {...props}/>}
         </div>
     )
 }
