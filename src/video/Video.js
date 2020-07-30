@@ -1,9 +1,20 @@
 import React, {useEffect, useRef, useState} from "react"
 
-import { TurnConfig } from "./Config"
-
 import styles from "../config/Styles"
 const { Background, LocalVideo, RemoteVideo } = styles
+
+const TurnConfig = {
+    iceServers: [
+        {
+            urls: 'stun:stun.' + process.env.REACT_APP_TURN_IP + ':' + process.env.REACT_APP_TURN_PORT
+        },
+        {
+            urls: 'turn:turn.' + process.env.REACT_APP_TURN_IP + ':' + process.env.REACT_APP_TURN_PORT,
+            username: process.env.REACT_APP_TURN_USER,
+            credential: process.env.REACT_APP_TURN_PASS
+        }
+    ]
+}
 
 const Video = ({username}) => {
     const [tracks, setTracks] = useState([])
@@ -21,11 +32,10 @@ const Video = ({username}) => {
         (async () => {
             const token = localStorage.getItem("Token")
             if (token) {
-                const isWebcam = await getWebcam(stream)
+                const isWebcam = true //await getWebcam(stream)
                 if (isWebcam) {
                     localVideoRef.current.srcObject = stream.current
-                    if (typeof socket !== "undefined")
-                        connectWebSocket(token)
+                    await connectWebSocket(token)
                 }
             }
         })()
@@ -43,7 +53,7 @@ const Video = ({username}) => {
             }
         }
 
-        navigator.getWebcam = (navigator.getUserMedia || navigator.webKitGetUserMedia || navigator.moxGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
+        //navigator.getWebcam = (navigator.getUserMedia || navigator.webKitGetUserMedia || navigator.moxGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
 
         if (navigator.mediaDevices.getUserMedia) {
             try {
@@ -55,7 +65,8 @@ const Video = ({username}) => {
             }
         }
         else {
-            await navigator.getWebcam({ audio: true, video: true },
+            console.log("Web cam is not accessible.")
+            /*await navigator.getWebcam({ audio: true, video: true },
                 (s) => {
                     stream.current = s
                     return true
@@ -63,34 +74,33 @@ const Video = ({username}) => {
                 () => {
                     console.log("Web cam is not accessible.")
                     return false
-                });
+                });*/
         }
     }
 
 
     //CONNECT TO THE SOCKET
-    const connectWebSocket = (token) => {
-        socket.current = new WebSocket(process.env.REACT_APP_WSS + "?Auth=" + token)
+    const connectWebSocket = async (token) => {
+        socket.current = (new WebSocket(process.env.REACT_APP_WSS + "?Auth=" + token))
 
         socket.current.onopen = () => {
             console.log("Websocket Connection Open")
-            console.log(stream.current)
-            createPeerConnection(socket, username, stream, tracks, setTracks, channel, remoteVideoRef)
+            createPeerConnection()
         }
 
         socket.current.onmessage = (event) => {
             const data = JSON.parse(event.data)
 
             switch (data.type){
-                /*case 'candidate':
-                    handleCandidate(jsonData.data, jsonData.id);
+                case 'candidate':
+                    handleCandidate(data.data, data.id);
                     break;
                 case 'offer':
-                    handleOffer(jsonData.data, jsonData.id);
+                    handleOffer(data.data, data.id);
                     break;
                 case 'answer':
-                    handleAnswer(jsonData.data, jsonData.id);
-                    break;*/
+                    handleAnswer(data.data, data.id);
+                    break;
                 default:
                     console.log(data)
                     break
@@ -180,6 +190,7 @@ const Video = ({username}) => {
     const setChannelEvents = (channel) => {
         channel.onmessage = (event) => {
             const data = JSON.parse(event.data)
+            console.log("New message: " + data)
             //TODO: Show messages
         }
 
@@ -267,9 +278,6 @@ const Video = ({username}) => {
             connection.current.setRemoteDescription(new RTCSessionDescription(answer))
         }
     }
-
-
-
 
 
     return (
