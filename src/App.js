@@ -16,7 +16,7 @@ export default function App() {
     const [logout, setLogout] = useState(false)
     const [username, setUsername] = useState()
 
-    const [showVideo, setShowVideo] = useState(false)
+    const [showVideo, setShowVideo] = useState(true)
 
     useEffect(() => {
         (async () => {
@@ -48,7 +48,7 @@ export default function App() {
     return (
         <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
             <GlobalStyle/>
-            <Home theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} showVideo={showVideo} setShowVideo={setShowVideo} username={username}/>}
+            <Home theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} showVideo={showVideo} setShowVideo={setShowVideo} username={username}/>
             {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername}/>}
         </ThemeProvider>
     )

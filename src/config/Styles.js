@@ -119,7 +119,7 @@ const Warning = styled.p`
 `
 
 const LocalVideo = styled.video`
-  width: 20vw;
+  width: 25vw;
 `
 
 const RemoteVideo = styled.video`
