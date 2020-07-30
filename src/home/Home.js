@@ -6,6 +6,7 @@ import styles from "../config/Styles"
 const { Warning } = styles
 
 const Banner = () => {
+
     return (
         <Warning style={{textAlign: "center"}}>
             <Emoji symbol="🐣" label="Hatching Chick"/> MOOSE is in early-stage development. Sign up below to beta test.
@@ -13,12 +14,12 @@ const Banner = () => {
     )
 }
 
-const Home = ({theme, setTheme}) => {
+const Home = ({theme, setTheme, setLogin, loggedIn, setLogout}) => {
 
     return (
         <div>
             <Banner/>
-            <Header theme={theme} setTheme={setTheme}/>
+            <Header theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout}/>
         </div>
     )
 }

@@ -39,8 +39,27 @@ const Background = styled.div`
   min-height: 100vh;
 `
 
-const LoginBackground = styled(Background)`
+const Modal = styled.div`
   text-align: center;
+  position: fixed;
+  background-color: rgba(0,0,0,0.4);
+  top:0;
+  right:0;
+  bottom:0;
+  left:0; 
+  z-index: 999;
+  transition: 0.3s;
+`
+
+const ModalContent = styled.div`
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 2em;
+  background: ${props => props.theme.background};
+  border-radius: 16px;
 `
 
 const ToggleTheme = styled.button`
@@ -58,6 +77,12 @@ const ToggleTheme = styled.button`
     background-color: rgba(73,96,249,0.4);
     box-shadow: none;
     transform: translateY(0px);
+  }
+  
+  &:active {
+    transform: translateY(0px);
+    box-shadow: none;
+    background: rgba(73,96,249,0.6);
   }
 `
 
@@ -91,4 +116,4 @@ const Warning = styled.p`
 `
 
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, LoginBackground, ToggleTheme}
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ToggleTheme}

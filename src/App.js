@@ -1,5 +1,5 @@
-import React, {useState} from "react"
-import { Route, Switch } from "react-router-dom"
+import React, {useEffect, useState} from "react"
+import jwt from "jsonwebtoken"
 
 import Home from "./home/Home"
 import Login from "./auth/Login"
@@ -10,18 +10,40 @@ import { mooseTheme, lightTheme, darkTheme } from "./config/Styles"
 
 export default function App() {
     const [theme, setTheme] = useState(localStorage.getItem('Theme') || 'moose')
+    const [login, setLogin] = useState(false)
+    const [loggedIn, setLoggedIn] = useState(false)
+    const [logout, setLogout] = useState(false)
+
+    useEffect(() => {
+        (async () => {
+            const token = localStorage.getItem("Token")
+
+            if(token) {
+                const decoded = await jwt.decode(token, {complete: true})
+                const time = new Date().getTime()
+
+                if(decoded.exp < time) {
+                    localStorage.removeItem("Token")
+                } else {
+                    setLoggedIn(true)
+                }
+            }
+        })()
+    }, [])
+
+    useEffect(() => {
+        if(logout) {
+            localStorage.removeItem("Token")
+            setLoggedIn(false)
+            setLogout(false)
+        }
+    }, [logout])
 
     return (
-        <Switch>
-            <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
-                <GlobalStyle/>
-                <Route exact path="/">
-                    <Home theme={theme} setTheme={setTheme}/>
-                </Route>
-                <Route exact path="/login">
-                    <Login/>
-                </Route>
-            </ThemeProvider>
-        </Switch>
+        <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
+            <GlobalStyle/>
+            <Home theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout}/>
+            {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn}/>}
+        </ThemeProvider>
     )
 }
