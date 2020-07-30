@@ -8,6 +8,7 @@ export const lightTheme = {
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
+    buttonAlpha: 'rgba(73, 96, 249, 0.5)'
 }
 
 export const darkTheme = {
@@ -18,6 +19,7 @@ export const darkTheme = {
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
+    buttonAlpha: 'rgba(73, 96, 249, 0.5)'
 }
 
 export const mooseTheme = {
@@ -25,76 +27,65 @@ export const mooseTheme = {
     text: '#FAFAFA',
     background: '#4960F9',
     placeholder: '#c7c7d9',
-    buttonPressed: '#FAC172',
+    buttonPressed: '#fac172',
     buttonPressedRim: '#09183e',
     buttonPressedText: '#09183e',
+    buttonAlpha: 'rgba(255, 255, 255, 0.3)'
 }
 
-const HeaderStyle = styled.div`
+const Background = styled.div`
   text-align: left;
-  margin-top: 0;
   padding-left: 10vw;
   padding-right: 10vw;
+  transition: 0.2s;
   background: ${props => props.theme.background};
   min-height: 100vh;
-  transition: 0.2s;
 `
 
-const Button = styled.button`
-  background: #f3f4f8;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #09183e;
-  padding: 10px 20px;
+const Modal = styled.div`
   text-align: center;
+  position: fixed;
+  background-color: rgba(0,0,0,0.4);
+  top:0;
+  right:0;
+  bottom:0;
+  left:0; 
+  z-index: 999;
   transition: 0.3s;
-  box-shadow: 0 4px #c7c7d9;
-  transform: translateY(-2px);
-  
-  &:hover {
-    box-shadow: 0 4px #8282bd;
-    transform: translateY(-2px);
-  }
-  
-  &:active {
-    background: ${props => props.theme.buttonPressed};
-    box-shadow: 0 2px ${props => props.theme.buttonPressedRim};
-    transform: translateY(0px);
-    color: ${props => props.theme.buttonPressedText};
-  }
+`
+
+const ModalContent = styled.div`
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 2em;
+  background: ${props => props.theme.background};
+  border-radius: 16px;
 `
 
 const ToggleTheme = styled.button`
   background: none;
   border: none;
-  font-size:20px;
   padding:12px 12px;
   transition: 0.3s;
   margin-top: 20px;
   float: right;
   border-radius: 24px;
+  box-shadow: none;
+  transform: translateY(0px);
   
   &:hover {
-    background-color: rgba(73,96,249,0.4);
+    background-color: ${props => props.theme.buttonAlpha};
+    box-shadow: none;
+    transform: translateY(0px);
   }
-`
-
-const Input = styled.input.attrs(props => ({type: "email"}))`
-  border-radius: 8px;
-  border: 2px solid #c7c7d9;
-  background-color: #f3f4f8;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 10px 20px;
-  margin-right: 20px;
-  max-width: 30vw;
-  min-width: 20vw;
   
-  ::placeholder {
-    color: ${props => props.theme.placeholder};
-    opacity: 1;
+  &:active {
+    transform: translateY(0px);
+    box-shadow: none;
+    background: ${props => props.theme.buttonAlpha};
   }
 `
 
@@ -107,24 +98,16 @@ const FormSubtext = styled.p`
 const MOOSE = styled.h1`
   font-weight: bold;
   font-size: 60px;
-  color: ${props => props.theme.text};
   padding-top: 15vh;
-  margin-top: 0;
 `
 
 const Subtitle = styled.h1`
   color: ${props => props.theme.specialText};
-  font-size: 50px;
   padding-bottom: 20px;
 `
 
 const Text = styled.p`
-  color: ${props => props.theme.text};
   font-size: 20px;
-`
-
-const Link = styled.a`
-  color: ${props => props.theme.specialText};
 `
 
 const Warning = styled.p`
@@ -135,5 +118,13 @@ const Warning = styled.p`
   margin: 0;
 `
 
+const LocalVideo = styled.video`
+  width: 20vw;
+`
 
-export default {lightTheme, darkTheme, mooseTheme, Button, Input, FormSubtext, MOOSE, Subtitle, Text, Warning, HeaderStyle, Link, ToggleTheme}
+const RemoteVideo = styled.video`
+  width: 50vw;
+`
+
+
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ToggleTheme, LocalVideo, RemoteVideo}
