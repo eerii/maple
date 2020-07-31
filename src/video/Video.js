@@ -80,7 +80,6 @@ const Video = ({ show }) => {
     useEffect(() => {
         socket.current.onmessage = async (event) => {
             const [message, type, id] = event.data.split("&")
-            console.log("Message: " + message, "Type: " + type, "ID: " + id)
 
             switch (type){
                 case 'candidate':
@@ -94,6 +93,7 @@ const Video = ({ show }) => {
                     break
                 default:
                     setMessages(messages.concat([message]))
+                    console.log("Message: " + message)
                     break
             }
         }
@@ -107,7 +107,7 @@ const Video = ({ show }) => {
     //CHECK CONNECTION
     useEffect(() => {
         if (checkConnection && !isConnection) {
-            socket.current = new WebSocket(socketURL)
+            socket.current = new WebSocket(process.env.REACT_APP_WSS + "?Auth=" + localStorage.getItem("Token"))
             setCheckConnection(false)
         }
     }, [isConnection, checkConnection])
@@ -169,9 +169,8 @@ const Video = ({ show }) => {
     useEffect(() => {
         if (connection) {
             connection.ontrack = event => {
-                console.log("Received Stream.")
-                console.log(event.streams)
-                remoteVideo.current.srcObject = event.streams[0]
+                console.log("Received Video Stream.")
+                console.log(event.streams[0])
             }
 
             connection.ondatachannel = (event) => {
@@ -241,7 +240,7 @@ const Video = ({ show }) => {
         if(channel)
             channel.close()
 
-        setChannel(connection.createDataChannel('channel', {}))
+        await setChannel(connection.createDataChannel('channel', {}))
 
         try {
             const offer = await connection.createOffer()
@@ -286,24 +285,34 @@ const Video = ({ show }) => {
     //---------
     //CANDIDATE
     const handleCandidate = async (candidate, id) => {
-        if(ID !== id){
+        //if(ID !== id){
             console.log("Adding Ice Candidate - " + candidate.candidate)
-            await connection.addIceCandidate(new RTCIceCandidate(candidate))
-        }
+            if(candidate)
+                await connection.addIceCandidate(new RTCIceCandidate(candidate))
+        //}
     }
     //OFFER
     const handleOffer = async (offer, id) => {
-        if(ID !== id) {
+        //if(ID !== id) {
             console.log("Received The Offer")
-            await connection.setRemoteDescription(new RTCSessionDescription(offer))
-        }
+            try {
+                await connection.setRemoteDescription(offer)
+            } catch(e) {
+                console.log(e)
+            }
+
+        //}
     }
     //ANSWER
     const handleAnswer = async (answer, id) => {
-        if(ID !== id){
+        //if(ID !== id){
             console.log("Received The Answer")
-            await connection.setRemoteDescription(new RTCSessionDescription(answer))
-        }
+            try {
+                await connection.setRemoteDescription(answer)
+            } catch(e) {
+                console.log(e)
+            }
+        //}
     }
     //---------
 

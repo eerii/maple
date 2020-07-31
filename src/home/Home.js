@@ -22,7 +22,7 @@ const Home = (props) => {
     return (
         <div>
             <Banner/>
-            {props.showVideo ? <Video show={props.setShowVideo}/> : <Header {...props}/>}
+            {props.showVideo ? <div><Video show={props.setShowVideo}/><Video show={props.setShowVideo}/></div> : <Header {...props}/>}
         </div>
     )
 }
