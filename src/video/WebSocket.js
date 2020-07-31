@@ -1,15 +1,16 @@
 import React, {useState, useEffect, useRef} from "react"
 
-const WS = ({ ws, username }) => {
+import Userlist from "./Userlist"
+
+
+const WS = ({ ws, ID, setID, username, startCall, sendSignal }) => {
     //STATE
     const [message, setMessage] = useState("")
-    const [ID, setID] = useState(null)
+    const [userlist, setUserlist] = useState([])
 
     //REFERENCES
     const messageInput = useRef(null)
     const messageButton = useRef(null)
-    const userlist = useRef([])
-
 
 
     //WEBSOCKET
@@ -35,6 +36,12 @@ const WS = ({ ws, username }) => {
             console.log("[WS]: WebSocket Client Connected")
             messageInput.current.disabled = false
             messageButton.current.disabled = false
+
+            const data = {
+                action: "sendMessage",
+                type: "getID",
+            }
+            ws.current.send(JSON.stringify(data))
         }
 
         ws.current.onmessage = async (event) => {
@@ -45,16 +52,21 @@ const WS = ({ ws, username }) => {
             switch (type) {
                 //USER MANAGEMENT
                 case "id":
-                    setID(message)
-                    if (data.userlist)
-                        userlist.current = data.userlist
+                    setUserlist(data.userlist)
+                    if(!ID){
+                        try {
+                            const userData = data.userlist.find(({ username: u }) => u === username)
+                            setID(userData.connectionID)
+                        } catch (e) {
+                            console.log("[WS]: Error Getting Connection ID")
+                        }
+                    }
                     break
                 case "username":
                     console.log(`[MESSAGE]: User ${message} has logged in at ${time}`)
-                    const userExists = userlist.current.find(({ username }) => username === message)
-                    if (!userExists)
-                    {
-                        userlist.current = [...userlist, {connectionID: sender, username: message, time: (new Date(data.date).getTime() / 1000)}]
+                    const userExists = userlist.find(({ username: u }) => u === message)
+                    if (!userExists) {
+                        setUserlist([...userlist, {connectionID: sender, username: message, time: (new Date(data.date).getTime() / 1000)}])
                     }
                     break
                 case "userlist":
@@ -71,7 +83,7 @@ const WS = ({ ws, username }) => {
                 case "video-answer":
                     //handleVideoAnswerMsg(msg)
                     break;
-                case "new-ice-candidate":
+                case "ice-candidate":
                     //handleNewICECandidateMsg(msg)
                     break;
                 case "hang-up":
@@ -90,7 +102,7 @@ const WS = ({ ws, username }) => {
         ws.current.onclose = () => {
             console.log("[WS]: WebSocket Client Disconnected")
         }
-    }, [ws])
+    }, [ws, ID, setID, username, userlist])
     //---------
 
 
@@ -112,24 +124,15 @@ const WS = ({ ws, username }) => {
     //---------
 
 
-    //MESSAGES
-    //---------
-    const sendMessage = (message) => {
-        const data = {
-            action: "sendMessage",
-            ...message
-        }
-
-        ws.current.send(JSON.stringify(data))
-        setMessage("")
-    }
-    //---------
-
     return (
         <div>
             <h2>Websocket</h2>
             <input ref={messageInput} type="text" size="80" placeholder="Enter message to send" value={message} onChange={(event) => setMessage(event.target.value)} disabled/>
-            <button ref={messageButton} onClick={() => sendMessage({data: message, type: "message"})} disabled>Send Message</button>
+            <button ref={messageButton} onClick={() => sendSignal({data: message, type: "message"})} disabled>Send Message</button>
+
+            <Userlist userlist={userlist} startCall={startCall}/>
+
+            <br/><br/>
         </div>
     )
 }
