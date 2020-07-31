@@ -1,7 +1,20 @@
-import React, {useEffect, useRef, useState} from "react"
+import React, {useRef, useState, useEffect} from "react"
+
+import { hri } from 'human-readable-ids'
 
 import styles from "../config/Styles"
 const { Background, LocalVideo, RemoteVideo } = styles
+
+const socketURL = process.env.REACT_APP_WSS + "?Auth=" + localStorage.getItem("Token")
+
+const cameraConstrains = {
+    audio: true,
+    video: {
+        facingMode: "user",
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+    }
+}
 
 const TurnConfig = {
     iceServers: [
@@ -16,215 +29,232 @@ const TurnConfig = {
     ]
 }
 
-const Video = ({username}) => {
-    const [tracks, setTracks] = useState([])
+const ID = hri.random()
 
-    const remoteVideoRef = useRef()
-    const localVideoRef = useRef()
-    const socket = useRef()
-    const stream = useRef()
-    const channel = useRef()
-    const connection = useRef()
+const Video = ({ show }) => {
+    //STATE
+    const [messages, setMessages] = useState(["Test message"])
+    const [newMessage, setNewMessage] = useState("")
+    const [isConnection, setIsConnection] = useState(false)
+    const [checkConnection, setCheckConnection] = useState(false)
+    const [stream, setStream] = useState(null)
+    const [connection, setConnection] = useState(null)
+    const [channel, setChannel] = useState(null)
+
+    //REF
+    const socket = useRef(new WebSocket(socketURL))
+    const tracks = useRef([])
+    const localVideo = useRef(null)
+    const remoteVideo = useRef(null)
 
 
-    //LOAD AT START
+    //WEBSOCKET
+    //---------
+    //OPEN WEBSOCKET
     useEffect(() => {
-        (async () => {
-            const token = localStorage.getItem("Token")
-            if (token) {
-                const isWebcam = true //await getWebcam(stream)
-                if (isWebcam) {
-                    localVideoRef.current.srcObject = stream.current
-                    await connectWebSocket(token)
-                }
-            }
-        })()
-    }, [])
-
-
-    //GET WEBCAM
-    const getWebcam = async () => {
-        const constraints = {
-            audio: true,
-            video: {
-                facingMode: "user",
-                width: { ideal: 1920 },
-                height: { ideal: 1080 }
-            }
-        }
-
-        //navigator.getWebcam = (navigator.getUserMedia || navigator.webKitGetUserMedia || navigator.moxGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
-
-        if (navigator.mediaDevices.getUserMedia) {
-            try {
-                stream.current = await navigator.mediaDevices.getUserMedia(constraints)
-                return true
-            } catch (e) {
-                console.log("Failed to get Webcam ", e)
-                return false
-            }
-        }
-        else {
-            console.log("Web cam is not accessible.")
-            /*await navigator.getWebcam({ audio: true, video: true },
-                (s) => {
-                    stream.current = s
-                    return true
-                },
-                () => {
-                    console.log("Web cam is not accessible.")
-                    return false
-                });*/
-        }
-    }
-
-
-    //CONNECT TO THE SOCKET
-    const connectWebSocket = async (token) => {
-        socket.current = (new WebSocket(process.env.REACT_APP_WSS + "?Auth=" + token))
-
+        let peerTimer
         socket.current.onopen = () => {
-            console.log("Websocket Connection Open")
-            createPeerConnection()
+            console.log("WebSocket Client Connected")
+            setIsConnection(true)
+            peerTimer = setTimeout(
+                () => setConnection(new RTCPeerConnection(TurnConfig)),
+                500
+            )
         }
+        const checkTimer = setTimeout(
+            () => setCheckConnection(true),
+            1000
+        )
+        return () => {
+            clearTimeout(peerTimer)
+            clearTimeout(checkTimer)
+        }
+    }, [])
+    useEffect(() => {
+        if (!localStorage.getItem("Token")) {
+            setIsConnection(false)
+            show(false)
+        }
+    }, [show])
+    //WHEN A MESSAGE ARRIVES
+    useEffect(() => {
+        socket.current.onmessage = async (event) => {
+            const [message, type, id] = event.data.split("&")
+            console.log("Message: " + message, "Type: " + type, "ID: " + id)
 
-        socket.current.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-
-            switch (data.type){
+            switch (type){
                 case 'candidate':
-                    handleCandidate(data.data, data.id);
-                    break;
+                    await handleCandidate(JSON.parse(message), id)
+                    break
                 case 'offer':
-                    handleOffer(data.data, data.id);
-                    break;
+                    await handleOffer(JSON.parse(message), id)
+                    break
                 case 'answer':
-                    handleAnswer(data.data, data.id);
-                    break;
+                    await handleAnswer(JSON.parse(message), id)
+                    break
                 default:
-                    console.log(data)
+                    setMessages(messages.concat([message]))
                     break
             }
         }
-
-        socket.current.onerror = (event) => {
-            console.error(event)
+    })
+    //CLOSE THE OLD SOCKET WHEN THE SOCKET CHANGES
+    useEffect(() => () => {
+        socket.current.close()
+        setIsConnection(false)
+        console.log("WebSocket Client Disconnected")
+    }, [socket])
+    //CHECK CONNECTION
+    useEffect(() => {
+        if (checkConnection && !isConnection) {
+            socket.current = new WebSocket(socketURL)
+            setCheckConnection(false)
         }
+    }, [isConnection, checkConnection])
+    //---------
 
-        socket.current.onclose = () => {
-            console.log("Websocket Connection Close")
-        }
-    }
+
+    //CAMERA
+    //---------
+    const askForCamera = true
+    useEffect(() => {
+        if (askForCamera) {
+            (async () => {
+                //navigator.getWebcam = (navigator.getUserMedia || navigator.webKitGetUserMedia || navigator.moxGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
+
+                if (navigator.mediaDevices.getUserMedia) {
+                    try {
+                        setStream(await navigator.mediaDevices.getUserMedia(cameraConstrains))
+                        console.log("Webcam is Available")
+                    } catch (e) {
+                        console.log("Failed to get Webcam ", e)
+                    }
+                }
+                else {
+                    console.log("Web cam is not accessible.")
+                    /*await navigator.getWebcam({ audio: true, video: true },
+                        (s) => {
+                            stream.current = s
+                            return true
+                        },
+                        () => {
+                            console.log("Web cam is not accessible.")
+                            return false
+                        });*/
+                }
+            })()
+    }}, [askForCamera])
+    useEffect(() => {
+        localVideo.current.srcObject = stream
+    }, [stream])
+    //---------
 
 
     //PEER CONNECTION
-    const createPeerConnection = () => {
-        connection.current = new RTCPeerConnection(TurnConfig)
+    //---------
+    useEffect(() => {
+        if (connection) {
+            console.log("Web RTC Peer Connection Created.")
 
-        if (stream.current) {
-            for (const track of stream.current.getTracks()) {
-                console.log("Sending Stream Track: ", track)
-                setTracks([...tracks, (connection.current.addTrack(track, stream.current))])
-            }
-        } else {
-            console.log("No Stream Available.")
-        }
-
-
-        connection.current.ontrack = event => {
-            console.log("Received Stream.")
-            remoteVideoRef.current.srcObject = event.streams[0]
-        }
-
-        connection.current.ondatachannel = (event) => {
-            console.log("Received a DataChannel.")
-            channel.current = event.channel
-            setChannelEvents(event.channel)
-        }
-
-        connection.current.onicecandidate = (event) => {
-            if (event.candidate) {
-                console.log("Sending Ice Candidate - " + event.candidate.candidate)
-
-                socket.current.send(JSON.stringify(
-                    {
-                        action: 'sendMessage',
-                        type: 'candidate',
-                        data: event.candidate,
-                        id: username
-                    }
-                ))
+            if (stream && tracks.current.length === 0) {
+                for (const t of stream.getTracks()) {
+                    console.log("Sending Stream Track: ", t)
+                    tracks.current = [...tracks.current, (connection.addTrack(t, stream))]
+                }
+            } else {
+                console.log("No Stream Available.")
             }
         }
+    }, [connection, stream])
+    useEffect(() => {
+        if (connection) {
+            connection.ontrack = event => {
+                console.log("Received Stream.")
+                console.log(event.streams)
+                remoteVideo.current.srcObject = event.streams[0]
+            }
 
-        connection.current.onconnectionstatechange = (event) => {
-            switch(connection.current.connectionState) {
-                case "connected":
-                    console.log("Web RTC Peer Connection Connected.")
-                    break
-                case "disconnected":
-                    console.log("Web RTC Peer Connection Disconnected. Please reload the page to reconnect.")
-                    break
-                case "failed":
-                    console.log("Web RTC Peer Connection Failed. Please reload the page to reconnect.")
-                    console.log(event)
-                    break;
-                case "closed":
-                    console.log("Web RTC Peer Connection Failed. Please reload the page to reconnect.")
-                    break
-                default:
-                    break
+            connection.ondatachannel = (event) => {
+                console.log("Received a DataChannel.")
+                setChannel(event.channel)
+            }
+
+            connection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    console.log("Sending Ice Candidate - " + event.candidate.candidate)
+
+                    socket.current.send(JSON.stringify(
+                        {
+                            action: 'sendMessage',
+                            data: JSON.stringify(event.candidate) + '&candidate&' + ID,
+                        }
+                    ))
+                }
+            }
+
+            connection.onconnectionstatechange = (event) => {
+                switch(connection.connectionState) {
+                    case "connected":
+                        console.log("Web RTC Peer Connection Connected.")
+                        break
+                    case "disconnected":
+                        console.log("Web RTC Peer Connection Disconnected. Please reload the page to reconnect.")
+                        break
+                    case "failed":
+                        console.log("Web RTC Peer Connection Failed. Please reload the page to reconnect.")
+                        console.log(event)
+                        break;
+                    case "closed":
+                        console.log("Web RTC Peer Connection Failed. Please reload the page to reconnect.")
+                        break
+                    default:
+                        break
+                }
             }
         }
-
-        console.log("Web RTC Peer Connection Created.")
-    }
-    //DISCONNECT PEER CONNECTION
-    const disconnectPeerConnection = () => {
-        connection.current.close()
-    }
+    }, [connection])
+    //---------
 
 
     //CHANNEL
-    //CHANNEL EVENTS
-    const setChannelEvents = (channel) => {
-        channel.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-            console.log("New message: " + data)
-            //TODO: Show messages
-        }
+    //---------
+    useEffect(() => {
+        if (channel) {
+            channel.onmessage = (event) => {
+                const [message, type] = event.data.split(":")
+                console.log("New message: " + message + "Type: " + type)
+                //TODO: ADD MESSAGE
+            }
 
-        channel.onerror = function (event) {
-            console.log('DataChannel Error.')
-            console.error(event)
-        }
+            channel.onerror = (event) => {
+                console.log('DataChannel Error.')
+                console.error(event)
+            }
 
-        channel.onclose = function () {
-            console.log('DataChannel Closed.')
+            channel.onclose = () => {
+                console.log('DataChannel Closed.')
+            }
         }
-    }
+    }, [channel])
     //SEND OFFER
     const sendOffer = async () => {
-        if(channel.current)
-            channel.current.close()
+        if(channel)
+            channel.close()
 
-        channel.current = connection.current.createDataChannel('channel', {})
-        setChannelEvents(channel.current)
+        setChannel(connection.createDataChannel('channel', {}))
 
         try {
-            const offer = await connection.current.createOffer()
+            const offer = await connection.createOffer()
             console.log("Sent Offer: ", offer)
 
             socket.current.send(JSON.stringify(
                 {
                     action: 'sendMessage',
-                    type: 'offer',
-                    data: offer,
-                    id: username
+                    data: JSON.stringify(offer) + '&offer&' + ID,
                 }
             ))
 
-            await connection.current.setLocalDescription(offer)
+            await connection.setLocalDescription(offer)
         } catch (e) {
             console.log("Error Creating Offer: " + e.message)
         }
@@ -232,71 +262,75 @@ const Video = ({username}) => {
     //SEND ANSWER
     const sendAnswer = async () => {
         try {
-            const answer = await connection.current.createAnswer()
+            const answer = await connection.createAnswer()
             console.log("Sent Answer: ", answer)
 
             socket.current.send(JSON.stringify(
                 {
                     action: 'sendMessage',
-                    type: 'answer',
-                    data: answer,
-                    id: username
+                    data: JSON.stringify(answer) + '&answer&' + ID,
                 }
             ))
         } catch (e) {
             console.log("Error Creating Answer: " + e.message)
         }
     }
-    //SEND MESSAGE
-    const sendMessage = (message) => {
-        channel.current.send(
-            JSON.stringify({
-                "action":"sendMessage",
-                "data": message
-    }))}
-
+    //SEND A MESSAGE
+    const sendMessage = () => {
+        socket.current.send(JSON.stringify({action: "sendMessage", data: newMessage}))
+        setNewMessage("")
+    }
+    //---------
 
     //HANDLERS
+    //---------
     //CANDIDATE
-    const handleCandidate = (candidate, id) => {
-        if(username !== id){
+    const handleCandidate = async (candidate, id) => {
+        if(ID !== id){
             console.log("Adding Ice Candidate - " + candidate.candidate)
-            connection.current.addIceCandidate(new RTCIceCandidate(candidate))
+            await connection.addIceCandidate(new RTCIceCandidate(candidate))
         }
     }
     //OFFER
-    const handleOffer = (offer, id) => {
-        if(username !== id) {
-            console.log("Recieved The Offer.")
-            connection.current.setRemoteDescription(new RTCSessionDescription(offer))
+    const handleOffer = async (offer, id) => {
+        if(ID !== id) {
+            console.log("Received The Offer")
+            await connection.setRemoteDescription(new RTCSessionDescription(offer))
         }
     }
     //ANSWER
-    const handleAnswer = (answer, id) => {
-        if(username !== id){
-            console.log("Recieved The Answer")
-            connection.current.setRemoteDescription(new RTCSessionDescription(answer))
+    const handleAnswer = async (answer, id) => {
+        if(ID !== id){
+            console.log("Received The Answer")
+            await connection.setRemoteDescription(new RTCSessionDescription(answer))
         }
     }
+    //---------
 
 
+    //WEBPAGE
     return (
         <Background>
             <h1 style={{paddingTop: "15vh"}}>Video</h1>
 
             <div id="videoContainer">
-                <RemoteVideo id="remoteVideo" ref={remoteVideoRef} autoPlay playsinline/>
-                <LocalVideo id="localVideo" ref={localVideoRef} muted autoPlay playsinline/>
+                <RemoteVideo id="remoteVideo" ref={remoteVideo} autoPlay playsinline/>
+                <LocalVideo id="localVideo" ref={localVideo} muted autoPlay playsinline/>
             </div>
 
-            <button id="sendOfferButton" onClick={() => sendOffer()}>Call</button>
-            <button id="answerButton" onClick={() => sendAnswer()}>Answer</button>
-            <button id="hangUpButton" onClick={() => disconnectPeerConnection()}>Hang Up</button>
+            <input type="text" size="80" placeholder="Enter message to send" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}/>
+            <button onClick={() => sendMessage()}>Send Message</button>
             <br/><br/>
 
-            <input id="messageInput" type="text" size="80" placeholder="Enter message to send"/>
-            <button id="sendMessageButton" onClick={() => sendMessage()}>Send Message</button>
+            <button onClick={() => sendOffer()}>Send Offer</button>
+            <button onClick={() => sendAnswer()}>Send Answer</button>
+            <button onClick={() => {connection.close(); console.log("Peer Connection Closed")}}>Close PC</button>
+            <button onClick={() => {socket.current.close(); console.log("WebSocket Client Disconnected")}}>Close WS</button>
             <br/><br/>
+
+            <div style={{height: "400px", border: "1px solid black", borderRadius: "3px"}} id="console">
+                {messages.map(message => <p style={{color: "black"}} key={message}>{message}</p>)}
+            </div>
         </Background>
     )
 }

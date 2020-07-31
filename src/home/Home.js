@@ -3,6 +3,7 @@ import React from "react"
 import Emoji from "../components/Emoji"
 import Header from "./Header"
 import Video from "../video/Video"
+//import WebSocket from "../video/WebSocket"
 
 import styles from "../config/Styles"
 const { Warning } = styles
@@ -21,7 +22,7 @@ const Home = (props) => {
     return (
         <div>
             <Banner/>
-            {props.showVideo ? <Video username={props.username}/> : <Header {...props}/>}
+            {props.showVideo ? <Video show={props.setShowVideo}/> : <Header {...props}/>}
         </div>
     )
 }
