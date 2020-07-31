@@ -16,7 +16,7 @@ export default function App() {
     const [logout, setLogout] = useState(false)
     const [username, setUsername] = useState()
 
-    const [showVideo, setShowVideo] = useState(false)
+    const [showVideo, setShowVideo] = useState(true)
 
     useEffect(() => {
         (async () => {

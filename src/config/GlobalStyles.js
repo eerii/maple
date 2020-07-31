@@ -15,6 +15,9 @@ const GlobalStyle = createGlobalStyle`
     font-size: 50px;
     margin-top: 0;
   }
+  h2 {
+    color: ${props => props.theme.text};
+  }
   a {
     color: ${props => props.theme.specialText};
   }
@@ -41,6 +44,12 @@ const GlobalStyle = createGlobalStyle`
       box-shadow: 0 2px ${props => props.theme.buttonPressedRim};
       transform: translateY(0px);
       color: ${props => props.theme.buttonPressedText};
+    }
+    
+    &:disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+      color: #c7c7d9
     }
   }
   input {
