@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from "react"
 import Userlist from "./Userlist"
 
 
-const WS = ({ ws, ID, setID, username, startCall, sendSignal }) => {
+const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg }) => {
     //STATE
     const [message, setMessage] = useState("")
     const [userlist, setUserlist] = useState([])
@@ -44,6 +44,16 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal }) => {
             ws.current.send(JSON.stringify(data))
         }
 
+        ws.current.onerror = (event) => {
+            console.log("[WS]: ERROR ", event)
+        }
+
+        ws.current.onclose = () => {
+            console.log("[WS]: WebSocket Client Disconnected")
+        }
+    }, [ws])
+    //ON MESSAGE
+    useEffect(() => {
         ws.current.onmessage = async (event) => {
             const data = JSON.parse(event.data)
             const time = (data.date) ? (new Date(data.date)).toLocaleTimeString() : ""
@@ -78,13 +88,13 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal }) => {
                     break
                 //SIGNALING
                 case "video-offer":
-                    //handleVideoOfferMsg(msg)
+                    await handleVideoOfferMsg(data)
                     break;
                 case "video-answer":
-                    //handleVideoAnswerMsg(msg)
+                    await handleVideoAnswerMsg(data)
                     break;
                 case "ice-candidate":
-                    //handleNewICECandidateMsg(msg)
+                    await handleICECandidateMsg(data)
                     break;
                 case "hang-up":
                     //handleHangUpMsg(msg)
@@ -94,15 +104,7 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal }) => {
                     break
             }
         }
-
-        ws.current.onerror = (event) => {
-            console.log("[WS]: ERROR ", event)
-        }
-
-        ws.current.onclose = () => {
-            console.log("[WS]: WebSocket Client Disconnected")
-        }
-    }, [ws, ID, setID, username, userlist])
+    }, [ws, ID, setID, username, userlist, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg])
     //---------
 
 

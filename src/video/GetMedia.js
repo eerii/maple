@@ -16,8 +16,8 @@ const GetMedia = ({ pc, localVideo }) => {
                 const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
 
                 stream.getTracks().forEach(track => {
-                    pc.addTrack(track, stream);
-                    console.log("[MEDIA]: Adding Track -> ", track)
+                    pc.current.addTrack(track, stream);
+                    console.log(`[MEDIA]: Adding ${(track.kind === "video") ? "Video" : "Audio"} Track -> `, track)
                 })
 
                 localVideo.current.srcObject = stream

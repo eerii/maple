@@ -10,6 +10,7 @@ const { Background, LocalVideo, RemoteVideo } = styles
 const VideoClient = ({ username }) => {
     const [ID, setID] = useState(null)
     const [createPC, setCreatePC] = useState(null)
+    const [remoteSDP, setRemoteSDP] = useState(null)
     const [getMedia, setGetMedia] = useState(false)
 
     const ws = useRef(null)
@@ -48,6 +49,41 @@ const VideoClient = ({ username }) => {
     //---------
 
 
+    //MESSAGE HANDLERS
+    //---------
+    //HANDLE VIDEO OFFER
+    const handleVideoOfferMsg = async (data) => {
+        if (!pc.current) {
+            setCreatePC(data.sender)
+        }
+        setRemoteSDP(data.message)
+    }
+    //HANDLE ICE CANDIDATE
+    const handleICECandidateMsg = async (data) => {
+        try {
+            const candidate = new RTCIceCandidate(data.message)
+            console.log("[PC]: (ICE) Adding New Candidate - " + JSON.stringify(candidate))
+            if(candidate.candidate)
+                await pc.current.addIceCandidate(candidate)
+        } catch (e) {
+            console.log("[PC]: (ICE) Error Adding New Candidate")
+            console.log(e)
+        }
+    }
+    //HANDLE VIDEO ANSWER
+    const handleVideoAnswerMsg = async (data) => {
+        try {
+            const answer = new RTCSessionDescription(data.message)
+            console.log("[PC]: (NEG) Setting Remote Description for Answer")
+            await pc.current.setRemoteDescription(answer)
+        } catch (e) {
+            console.log("[PC]: (NEG) Error Handling Answer")
+            console.log(e)
+        }
+    }
+    //---------
+
+
     return (
         <Background>
             <h1 style={{paddingTop: "15vh"}}>Video Room</h1>
@@ -59,9 +95,9 @@ const VideoClient = ({ username }) => {
                 <button ref={hangupButton} onClick={() => {}} disabled>Hang Up</button>
             </div>
 
-            <WS ws={ws} ID={ID} setID={setID} username={username} startCall={startCall} sendSignal={sendSignal}/>
+            <WS ws={ws} ID={ID} setID={setID} username={username} startCall={startCall} sendSignal={sendSignal} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg}/>
 
-            <PC pc={pc} createPC={createPC} setCreatePC={setCreatePC} sendSignal={sendSignal} remoteVideo={remoteVideo} hangupButton={hangupButton}/>
+            <PC pc={pc} createPC={createPC} setCreatePC={setCreatePC} ID={ID} sendSignal={sendSignal} remoteVideo={remoteVideo} hangupButton={hangupButton} getMedia={getMedia} setGetMedia={setGetMedia} remoteSDP={remoteSDP}/>
 
             {getMedia && <GetMedia pc={pc} localVideo={localVideo}/>}
         </Background>
