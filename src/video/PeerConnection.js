@@ -68,7 +68,7 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
                     case "closed":
                     case "failed":
                     case "disconnected":
-                        stopCall(receiverID)
+                        //stopCall(receiverID)
                         break
                     default:
                         break
