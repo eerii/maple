@@ -12,6 +12,7 @@ const VideoClient = ({ username }) => {
     const [createPC, setCreatePC] = useState(null)
     const [remoteSDP, setRemoteSDP] = useState(null)
     const [getMedia, setGetMedia] = useState(false)
+    const [stopping, setStopping] = useState(false)
 
     const ws = useRef(null)
     const pc = useRef(null)
@@ -50,6 +51,7 @@ const VideoClient = ({ username }) => {
     //STOP
     const stopCall = (id=null) => {
         console.log(`[END]: Closing Peer Connection${id ? ` with ${id}` : ""}`)
+        setStopping(true)
 
         if (id) {
             sendSignal ({
@@ -59,7 +61,7 @@ const VideoClient = ({ username }) => {
             })
         }
 
-        if (pc) {
+        if (pc.current) {
             pc.current.ontrack = null
             pc.current.onicecandidate = null
             pc.current.oniceconnectionstatechange = null
@@ -71,18 +73,19 @@ const VideoClient = ({ username }) => {
         }
 
         if (localVideo.current.srcObject) {
-            localVideo.srcObject.getTracks().forEach(track => { track.stop() })
+            localVideo.current.srcObject.getTracks().forEach(track => { track.stop() })
         }
 
         if (remoteVideo.current.srcObject) {
             remoteVideo.current.srcObject.getTracks().forEach(track => { track.stop() })
         }
 
-        if (pc) {
+        if (pc.current) {
             pc.current.close()
             pc.current = null
         }
 
+        setStopping(false)
         setGetMedia(false)
         setCreatePC(false)
         setRemoteSDP(false)
@@ -96,32 +99,38 @@ const VideoClient = ({ username }) => {
     //---------
     //HANDLE VIDEO OFFER
     const handleVideoOfferMsg = async (data) => {
-        if (!pc.current) {
-            setCreatePC(data.sender)
+        if (!stopping){
+            if (!pc.current) {
+                setCreatePC(data.sender)
+            }
+            setRemoteSDP(data.message)
         }
-        setRemoteSDP(data.message)
     }
     //HANDLE ICE CANDIDATE
     const handleICECandidateMsg = async (data) => {
-        try {
-            const candidate = new RTCIceCandidate(data.message)
-            console.log("[PC]: (ICE) Adding New Candidate - " + JSON.stringify(candidate))
-            if(candidate.candidate)
-                await pc.current.addIceCandidate(candidate)
-        } catch (e) {
-            console.log("[PC]: (ICE) Error Adding New Candidate")
-            console.log(e)
+        if (!stopping) {
+            try {
+                const candidate = new RTCIceCandidate(data.message)
+                console.log("[PC]: (ICE) Adding New Candidate - " + JSON.stringify(candidate))
+                if(candidate.candidate)
+                    await pc.current.addIceCandidate(candidate)
+            } catch (e) {
+                console.log("[PC]: (ICE) Error Adding New Candidate")
+                console.log(e)
+            }
         }
     }
     //HANDLE VIDEO ANSWER
     const handleVideoAnswerMsg = async (data) => {
-        try {
-            const answer = new RTCSessionDescription(data.message)
-            console.log("[PC]: (NEG) Setting Remote Description for Answer")
-            await pc.current.setRemoteDescription(answer)
-        } catch (e) {
-            console.log("[PC]: (NEG) Error Handling Answer")
-            console.log(e)
+        if (!stopping) {
+            try {
+                const answer = new RTCSessionDescription(data.message)
+                console.log("[PC]: (ANSWER) Setting Remote Description for Answer")
+                await pc.current.setRemoteDescription(answer)
+            } catch (e) {
+                console.log("[PC]: (ANSWER) Error Handling Answer")
+                console.log(e)
+            }
         }
     }
     //HANDLE HANG UP

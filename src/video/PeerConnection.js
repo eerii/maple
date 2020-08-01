@@ -171,7 +171,6 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
                 remoteVideo.current.srcObject = event.streams[0]
                 hangupButton.current.disabled = false
             }
-            console.log(pc.current)
         }
     }, [pc, hangupButton, remoteVideo, pcDone])
     //---------
@@ -226,7 +225,7 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
     return (
         <div>
             Peer Connection
-            <button ref={hangupButton} onClick={() => stopCall(receiverID)} disabled>Hang Up</button>
+            <button ref={hangupButton} onClick={() => { stopCall(receiverID) }} disabled>Hang Up</button>
         </div>
     )
 }
