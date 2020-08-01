@@ -120,10 +120,12 @@ const Warning = styled.p`
 
 const LocalVideo = styled.video`
   width: 25vw;
+  transform: scale(-1, 1);
 `
 
 const RemoteVideo = styled.video`
   width: 50vw;
+  transform: scale(-1, 1);
 `
 
 
