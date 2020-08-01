@@ -220,7 +220,7 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
     return (
         <div>
             Peer Connection
-            <button ref={hangupButton} onClick={() => { stopCall(receiverID) }} disabled>Hang Up</button>
+            <button ref={hangupButton} onClick={() => { stopCall(receiverID) }}>Hang Up</button>
         </div>
     )
 }
