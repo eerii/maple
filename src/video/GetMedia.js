@@ -9,7 +9,7 @@ const mediaConstraints = {
     }
 }
 
-const GetMedia = ({ pc, localVideo }) => {
+const GetMedia = ({ pc, localVideo, stopCall }) => {
     useEffect(() => {
         (async () => {
             try {
@@ -37,10 +37,10 @@ const GetMedia = ({ pc, localVideo }) => {
                         break
                 }
 
-                //TODO: Close Video Call
+                stopCall()
             }
         })()
-    }, [pc, localVideo])
+    }, [pc, localVideo, stopCall])
 
     return (
         <div>

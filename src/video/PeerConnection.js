@@ -13,7 +13,7 @@ const TurnConfig = {
     ]
 }
 
-const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButton, getMedia, setGetMedia, remoteSDP }) => {
+const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButton, getMedia, setGetMedia, remoteSDP, stopCall }) => {
     //STATE
     const [receiverID, setReceiverID] = useState("")
     const [pcDone, setPcDone] = useState(false)
@@ -68,14 +68,14 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
                     case "closed":
                     case "failed":
                     case "disconnected":
-                        //TODO: Close Video Call
+                        stopCall(receiverID)
                         break
                     default:
                         break
                 }
             }
         }
-    }, [pc, pcDone])
+    }, [pc, pcDone, stopCall, receiverID])
     //HANDLE ICE GATHERING STATE CHANGE
     useEffect(() => {
         // Handle the |icegatheringstatechange| event. This lets us know what the
@@ -104,14 +104,14 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
                 console.log("[PC]: (SIG) Signaling State Changed to " + pc.current.signalingState)
                 switch(pc.current.signalingState) {
                     case "closed":
-                        //TODO: Close Video Call
+                        stopCall(receiverID)
                         break
                     default:
                         break
                 }
             }
         }
-    }, [pc, pcDone])
+    }, [pc, pcDone, stopCall, receiverID])
     //HANDLE NEGOTIATION NEEDED
     useEffect(() => {
         // Called by the WebRTC layer to let us know when it's time to
@@ -226,6 +226,7 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
     return (
         <div>
             Peer Connection
+            <button ref={hangupButton} onClick={() => stopCall(receiverID)} disabled>Hang Up</button>
         </div>
     )
 }

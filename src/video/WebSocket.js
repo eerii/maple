@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from "react"
 import Userlist from "./Userlist"
 
 
-const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg }) => {
+const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
     //STATE
     const [message, setMessage] = useState("")
     const [userlist, setUserlist] = useState([])
@@ -97,14 +97,14 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMs
                     await handleICECandidateMsg(data)
                     break;
                 case "hang-up":
-                    //handleHangUpMsg(msg)
+                    handleHangUpMsg(data)
                     break;
                 default:
                     console.log("[MESSAGE]: Unknown message -> " + message)
                     break
             }
         }
-    }, [ws, ID, setID, username, userlist, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg])
+    }, [ws, ID, setID, username, userlist, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg])
     //---------
 
 

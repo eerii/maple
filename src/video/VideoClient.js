@@ -35,6 +35,7 @@ const VideoClient = ({ username }) => {
 
     //CALLING
     //---------
+    //START
     const startCall = (id) => {
         if (pc.current) {
             alert("You can't start a call now! There is another call open.")
@@ -45,6 +46,48 @@ const VideoClient = ({ username }) => {
             return
         }
         setCreatePC(id)
+    }
+    //STOP
+    const stopCall = (id=null) => {
+        console.log(`[END]: Closing Peer Connection${id ? ` with ${id}` : ""}`)
+
+        if (id) {
+            sendSignal ({
+                sender: ID,
+                target: id,
+                type: "hang-up"
+            })
+        }
+
+        if (pc) {
+            pc.current.ontrack = null
+            pc.current.onicecandidate = null
+            pc.current.oniceconnectionstatechange = null
+            pc.current.onicegatheringstatechange = null
+            pc.current.onsignalingstatechange = null
+            pc.current.onnegotiationneeded = null
+
+            pc.current.getTransceivers().forEach(transceiver => { transceiver.stop() })
+        }
+
+        if (localVideo.current.srcObject) {
+            localVideo.srcObject.getTracks().forEach(track => { track.stop() })
+        }
+
+        if (remoteVideo.current.srcObject) {
+            remoteVideo.current.srcObject.getTracks().forEach(track => { track.stop() })
+        }
+
+        if (pc) {
+            pc.current.close()
+            pc.current = null
+        }
+
+        setGetMedia(false)
+        setCreatePC(false)
+        setRemoteSDP(false)
+
+        hangupButton.current.disabled = true
     }
     //---------
 
@@ -81,6 +124,11 @@ const VideoClient = ({ username }) => {
             console.log(e)
         }
     }
+    //HANDLE HANG UP
+    const handleHangUpMsg = (data) => {
+        console.log("[END]: Received Hang Up from " + data.sender)
+        stopCall()
+    }
     //---------
 
 
@@ -91,15 +139,13 @@ const VideoClient = ({ username }) => {
             <div id="camera-box">
                 <RemoteVideo ref={remoteVideo} autoPlay playsinline/>
                 <LocalVideo ref={localVideo} muted autoPlay playsinline/>
-
-                <button ref={hangupButton} onClick={() => {}} disabled>Hang Up</button>
             </div>
 
-            <WS ws={ws} ID={ID} setID={setID} username={username} startCall={startCall} sendSignal={sendSignal} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg}/>
+            <WS ws={ws} ID={ID} setID={setID} username={username} startCall={startCall} sendSignal={sendSignal} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>
 
-            <PC pc={pc} createPC={createPC} setCreatePC={setCreatePC} ID={ID} sendSignal={sendSignal} remoteVideo={remoteVideo} hangupButton={hangupButton} getMedia={getMedia} setGetMedia={setGetMedia} remoteSDP={remoteSDP}/>
+            <PC pc={pc} createPC={createPC} setCreatePC={setCreatePC} ID={ID} sendSignal={sendSignal} remoteVideo={remoteVideo} hangupButton={hangupButton} getMedia={getMedia} setGetMedia={setGetMedia} remoteSDP={remoteSDP} stopCall={stopCall}/>
 
-            {getMedia && <GetMedia pc={pc} localVideo={localVideo}/>}
+            {getMedia && <GetMedia pc={pc} localVideo={localVideo} stopCall={stopCall}/>}
         </Background>
     )
 }
