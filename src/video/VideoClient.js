@@ -93,8 +93,6 @@ const VideoClient = ({ username }) => {
             pc.current.onicegatheringstatechange = null
             pc.current.onsignalingstatechange = null
             pc.current.onnegotiationneeded = null
-
-            pc.current.getTracks().forEach(track => { track.stop() })
         }
 
         if (localVideo.current.srcObject) {

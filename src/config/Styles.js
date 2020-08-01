@@ -125,7 +125,6 @@ const LocalVideo = styled.video`
 
 const RemoteVideo = styled.video`
   width: 50vw;
-  transform: scale(-1, 1);
 `
 
 
