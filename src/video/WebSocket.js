@@ -132,7 +132,7 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMs
             <input ref={messageInput} type="text" size="80" placeholder="Enter message to send" value={message} onChange={(event) => setMessage(event.target.value)} disabled/>
             <button ref={messageButton} onClick={() => sendSignal({data: message, type: "message"})} disabled>Send Message</button>
 
-            <Userlist userlist={userlist} startCall={startCall}/>
+            <Userlist userlist={userlist} startCall={startCall} disabled/>
 
             <br/><br/>
         </div>

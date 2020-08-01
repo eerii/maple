@@ -86,9 +86,9 @@ const VideoClient = ({ username }) => {
         }
 
         setStopping(false)
+        setRemoteSDP(null)
         setGetMedia(false)
-        setCreatePC(false)
-        setRemoteSDP(false)
+        setCreatePC(null)
 
         hangupButton.current.disabled = true
     }

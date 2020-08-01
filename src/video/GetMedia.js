@@ -37,7 +37,8 @@ const GetMedia = ({ pc, localVideo, stopCall }) => {
                         break
                 }
 
-                stopCall()
+                console.log("!!! Error with media triggers stop call")
+                //stopCall()
             }
         })()
     }, [pc, localVideo, stopCall])
