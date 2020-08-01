@@ -17,7 +17,6 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
     //STATE
     const [receiverID, setReceiverID] = useState("")
     const [pcDone, setPcDone] = useState(false)
-    const [retry, setRetry] = useState(0)
 
 
     //RTC PEER CONNECTION
@@ -179,21 +178,17 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
     useEffect(() => {
         (async () => {
             if (remoteSDP && pcDone && pc.current) {
-                let retryTimer
                 console.log("[PC]: (ANSWER) Offer Received from " + receiverID)
                 try {
+                    const description = new RTCSessionDescription(remoteSDP)
+
                     if (pc.current.signalingState !== "stable") {
                         console.log("[PC]: (ANSWER) Signaling isn't Stable... Rolling back")
-                        retryTimer = setTimeout(
-                            () => {setRetry(retry + 1)},
-                            500
-                        )
-                        return (
-                            clearTimeout(retryTimer)
-                        )
+                        await pc.current.setLocalDescription({type: "rollback"})
+                        await pc.current.setRemoteDescription(description)
+                        return
                     } else {
                         console.log("[PC]: (ANSWER) Setting Remote Description")
-                        const description = new RTCSessionDescription(remoteSDP)
                         await pc.current.setRemoteDescription(description)
                     }
 
@@ -218,7 +213,7 @@ const PC = ({ pc, createPC, setCreatePC, ID, sendSignal, remoteVideo, hangupButt
                 }
             }
         })()
-    }, [pc, remoteSDP, ID, receiverID, getMedia, setGetMedia, sendSignal, pcDone, retry])
+    }, [pc, remoteSDP, ID, receiverID, getMedia, setGetMedia, sendSignal, pcDone])
     //---------
 
 
