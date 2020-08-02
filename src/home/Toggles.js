@@ -15,7 +15,7 @@ const Toggles = ({theme, setTheme, setLogin, loggedIn, setLogout, setShowVideo})
     }
 
     return (
-        <div>
+        <div style={{marginRight: "10vw"}}>
             <ToggleTheme
                 onClick={themeToggler}>{ theme === 'light' ? <Emoji symbol="☀️️" label="Light Mode"/> : (theme === 'moose' ? <Emoji symbol="✨️️" label="Colorful Mode"/> : <Emoji symbol="🌙" label="Dark Mode"/>)}
             </ToggleTheme>

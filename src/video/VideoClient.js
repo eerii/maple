@@ -21,17 +21,35 @@ const TurnConfig = {
 const mediaConstraints = {
     audio: true,
     video: {
+        width: { ideal: 1280, max: 1920 },
+        height: { ideal: 720, max: 1080 },
+        facingMode: "user",
         aspectRatio: {
-            ideal: 0.8
+            max: 1.777778,
+            ideal: 1.777778,
+            min: 1
         }
     }
 }
+
+//TODO: Make it responsible
+//TODO: Add controls (video, audio)
+//TODO: Handle Added/Removed tracks
+//TODO: Incoming Call and Message when on other call
+//TODO: Add Rooms and move from /
+//TODO: Fix Messages
+//TODO: Transcode and Encrypt
+//TODO: Make a diagram and add names (Blue Jay)
+//TODO: Token authentication for registering
+//TODO: Registration with 2 step verification and manual approval or allowed emails
 
 const VideoClient = ({ username }) => {
     const [ID, setID] = useState(null)
     const remoteID = useRef(null)
 
     const [isMedia, setIsMedia] = useState(false)
+
+    const [volume, setVolume] = useState(80)
 
     const ws = useRef(null)
     const pc = useRef(null)
@@ -381,6 +399,8 @@ const VideoClient = ({ username }) => {
             </div>
 
             <button ref={hangupButton} onClick={() => { stopCall(remoteID) }}>Hang Up</button>
+            Audio: <input type="range" min="1" max="100" value={volume} onChange={(event) => {setVolume(parseInt(event.target.value))}}/> Volume: {volume}
+
             <p>My ID: {ID} - Remote ID: {remoteID.current}</p>
 
             <WS ws={ws} ID={ID} setID={setID} username={username} startCall={startCall} sendSignal={sendSignal} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>

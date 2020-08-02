@@ -1,7 +1,6 @@
 import React from "react"
 
 import Form from "./Form"
-import Toggles from "./Toggles"
 
 import styles from "../config/Styles"
 
@@ -10,8 +9,6 @@ const { MOOSE, Subtitle, Text, Background} = styles
 const Header = (props) => {
     return (
         <Background>
-            <Toggles {...props}/>
-
             <MOOSE>MOOSE</MOOSE>
             <Subtitle>Bank time,<br/>Exchange purpose.</Subtitle>
 
