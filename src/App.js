@@ -1,8 +1,16 @@
 import React, {useEffect, useState} from "react"
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route, Redirect
+} from "react-router-dom"
 import jwt from "jsonwebtoken"
 
 import Home from "./home/Home"
 import Login from "./auth/Login"
+import VideoHub from "./video/VideoHub"
+import VideoRoom from "./video/VideoRoom"
+import Toggles from "./home/Toggles"
 
 import { ThemeProvider } from "styled-components"
 import GlobalStyle from "./config/GlobalStyles"
@@ -17,25 +25,28 @@ export default function App() {
     const [username, setUsername] = useState()
 
     const [showVideo, setShowVideo] = useState(false)
+    const [goHome, setGoHome] = useState(false)
 
+    //VERIFY TOKEN
     useEffect(() => {
         (async () => {
             const token = localStorage.getItem("Token")
 
             if(token) {
-                const decoded = await jwt.decode(token, {complete: true})
-                const time = new Date().getTime()
+                const decoded = await jwt.verify(token, process.env.REACT_APP_SECRET)
+                const time = new Date().getTime() / 1000
 
                 if(decoded.exp < time) {
-                    localStorage.removeItem("Token")
+                    setLogout(true)
                 } else {
                     setLoggedIn(true)
-                    setUsername(decoded.payload.username)
+                    setUsername(decoded.username)
                 }
             }
         })()
     }, [])
 
+    //LOGOUT
     useEffect(() => {
         if(logout) {
             localStorage.removeItem("Token")
@@ -45,11 +56,29 @@ export default function App() {
         }
     }, [logout])
 
+    //CLEAN WHEN GOING HOME
+    useEffect(() => {
+        setShowVideo(false)
+        setGoHome(false)
+    }, [goHome])
+
     return (
-        <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
-            <GlobalStyle/>
-            <Home theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} showVideo={showVideo} setShowVideo={setShowVideo} username={username}/>
-            {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername}/>}
-        </ThemeProvider>
+        <Router>
+            <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
+                <GlobalStyle/>
+                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} setShowVideo={setShowVideo} setGoHome={setGoHome}/>
+                {goHome && <Redirect push to="/"/>}
+                <Switch>
+                    <Route exact path="/video/:room">
+                        <VideoRoom username={username}/>
+                    </Route>
+                    <Route path="/">
+                        <Home setGoHome={setGoHome}/>
+                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername}/>}
+                        {showVideo && <VideoHub setShowVideo={setShowVideo} username={username}/>}
+                    </Route>
+                </Switch>
+            </ThemeProvider>
+        </Router>
     )
 }

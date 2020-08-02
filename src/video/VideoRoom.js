@@ -1,9 +1,13 @@
 import React, {useCallback, useRef, useState} from "react"
+import { useParams, Redirect } from "react-router-dom"
 
 import WS from "./WebSocket"
+import Userlist from "./Userlist"
+import MessageBox from "./Message"
+import VideoFrame from "./VideoFrame"
 
 import styles from "../config/Styles"
-const { Background, LocalVideo, RemoteVideo } = styles
+const { Background } = styles
 
 const TurnConfig = {
     iceServers: [
@@ -16,22 +20,47 @@ const TurnConfig = {
             credential: process.env.REACT_APP_TURN_PASS
         }
     ]
-}
+} //
 
 const mediaConstraints = {
     audio: true,
     video: {
+        width: { ideal: 1280, max: 1920 },
+        height: { ideal: 720, max: 1080 },
+        facingMode: "user",
         aspectRatio: {
-            ideal: 0.8
+            max: 1.777778,
+            ideal: 1.777778,
+            min: 1
         }
     }
 }
 
-const VideoClient = ({ username }) => {
+//TODO: Make it responsible
+//TODO: Add controls (video, audio)
+//TODO: Handle Added/Removed tracks
+//TODO: Incoming Call and Message when on other call
+//TODO: Fix Messages
+//TODO: Transcode and Encrypt
+//TODO: Make a diagram and add names (Blue Jay)
+//TODO: Token authentication for registering
+//TODO: Registration with 2 step verification and manual approval or allowed emails
+
+const useWS = true
+
+const VideoRoom = ({ username }) => {
+    const { room } = useParams()
+
     const [ID, setID] = useState(null)
     const remoteID = useRef(null)
+    const [userlist, setUserlist] = useState([])
+
+    const [messageList, setMessageList] = useState([])
 
     const [isMedia, setIsMedia] = useState(false)
+    //const [volume, setVolume] = useState(80)
+
+    const [inVideoCall, setInVideoCall] = useState(false)
 
     const ws = useRef(null)
     const pc = useRef(null)
@@ -39,6 +68,10 @@ const VideoClient = ({ username }) => {
     const localVideo = useRef(null)
     const remoteVideo = useRef(null)
     const hangupButton = useRef(null)
+
+    const messageInput = useRef(null)
+    const messageButton = useRef(null)
+    const messageBox = useRef(null)
 
 
     //SIGNALING
@@ -49,7 +82,7 @@ const VideoClient = ({ username }) => {
             ...message
         }
         ws.current.send(JSON.stringify(data))
-    }
+    } //
     //---------
 
 
@@ -73,7 +106,7 @@ const VideoClient = ({ username }) => {
         const stream = await getMedia()
         if (stream)
             setIsMedia(await setTracks(stream))
-    }
+    } //
     //STOP
     const stopCall = useCallback( (id=null) => {
         console.log(`[END]: Closing Peer Connection${id ? ` with ${id}` : ""}`)
@@ -112,13 +145,14 @@ const VideoClient = ({ username }) => {
 
         remoteID.current = null
         setIsMedia(false)
+        setInVideoCall(false)
 
         hangupButton.current.disabled = true
-    }, [ID])
+    }, [ID]) //
     //---------
 
 
-    //PEER CONNECTION HANDLERS
+    //PEER CONNECTION HANDLERS //
     //---------
     const handleICECandidateEvent = useCallback( (event) => {
         // Handles |icecandidate| events by forwarding the specified
@@ -261,7 +295,8 @@ const VideoClient = ({ username }) => {
     const getMedia = useCallback (  async () => {
         try {
             console.log("[MEDIA]: Getting User's Media")
-            const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+            const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+            setInVideoCall(true)
             localVideo.current.srcObject = stream
             return stream
         } catch(e) {
@@ -370,22 +405,24 @@ const VideoClient = ({ username }) => {
     }, [stopCall])
     //---------
 
+    //Audio: <input type="range" min="1" max="100" value={volume} onChange={(event) => {setVolume(parseInt(event.target.value))}}/> Volume: {volume}
 
     return (
         <Background>
+            {(room !== "beta") && <Redirect to="/"/>}
+
             <h1 style={{paddingTop: "15vh"}}>Video Room</h1>
+            <p>Room Name: {room} - User Name: {username}</p>
 
-            <div>
-                <RemoteVideo ref={remoteVideo} autoPlay playsinline/>
-                <LocalVideo ref={localVideo} muted autoPlay playsinline/>
-            </div>
+            <Userlist userlist={userlist} startCall={startCall}/>
 
-            <button ref={hangupButton} onClick={() => { stopCall(remoteID) }}>Hang Up</button>
-            <p>My ID: {ID} - Remote ID: {remoteID.current}</p>
+            {useWS && <WS ws={ws} ID={ID} setID={setID} username={username} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
 
-            <WS ws={ws} ID={ID} setID={setID} username={username} startCall={startCall} sendSignal={sendSignal} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>
+            <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
+
+            <VideoFrame remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} inVideoCall={inVideoCall}/>
         </Background>
     )
 }
 
-export default VideoClient
+export default VideoRoom

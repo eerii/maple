@@ -2,7 +2,6 @@ import React from "react"
 
 import Emoji from "../components/Emoji"
 import Header from "./Header"
-import VideoClient from "../video/VideoClient"
 
 import styles from "../config/Styles"
 const { Warning } = styles
@@ -16,12 +15,11 @@ const Banner = () => {
     )
 }
 
-const Home = (props) => {
-
+const Home = () => {
     return (
         <div>
             <Banner/>
-            {props.showVideo ? <VideoClient show={props.setShowVideo} username={props.username}/> : <Header {...props}/>}
+            <Header/>
         </div>
     )
 }
