@@ -4,7 +4,6 @@ import Emoji from "../components/Emoji"
 import Header from "./Header"
 
 import styles from "../config/Styles"
-import Toggles from "./Toggles";
 const { Warning } = styles
 
 const Banner = () => {
@@ -16,13 +15,11 @@ const Banner = () => {
     )
 }
 
-const Home = (props) => {
-
+const Home = () => {
     return (
         <div>
             <Banner/>
-            <Toggles {...props}/>
-            <Header {...props}/>
+            <Header/>
         </div>
     )
 }

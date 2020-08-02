@@ -1,16 +1,6 @@
-import React, {useState, useEffect, useRef} from "react"
+import React, {useEffect} from "react"
 
-import Userlist from "./Userlist"
-
-
-const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
-    //STATE
-    const [message, setMessage] = useState("")
-    const [userlist, setUserlist] = useState([])
-
-    //REFERENCES
-    const messageInput = useRef(null)
-    const messageButton = useRef(null)
+const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
 
 
     //WEBSOCKET
@@ -51,7 +41,7 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMs
         ws.current.onclose = () => {
             console.log("[WS]: WebSocket Client Disconnected")
         }
-    }, [ws])
+    }, [ws, messageInput, messageButton])
     //ON MESSAGE
     useEffect(() => {
         ws.current.onmessage = async (event) => {
@@ -85,6 +75,8 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMs
                 //MESSAGES
                 case "message":
                     console.log(`[MESSAGE]: ${sender}(${time}) -> ${message}`)
+                    setMessageList([...messageList, {user: sender, message: message, time}])
+                    messageBox.current.scrollTo({top: messageBox.current.scrollHeight, behavior: "smooth"})
                     break
                 //SIGNALING
                 case "video-offer":
@@ -104,7 +96,7 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMs
                     break
             }
         }
-    }, [ws, ID, setID, username, userlist, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg])
+    }, [ws, ID, setID, username, userlist, setUserlist, messageList, setMessageList, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg, messageBox])
     //---------
 
 
@@ -127,15 +119,7 @@ const WS = ({ ws, ID, setID, username, startCall, sendSignal, handleVideoOfferMs
 
 
     return (
-        <div>
-            <h2>Websocket</h2>
-            <input ref={messageInput} type="text" size="80" placeholder="Enter message to send" value={message} onChange={(event) => setMessage(event.target.value)} disabled/>
-            <button ref={messageButton} onClick={() => sendSignal({data: message, type: "message"})} disabled>Send Message</button>
-
-            <Userlist userlist={userlist} startCall={startCall}/>
-
-            <br/><br/>
-        </div>
+        <div/>
     )
 }
 

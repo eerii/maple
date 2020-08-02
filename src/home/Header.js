@@ -6,7 +6,7 @@ import styles from "../config/Styles"
 
 const { MOOSE, Subtitle, Text, Background} = styles
 
-const Header = (props) => {
+const Header = () => {
     return (
         <Background>
             <MOOSE>MOOSE</MOOSE>

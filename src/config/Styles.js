@@ -4,33 +4,39 @@ export const lightTheme = {
     specialText: '#4960F9',
     text: '#09183e',
     background: '#f8f8f8',
-    placeholder: '#FAC172',
+    altBackground: '#f8f8f8',
+    placeholder: '#c7c7d9',
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
-    buttonAlpha: 'rgba(73, 96, 249, 0.5)'
+    buttonAlpha: 'rgba(73, 96, 249, 0.5)',
+    chatBubbleBorder: '2px solid #4960F9'
 }
 
 export const darkTheme = {
     specialText: '#FAC172',
     text: '#FAFAFA',
     background: '#09183e',
+    altBackground: '#4960F9',
     placeholder: '#c7c7d9',
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
-    buttonAlpha: 'rgba(73, 96, 249, 0.5)'
+    buttonAlpha: 'rgba(73, 96, 249, 0.5)',
+    chatBubbleBorder: 'none'
 }
 
 export const mooseTheme = {
     specialText: '#FAC172',
     text: '#FAFAFA',
     background: '#4960F9',
+    altBackground: '#09183e',
     placeholder: '#c7c7d9',
     buttonPressed: '#fac172',
     buttonPressedRim: '#09183e',
     buttonPressedText: '#09183e',
-    buttonAlpha: 'rgba(255, 255, 255, 0.3)'
+    buttonAlpha: 'rgba(255, 255, 255, 0.3)',
+    chatBubbleBorder: 'none'
 }
 
 const Background = styled.div`
@@ -65,13 +71,23 @@ const ModalContent = styled.div`
   border-radius: 16px;
 `
 
+const ModalVideo = styled(ModalContent)`
+  width: 90vw;
+`
+
+const ToggleDiv = styled.div`
+  position: fixed;
+  right: 10vw;
+  top: 40px;
+  z-index: 10;
+`
+
 const ToggleTheme = styled.button`
   background: none;
   border: none;
   padding:12px 12px;
   transition: 0.3s;
   margin-top: 20px;
-  float: right;
   border-radius: 24px;
   box-shadow: none;
   transform: translateY(0px);
@@ -119,13 +135,53 @@ const Warning = styled.p`
 `
 
 const LocalVideo = styled.video`
-  width: 25vw;
+  width: 20vw;
   transform: scale(-1, 1);
+  
 `
 
 const RemoteVideo = styled.video`
-  width: 50vw;
+  float: left;
+  width: 100%;
+`
+
+const VideoBox = styled.div`
+  position: absolute;
+  z-index: 2;
+  float: left;
+  margin: 10px;
+`
+
+const MessageBox = styled.div`
+  background: ${props => props.theme.altBackground};
+  border-radius: 16px;
+  border: 2px solid ${props => props.theme.specialText};
+  height: 400px;
+  padding: 20px;
+  margin-top: 20px;
+  overflow: scroll;
+  transition: 0.3s;
+`
+
+const Message = styled.div`
+  display: inline-block;
+  background: ${props => props.theme.background};
+  border: ${props => props.theme.chatBubbleBorder};
+  border-radius: 12px;
+  min-width: 150px;
+  max-width: 600px;
+  padding: 8px 20px 8px 20px;
+  margin-bottom: 10px;
+  vertical-align: bottom;
+  float: left;
+  clear: both;
+  transition: 0.3s;
+`
+
+const ReplyMessage = styled(Message)`
+  text-align: right;
+  float: right;
 `
 
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ToggleTheme, LocalVideo, RemoteVideo}
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, Message, ReplyMessage, MessageBox}

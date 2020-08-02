@@ -2,13 +2,15 @@ import React, {useEffect, useState} from "react"
 import {
     BrowserRouter as Router,
     Switch,
-    Route
+    Route, Redirect
 } from "react-router-dom"
 import jwt from "jsonwebtoken"
 
 import Home from "./home/Home"
 import Login from "./auth/Login"
 import VideoHub from "./video/VideoHub"
+import VideoRoom from "./video/VideoRoom"
+import Toggles from "./home/Toggles"
 
 import { ThemeProvider } from "styled-components"
 import GlobalStyle from "./config/GlobalStyles"
@@ -23,6 +25,7 @@ export default function App() {
     const [username, setUsername] = useState()
 
     const [showVideo, setShowVideo] = useState(false)
+    const [goHome, setGoHome] = useState(false)
 
     //VERIFY TOKEN
     useEffect(() => {
@@ -53,18 +56,26 @@ export default function App() {
         }
     }, [logout])
 
+    //CLEAN WHEN GOING HOME
+    useEffect(() => {
+        setShowVideo(false)
+        setGoHome(false)
+    }, [goHome])
+
     return (
         <Router>
             <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
                 <GlobalStyle/>
+                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} setShowVideo={setShowVideo} setGoHome={setGoHome}/>
+                {goHome && <Redirect push to="/"/>}
                 <Switch>
-                    <Route path="/video/:room">
-                        <VideoHub/>
+                    <Route exact path="/video/:room">
+                        <VideoRoom username={username}/>
                     </Route>
                     <Route path="/">
-                        <Home theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} setShowVideo={setShowVideo}/>
+                        <Home setGoHome={setGoHome}/>
                         {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername}/>}
-                        {showVideo && (loggedIn ? <VideoHub setShowVideo={setShowVideo} username={username}/> : (setShowVideo(false) && setLogin(true)))}
+                        {showVideo && <VideoHub setShowVideo={setShowVideo} username={username}/>}
                     </Route>
                 </Switch>
             </ThemeProvider>

@@ -69,9 +69,9 @@ const GlobalStyle = createGlobalStyle`
     }
   }
   video {
-    background: #09183e;
+    background: ${props => props.theme.altBackground};
     border: 2px solid ${props => props.theme.specialText};
-    margin: 8px;
+    border-radius: 12px;
   }
 `
 

@@ -15,7 +15,7 @@ const VideoHub = ({ setShowVideo, username }) => {
         <Modal setVisible={setShowVideo}>
             <h1>Video Room</h1>
             <button onClick={() => handleEnter()}>Enter</button>
-            {redirect && <Redirect push to="/video/default"/>}
+            {redirect && <Redirect push to="/video/beta"/>}
         </Modal>
     )
 }
