@@ -17,8 +17,8 @@ const Userlist = ({ userlist, startCall }) => {
         <div>
             <h2>Userlist</h2>
             <div>
-                {userlist.length === 0 && <p>Loading...</p>}
-                {userlist.map(({connectionID, username}) => <User key={connectionID} id={connectionID} username={username} startCall={startCall}/>)}
+                {!userlist && <p>Loading...</p>}
+                {userlist && userlist.map(({connectionID, username}) => <User key={connectionID} id={connectionID} username={username} startCall={startCall}/>)}
             </div>
         </div>
     )

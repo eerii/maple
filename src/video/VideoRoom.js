@@ -20,7 +20,7 @@ const TurnConfig = {
             credential: process.env.REACT_APP_TURN_PASS
         }
     ]
-} //
+}
 
 const mediaConstraints = {
     audio: true,
@@ -38,9 +38,7 @@ const mediaConstraints = {
 
 //TODO: Make it responsible
 //TODO: Add controls (video, audio)
-//TODO: Handle Added/Removed tracks
 //TODO: Incoming Call and Message when on other call
-//TODO: Fix Messages
 //TODO: Transcode and Encrypt
 //TODO: Make a diagram and add names (Blue Jay)
 //TODO: Token authentication for registering
@@ -48,12 +46,10 @@ const mediaConstraints = {
 
 const useWS = true
 
-const VideoRoom = ({ username }) => {
+const VideoRoom = ({ username, ID, setID }) => {
     const { room } = useParams()
 
-    const [ID, setID] = useState(null)
     const remoteID = useRef(null)
-    const [userlist, setUserlist] = useState([])
 
     const [messageList, setMessageList] = useState([])
 
@@ -64,6 +60,8 @@ const VideoRoom = ({ username }) => {
 
     const ws = useRef(null)
     const pc = useRef(null)
+
+    const [userlist, setUserlist] = useState(null)
 
     const localVideo = useRef(null)
     const remoteVideo = useRef(null)
@@ -82,7 +80,7 @@ const VideoRoom = ({ username }) => {
             ...message
         }
         ws.current.send(JSON.stringify(data))
-    } //
+    }
     //---------
 
 
@@ -106,7 +104,7 @@ const VideoRoom = ({ username }) => {
         const stream = await getMedia()
         if (stream)
             setIsMedia(await setTracks(stream))
-    } //
+    }
     //STOP
     const stopCall = useCallback( (id=null) => {
         console.log(`[END]: Closing Peer Connection${id ? ` with ${id}` : ""}`)
@@ -148,7 +146,7 @@ const VideoRoom = ({ username }) => {
         setInVideoCall(false)
 
         hangupButton.current.disabled = true
-    }, [ID]) //
+    }, [ID])
     //---------
 
 
@@ -297,18 +295,24 @@ const VideoRoom = ({ username }) => {
             console.log("[MEDIA]: Getting User's Media")
             const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
             setInVideoCall(true)
+
             localVideo.current.srcObject = stream
+
+            //localVideo.current.videoTracks.onaddtrack = handleAddTrack
+            //localVideo.current.videoTracks.onremovetrack = handleRemoveTrack
+            //localVideo.current.videoTracks.onchange = handleChangeTrack
+
             return stream
         } catch(e) {
             handleMediaError(e)
             return null
         }
     }, [])
-    const setTracks = useCallback ( (stream) => {
+    const setTracks = useCallback ( () => {
         try {
-            stream.getTracks().forEach(track => {
-                pc.current.addTrack(track, stream)
-                //pc.current.addTransceiver(track, {streams: [stream]}) TODO: TEST WHICH IS BETTER
+            localVideo.current.srcObject.getTracks().forEach(track => {
+                //pc.current.addTrack(track, stream)
+                pc.current.addTransceiver(track, {streams: [localVideo.current.srcObject]}) //TODO: TEST WHICH IS BETTER
                 console.log(`[MEDIA]: Adding ${(track.kind === "video") ? "Video" : "Audio"} Track -> `, track)
             })
             console.log("[MEDIA]: User Media is Processed")
@@ -335,6 +339,15 @@ const VideoRoom = ({ username }) => {
         console.log("!!! Error with media triggers stop call")
         //stopCall()
     }
+    /*const handleAddTrack = (event) => {
+        console.log("[MEDIA]: Added a New Track " + event.track.kind)
+    }
+    const handleChangeTrack = () => {
+        console.log("[MEDIA]: Changed a Track")
+    }
+    const handleRemoveTrack = (event) => {
+        console.log("[MEDIA]: Removed a Track " + event.track.kind)
+    }*/
     //---------
 
 

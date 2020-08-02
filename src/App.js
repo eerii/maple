@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react"
 import {
     BrowserRouter as Router,
     Switch,
-    Route, Redirect
+    Route,
+    Redirect
 } from "react-router-dom"
 import jwt from "jsonwebtoken"
 
@@ -26,6 +27,8 @@ export default function App() {
 
     const [showVideo, setShowVideo] = useState(false)
     const [goHome, setGoHome] = useState(false)
+
+    const [ID, setID] = useState(null)
 
     //VERIFY TOKEN
     useEffect(() => {
@@ -58,6 +61,7 @@ export default function App() {
 
     //CLEAN WHEN GOING HOME
     useEffect(() => {
+        setID(null)
         setShowVideo(false)
         setGoHome(false)
     }, [goHome])
@@ -70,7 +74,7 @@ export default function App() {
                 {goHome && <Redirect push to="/"/>}
                 <Switch>
                     <Route exact path="/video/:room">
-                        <VideoRoom username={username}/>
+                        <VideoRoom username={username} ID={ID} setID={setID}/>
                     </Route>
                     <Route path="/">
                         <Home setGoHome={setGoHome}/>
