@@ -2,7 +2,6 @@ import React, {useEffect} from "react"
 
 const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
 
-
     //WEBSOCKET
     //---------
     //ON RENDER
@@ -52,25 +51,44 @@ const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, mess
             switch (type) {
                 //USER MANAGEMENT
                 case "id":
-                    setUserlist(data.userlist)
+                    let tempList = data.userlist
                     if(!ID){
                         try {
-                            const userData = data.userlist.find(({ username: u }) => u === username)
-                            setID(userData.connectionID)
+                            const userData = data.userlist.filter(({ username: u }) => u === username)
+                            let latestUser
+                            if (userData.length > 1) {
+                                latestUser = userData.reduce((max, current) => max.time > current.time ? max : current)
+                                await data.userlist.forEach(user => {
+                                    if (user.username === latestUser.username) {
+                                        if (user.connectionID !== latestUser.connectionID) {
+                                            const data = {
+                                                action: "sendMessage",
+                                                type: "close",
+                                                sender: user.connectionID
+                                            }
+                                            ws.current.send(JSON.stringify(data))
+                                            tempList = tempList.filter(({ connectionID }) => connectionID !== user.connectionID)
+                                        }
+                                    }
+                                })
+                            } else {
+                                latestUser = userData[0]
+                            }
+                            setID(latestUser.connectionID)
                         } catch (e) {
                             console.log("[WS]: Error Getting Connection ID")
                         }
+                        setUserlist(tempList)
                     }
                     break
                 case "username":
                     console.log(`[MESSAGE]: User ${message} has logged in at ${time}`)
-                    const userExists = userlist.find(({ username: u }) => u === message)
-                    if (!userExists) {
+                    if (!userlist.find(({ username: u }) => u === message)) {
                         setUserlist([...userlist, {connectionID: sender, username: message, time: (new Date(data.date).getTime() / 1000)}])
+                    } else if (!userlist.find(({ connectionID }) => connectionID === sender)) {
+                        const tempList = userlist.filter(({ username }) => username !== message)
+                        setUserlist([...tempList, {connectionID: sender, username: message, time: (new Date(data.date).getTime() / 1000)}])
                     }
-                    break
-                case "userlist":
-                    //handleUserListMsg(msg) UPDATE USER LIST
                     break
                 //MESSAGES
                 case "message":
@@ -90,6 +108,9 @@ const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, mess
                     break;
                 case "hang-up":
                     handleHangUpMsg(data)
+                    break;
+                case "close":
+                    console.log("[MESSAGE]: Closed Old User Connection (Make sure you don't login in different browsers)")
                     break;
                 default:
                     console.log("[MESSAGE]: Unknown message -> " + message)

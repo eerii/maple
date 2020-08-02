@@ -32,6 +32,8 @@ const MessageBox = ({ sendSignal, username, messageInput, messageButton, message
             sender: username, //Use ID?
             date: (Date.now() / 1000)
         })
+
+        setMessage("")
     }
 
     return (
