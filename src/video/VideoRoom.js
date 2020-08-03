@@ -46,22 +46,19 @@ const mediaConstraints = {
 
 const useWS = true
 
-const VideoRoom = ({ username, ID, setID }) => {
+const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const { room } = useParams()
 
-    const remoteID = useRef(null)
-
     const [messageList, setMessageList] = useState([])
+    const [userlist, setUserlist] = useState(null)
 
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
-
     const [inVideoCall, setInVideoCall] = useState(false)
 
     const ws = useRef(null)
     const pc = useRef(null)
-
-    const [userlist, setUserlist] = useState(null)
+    const remoteID = useRef(null)
 
     const localVideo = useRef(null)
     const remoteVideo = useRef(null)
@@ -429,7 +426,7 @@ const VideoRoom = ({ username, ID, setID }) => {
 
             <Userlist userlist={userlist} startCall={startCall}/>
 
-            {useWS && <WS ws={ws} ID={ID} setID={setID} username={username} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
+            {(useWS && loggedIn) && <WS ws={ws} ID={ID} setID={setID} username={username} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
 
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
