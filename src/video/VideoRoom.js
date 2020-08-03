@@ -5,6 +5,7 @@ import WS from "./WebSocket"
 import Userlist from "./Userlist"
 import MessageBox from "./Message"
 import VideoFrame from "./VideoFrame"
+import VideoAccept from "./VideoAccept"
 
 import styles from "../config/Styles"
 const { Background } = styles
@@ -36,9 +37,10 @@ const mediaConstraints = {
     }
 }
 
+//TODO: Incoming Call and Message when on other call
+
 //TODO: Make it responsible
 //TODO: Add controls (video, audio)
-//TODO: Incoming Call and Message when on other call
 //TODO: Transcode and Encrypt
 //TODO: Make a diagram and add names (Blue Jay)
 //TODO: Token authentication for registering
@@ -55,6 +57,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
     const [inVideoCall, setInVideoCall] = useState(false)
+    const [showVideoAccept, setShowVideoAccept] = useState(true)
 
     const ws = useRef(null)
     const pc = useRef(null)
@@ -355,6 +358,8 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         console.log("[PC]: (ANSWER) Changed Remote ID from " + remoteID.current + " to " + data.sender) //TODO: REMOVE
         remoteID.current = data.sender
 
+        //TODO: ADD VIDEO ACCEPT setShowVideoAccept(true)
+
         if (!pc.current)
             await createPeerConnection()
 
@@ -430,6 +435,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
+            {showVideoAccept && <VideoAccept setShowVideoAccept={setShowVideoAccept} /*caller={remoteID.current}*//>}
             <VideoFrame remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} inVideoCall={inVideoCall}/>
         </Background>
     )

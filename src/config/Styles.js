@@ -152,6 +152,41 @@ const VideoBox = styled.div`
   margin: 10px;
 `
 
+const VideoAcceptButton = styled.button`
+  background-color: #5CDB76;
+  box-shadow: 0 4px #48ab5c;
+  border-radius: 32px;
+  fill: white;
+  padding: 14px 16px 12px 16px;
+  margin: 0px 10px;
+  
+  &:hover {
+    fill: #234a2b;
+    box-shadow: 0 4px #234a2b;
+  }
+  
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px ${props => props.theme.buttonPressedRim};
+    fill: ${props => props.theme.buttonPressedText};
+  }
+`
+
+const VideoDeclineButton = styled(VideoAcceptButton)`
+  background-color: #FA6B80;
+  box-shadow: 0 4px #b84f5f;
+  
+  &:hover {
+    fill: #622f37;
+    box-shadow: 0 4px #622f37;
+  }
+  
+  &:active {
+    box-shadow: 0 2px ${props => props.theme.buttonPressedRim};
+    fill: ${props => props.theme.buttonPressedText};
+  }
+`
+
 const MessageBox = styled.div`
   background: ${props => props.theme.altBackground};
   border-radius: 16px;
@@ -184,4 +219,4 @@ const ReplyMessage = styled(Message)`
 `
 
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, Message, ReplyMessage, MessageBox}
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, Message, ReplyMessage, MessageBox}
