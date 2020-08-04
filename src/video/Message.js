@@ -40,6 +40,10 @@ const MessageBox = ({ sendSignal, username, messageInput, messageButton, message
         <div>
             <h2>Messages</h2>
             <MessageBoxStyle ref={messageBox}>
+                {/*<Message key={"test"} user={"User 1"} message={"Hi! Welcome to MOOSE's chat room 😄"} time={"3:14"} myself={"User 1"}/>
+                <Message key={"test"} user={"User 2"} message={"Hello, this is awesome ✨"} time={"16:18"} myself={"User 1"}/>
+                <Message key={"test"} user={"User 3"} message={"I can't wait to try Time Banking ⏳. For the first time, you can sharing skills in a fair way, with everyone giving their time in return for knowledge 🧠. Join MOOSE now!"} time={"3:14"} myself={"User 1"}/>*/}
+
                 {messageList.map(({ message, user, time }) => <Message key={user+time+Math.floor(Math.random() * 20)} user={user} message={message} time={time} myself={username}/>)}
             </MessageBoxStyle>
             <br/>

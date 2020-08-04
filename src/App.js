@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import {
     BrowserRouter as Router,
     Switch,
@@ -16,6 +16,8 @@ import Toggles from "./home/Toggles"
 import { ThemeProvider } from "styled-components"
 import GlobalStyle from "./config/GlobalStyles"
 import { mooseTheme, lightTheme, darkTheme } from "./config/Styles"
+import styles from "./config/Styles"
+const { Background } = styles
 
 export default function App() {
     const [theme, setTheme] = useState(localStorage.getItem('Theme') || 'moose')
@@ -23,10 +25,12 @@ export default function App() {
     const [login, setLogin] = useState(false)
     const [loggedIn, setLoggedIn] = useState(false)
     const [logout, setLogout] = useState(false)
-    const [username, setUsername] = useState()
-
-    const [showVideo, setShowVideo] = useState(false)
     const [goHome, setGoHome] = useState(false)
+    const goHomeTimer = useRef(null)
+
+    const [username, setUsername] = useState()
+    const [showVideo, setShowVideo] = useState(false)
+
 
     const [ID, setID] = useState(null)
 
@@ -56,8 +60,19 @@ export default function App() {
             setLoggedIn(false)
             setLogout(false)
             setUsername(null)
+            setID(null)
+            setShowVideo(false)
         }
     }, [logout])
+
+    useEffect(() => {
+        if (!loggedIn) {
+            goHomeTimer.current = setTimeout(() => setGoHome(true), 500)
+        } else {
+            clearTimeout(goHomeTimer.current)
+            goHomeTimer.current = null
+        }
+    }, [loggedIn])
 
     //CLEAN WHEN GOING HOME
     useEffect(() => {
@@ -74,7 +89,8 @@ export default function App() {
                 {goHome && <Redirect push to="/"/>}
                 <Switch>
                     <Route exact path="/video/:room">
-                        <VideoRoom username={username} ID={ID} setID={setID}/>
+                        {loggedIn && <VideoRoom username={username} ID={ID} setID={setID} loggedIn={loggedIn}/>}
+                        {!loggedIn && <Background/>}
                     </Route>
                     <Route path="/">
                         <Home setGoHome={setGoHome}/>

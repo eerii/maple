@@ -1,6 +1,6 @@
 import React, {useEffect} from "react"
 
-const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
+const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
 
     //WEBSOCKET
     //---------
@@ -100,6 +100,9 @@ const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, mess
                 case "video-offer":
                     await handleVideoOfferMsg(data)
                     break;
+                case "video-received":
+                    await handleVideoReceivedMsg(data)
+                    break;
                 case "video-answer":
                     await handleVideoAnswerMsg(data)
                     break;
@@ -117,7 +120,7 @@ const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, mess
                     break
             }
         }
-    }, [ws, ID, setID, username, userlist, setUserlist, messageList, setMessageList, handleVideoOfferMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg, messageBox])
+    }, [ws, ID, setID, username, userlist, setUserlist, messageList, setMessageList, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg, messageBox])
     //---------
 
 
