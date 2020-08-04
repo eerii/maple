@@ -38,8 +38,8 @@ const mediaConstraints = {
     }
 }
 
-//TODO: Incoming Call and Message when on other call
-
+//TODO: Show caller when receiving call
+//TODO: Time Tracking
 //TODO: Make it responsible
 //TODO: Add controls (video, audio)
 //TODO: Transcode and Encrypt
@@ -47,13 +47,14 @@ const mediaConstraints = {
 //TODO: Token authentication for registering
 //TODO: Registration with 2 step verification and manual approval or allowed emails
 
-const useWS = true
+const useWS = false
 
 const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const { room } = useParams()
 
     const [messageList, setMessageList] = useState([])
     const [userlist, setUserlist] = useState(null)
+    const [remoteUser, setRemoteUser] = useState(null)
 
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
@@ -92,7 +93,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     //CALLING
     //---------
     //START
-    const startCall = async (id) => {
+    const startCall = async (id, user) => {
         setShowVideoCallingUI(true)
 
         if (pc.current) {
@@ -104,6 +105,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             return
         }
         remoteID.current = id
+        setRemoteUser(user)
         console.log("[CALLING]: Calling user " + remoteID.current)
 
         await createPeerConnection()
@@ -115,6 +117,10 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     //STOP
     const stopCall = useCallback( (id=null) => {
         console.log(`[END]: Closing Peer Connection${id ? ` with ${id}` : ""}`)
+
+        setShowVideoCallingUI(false)
+        setVideoCallStartStatus(0)
+        setShowVideoAccept(false)
 
         if (id) {
             sendSignal ({
@@ -148,6 +154,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             pc.current = null
         }
 
+        setRemoteUser(null)
         remoteID.current = null
         setIsMedia(false)
         setInVideoCall(false)
@@ -251,7 +258,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         } catch (e) {
             console.log("[PC]: (OFFER) - Error During Negotiation - " + e.message)
         }
-    }, [ID])
+    }, [ID, showVideoCallingUI])
     const handleTrackEvent = (event) => {
         // Called by the WebRTC layer when events occur on the media tracks
         // on our WebRTC call. This includes when streams are added to and
@@ -429,7 +436,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             }
         })()
     }, [continueVideoAccept, handleContinueVideoOfferMsg, stopCall])
-    const handleVideoReceivedMsg = (data) => {
+    const handleVideoReceivedMsg = () => {
         if (showVideoCallingUI)
             setVideoCallStartStatus(2)
     }
@@ -478,8 +485,8 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
             <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall}/>
-            {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} status={videoCallStartStatus} /*calling={remoteID.current}*//>}
-            {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept}/*caller={remoteID.current}*//>}
+            {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
+            {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept}/>}
         </Background>
     )
 }

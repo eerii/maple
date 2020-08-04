@@ -6,7 +6,7 @@ const User = ({ id, username, startCall }) => {
         <div style={{color: "white"}}>
             User {username} @ {id}
             <button style={{fontSize: "14px", padding: "4px 10px", marginLeft: "16px"}} key={"button" + id}
-                    onClick={() => { startCall(id) }}>Connect</button>
+                    onClick={() => { startCall(id, username) }}>Connect</button>
         </div>
     )
 }

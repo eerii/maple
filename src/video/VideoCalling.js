@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react"
 
 import Modal from "../components/Modal"
 
-const VideoCalling = ({ setShowVideoCallingUI, status, calling="User" }) => { //TODO: Click outside cancel modal
+const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, callingUser="Awesome User" }) => { //TODO: Click outside cancel modal
     const [callState, setCallState] = useState("Not initialized")
 
     useEffect(() => {
@@ -23,14 +23,18 @@ const VideoCalling = ({ setShowVideoCallingUI, status, calling="User" }) => { //
             default:
                 return
         }
-    }, [status])
+    }, [status, setShowVideoCallingUI])
 
-    //TODO: Add option to cancel clicking outside
+    const stopCallClickOutside = () => {
+        // eslint-disable-next-line no-restricted-globals
+        if (confirm("Are you sure you want to stop the call?"))
+            stopCall(callingID)
+    }
 
     return (
-        <Modal setVisible={() => {}}>
+        <Modal setVisible={() => stopCallClickOutside()}>
             <h2>Calling...</h2>
-            <h1>{calling}</h1>
+            <h1>{callingUser}</h1>
             <p>Status: {callState}</p>
         </Modal>
     )
