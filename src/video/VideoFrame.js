@@ -3,9 +3,9 @@ import React from "react"
 import styles from "../config/Styles"
 const { RemoteVideo, LocalVideo, Modal, ModalVideo, VideoBox } = styles
 
-const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID, inVideoCall }) => {
+const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID, onVideoCall }) => {
     return (
-        <Modal style={{display: (inVideoCall ? "" : "none")}}>
+        <Modal style={{display: (onVideoCall ? "" : "none")}}>
             <ModalVideo>
                 <div>
                     <RemoteVideo ref={remoteVideo} autoPlay playsinline/>

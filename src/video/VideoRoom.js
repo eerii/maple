@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from "react"
+import React, {useCallback, useEffect, useRef, useState} from "react"
 import { useParams, Redirect } from "react-router-dom"
 
 import WS from "./WebSocket"
@@ -8,6 +8,7 @@ import VideoFrame from "./VideoFrame"
 import VideoAccept from "./VideoAccept"
 
 import styles from "../config/Styles"
+import VideoCalling from "./VideoCalling";
 const { Background } = styles
 
 const TurnConfig = {
@@ -56,12 +57,16 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
-    const [inVideoCall, setInVideoCall] = useState(false)
-    const [showVideoAccept, setShowVideoAccept] = useState(true)
+    const [onVideoCall, setInVideoCall] = useState(false)
+    const [showVideoAccept, setShowVideoAccept] = useState(false)
+    const [showVideoCallingUI, setShowVideoCallingUI] = useState(false)
+    const [continueVideoAccept, setContinueVideoAccept] = useState(0)
+    const [videoCallStartStatus, setVideoCallStartStatus] = useState(0)
 
     const ws = useRef(null)
     const pc = useRef(null)
     const remoteID = useRef(null)
+    const description = useRef(null)
 
     const localVideo = useRef(null)
     const remoteVideo = useRef(null)
@@ -88,6 +93,8 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     //---------
     //START
     const startCall = async (id) => {
+        setShowVideoCallingUI(true)
+
         if (pc.current) {
             alert("You can't start a call now! There is another call open.")
             return
@@ -103,7 +110,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
         const stream = await getMedia()
         if (stream)
-            setIsMedia(await setTracks(stream))
+            setIsMedia(await setTracks())
     }
     //STOP
     const stopCall = useCallback( (id=null) => {
@@ -238,6 +245,9 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
                 type: "video-offer",
                 data: pc.current.localDescription
             })
+
+            if (showVideoCallingUI)
+                setVideoCallStartStatus(1)
         } catch (e) {
             console.log("[PC]: (OFFER) - Error During Negotiation - " + e.message)
         }
@@ -353,26 +363,36 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
     //MESSAGE HANDLERS
     //---------
-    const handleVideoOfferMsg = useCallback( async (data) => {
+    const handleVideoOfferMsg = async (data) => {
         console.log("[PC]: (ANSWER) Received Offer from " + data.sender)
-        console.log("[PC]: (ANSWER) Changed Remote ID from " + remoteID.current + " to " + data.sender) //TODO: REMOVE
-        remoteID.current = data.sender
 
-        //TODO: ADD VIDEO ACCEPT setShowVideoAccept(true)
+        remoteID.current = data.sender
+        description.current = new RTCSessionDescription(data.message)
 
         if (!pc.current)
             await createPeerConnection()
 
-        const description = new RTCSessionDescription(data.message)
+        if(!onVideoCall) {
+            sendSignal({
+                sender: ID,
+                target: remoteID.current,
+                type: "video-received"
+            })
 
+            setShowVideoAccept(true)
+        } else {
+            await handleContinueVideoOfferMsg()
+        }
+    }
+    const handleContinueVideoOfferMsg = useCallback( async () => {
         if (pc.current.signalingState !== "stable") {
             console.log("[PC]: (ANSWER) Signaling isn't Stable... Rolling back")
             await pc.current.setLocalDescription({type: "rollback"})
-            await pc.current.setRemoteDescription(description)
+            await pc.current.setRemoteDescription(description.current)
             return
         } else {
             console.log("[PC]: (ANSWER) Setting Remote Description")
-            await pc.current.setRemoteDescription(description)
+            await pc.current.setRemoteDescription(description.current)
         }
 
         if(!isMedia) {
@@ -393,7 +413,26 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         })
 
         console.log("[PC]: (ANSWER) Answer Sent Successfully")
-    }, [ID, createPeerConnection, isMedia, getMedia, setTracks])
+    }, [ID, getMedia, isMedia, setTracks])
+    useEffect(() => {
+        (async () => {
+            if (continueVideoAccept === 1) {
+                console.log("Continue")
+                setShowVideoAccept(false)
+                setContinueVideoAccept(0)
+                await handleContinueVideoOfferMsg()
+            } else if (continueVideoAccept === 2) {
+                console.log("Cancel")
+                setShowVideoAccept(false)
+                setContinueVideoAccept(0)
+                await stopCall(remoteID.current)
+            }
+        })()
+    }, [continueVideoAccept, handleContinueVideoOfferMsg, stopCall])
+    const handleVideoReceivedMsg = (data) => {
+        if (showVideoCallingUI)
+            setVideoCallStartStatus(2)
+    }
     const handleICECandidateMsg = async (data) => {
         try {
             const candidate = new RTCIceCandidate(data.message)
@@ -409,6 +448,9 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             const answer = new RTCSessionDescription(data.message)
             console.log("[PC]: (ANSWER) Setting Remote Description for Answer")
             await pc.current.setRemoteDescription(answer)
+
+            if (showVideoCallingUI)
+                setVideoCallStartStatus(3)
         } catch (e) {
             console.log("[PC]: (ANSWER) Error Handling Answer")
             console.log(e)
@@ -431,12 +473,13 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
             <Userlist userlist={userlist} startCall={startCall}/>
 
-            {(useWS && loggedIn) && <WS ws={ws} ID={ID} setID={setID} username={username} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
+            {(useWS && loggedIn) && <WS ws={ws} ID={ID} setID={setID} username={username} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleVideoReceivedMsg={handleVideoReceivedMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
 
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
-            {showVideoAccept && <VideoAccept setShowVideoAccept={setShowVideoAccept} /*caller={remoteID.current}*//>}
-            <VideoFrame remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} inVideoCall={inVideoCall}/>
+            <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall}/>
+            {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} status={videoCallStartStatus} /*calling={remoteID.current}*//>}
+            {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept}/*caller={remoteID.current}*//>}
         </Background>
     )
 }
