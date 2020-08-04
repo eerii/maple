@@ -38,7 +38,6 @@ const mediaConstraints = {
     }
 }
 
-//TODO: Show caller when receiving call
 //TODO: Time Tracking
 //TODO: Make it responsible
 //TODO: Add controls (video, audio)
@@ -47,14 +46,13 @@ const mediaConstraints = {
 //TODO: Token authentication for registering
 //TODO: Registration with 2 step verification and manual approval or allowed emails
 
-const useWS = false
+const useWS = true
 
 const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const { room } = useParams()
 
     const [messageList, setMessageList] = useState([])
     const [userlist, setUserlist] = useState(null)
-    const [remoteUser, setRemoteUser] = useState(null)
 
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
@@ -67,6 +65,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const ws = useRef(null)
     const pc = useRef(null)
     const remoteID = useRef(null)
+    const remoteUser = useRef(null)
     const description = useRef(null)
 
     const localVideo = useRef(null)
@@ -105,7 +104,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             return
         }
         remoteID.current = id
-        setRemoteUser(user)
+        remoteUser.current = user
         console.log("[CALLING]: Calling user " + remoteID.current)
 
         await createPeerConnection()
@@ -154,7 +153,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             pc.current = null
         }
 
-        setRemoteUser(null)
+        remoteUser.current = null
         remoteID.current = null
         setIsMedia(false)
         setInVideoCall(false)
@@ -247,7 +246,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
             console.log("[PC]: (OFFER) - Sending the Offer to the Remote Peer " + remoteID.current)
             sendSignal({
-                sender: ID,
+                sender: ID + ":" + username,
                 target: remoteID.current,
                 type: "video-offer",
                 data: pc.current.localDescription
@@ -258,7 +257,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         } catch (e) {
             console.log("[PC]: (OFFER) - Error During Negotiation - " + e.message)
         }
-    }, [ID, showVideoCallingUI])
+    }, [ID, showVideoCallingUI, username])
     const handleTrackEvent = (event) => {
         // Called by the WebRTC layer when events occur on the media tracks
         // on our WebRTC call. This includes when streams are added to and
@@ -373,7 +372,10 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const handleVideoOfferMsg = async (data) => {
         console.log("[PC]: (ANSWER) Received Offer from " + data.sender)
 
-        remoteID.current = data.sender
+        const [ id, user ] = data.sender.split(":")
+
+        remoteID.current = id
+        remoteUser.current = user
         description.current = new RTCSessionDescription(data.message)
 
         if (!pc.current)
@@ -486,7 +488,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
             <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall}/>
             {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
-            {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept}/>}
+            {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept} caller={remoteUser}/>}
         </Background>
     )
 }

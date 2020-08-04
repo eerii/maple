@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react"
 
 import Modal from "../components/Modal"
 
-const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, callingUser="Awesome User" }) => { //TODO: Click outside cancel modal
+const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, callingUser }) => { //TODO: Click outside cancel modal
     const [callState, setCallState] = useState("Not initialized")
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, call
     return (
         <Modal setVisible={() => stopCallClickOutside()}>
             <h2>Calling...</h2>
-            <h1>{callingUser}</h1>
+            <h1>{callingUser.current}</h1>
             <p>Status: {callState}</p>
         </Modal>
     )
