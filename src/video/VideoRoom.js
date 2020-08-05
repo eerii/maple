@@ -85,7 +85,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
                     sender: username,
                     target: ID,
                 })
-            }, 30 * 1000)) //10 minutes
+            }, 600 * 1000)) //10 minutes
         }
     }, [useTimer, timer, ID, username])
 
@@ -181,11 +181,17 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         setIsMedia(false)
         setInVideoCall(false)
 
+        try {
+            clearTimeout(timer)
+        } catch (e) {
+            console.log("[TIME TRACKING]: Couldn't cancel timer (one extra time token will be billed) " + e.message)
+        }
+
         setUseTimer(false)
         setTimer(null)
 
         hangupButton.current.disabled = true
-    }, [ID])
+    }, [ID, timer])
     //---------
 
 
