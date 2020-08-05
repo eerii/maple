@@ -77,6 +77,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     //TIME TRACKING
     useEffect(() => {
         if (useTimer && !timer) {
+            console.log("[TIME TRACKING]: Sending request to add time")
             setTimer(setTimeout(() => {
                 setTimer(null)
                 sendSignal ({
@@ -84,7 +85,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
                     sender: username,
                     target: ID,
                 })
-            }, 600 * 1000)) //10 minutes
+            }, 30 * 1000)) //10 minutes
         }
     }, [useTimer, timer, ID, username])
 
