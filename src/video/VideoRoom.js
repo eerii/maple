@@ -38,15 +38,8 @@ const mediaConstraints = {
     }
 }
 
-//TODO: Time Tracking
-//TODO: Make it responsible
-//TODO: Add controls (video, audio)
-//TODO: Transcode and Encrypt
-//TODO: Make a diagram and add names (Blue Jay)
-//TODO: Token authentication for registering
-//TODO: Registration with 2 step verification and manual approval or allowed emails
-
 const useWS = true
+const useTime = true
 
 const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const { room } = useParams()
@@ -56,11 +49,15 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
+
     const [onVideoCall, setInVideoCall] = useState(false)
     const [showVideoAccept, setShowVideoAccept] = useState(false)
     const [showVideoCallingUI, setShowVideoCallingUI] = useState(false)
     const [continueVideoAccept, setContinueVideoAccept] = useState(0)
     const [videoCallStartStatus, setVideoCallStartStatus] = useState(0)
+
+    const [useTimer, setUseTimer] = useState(false)
+    const [timer, setTimer] = useState(null)
 
     const ws = useRef(null)
     const pc = useRef(null)
@@ -75,6 +72,21 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const messageInput = useRef(null)
     const messageButton = useRef(null)
     const messageBox = useRef(null)
+
+
+    //TIME TRACKING
+    useEffect(() => {
+        if (useTimer && !timer) {
+            setTimer(setTimeout(() => {
+                setTimer(null)
+                sendSignal ({
+                    type: "add-time",
+                    sender: username,
+                    target: ID,
+                })
+            }, 600 * 1000)) //10 minutes
+        }
+    }, [useTimer, timer, ID, username])
 
 
     //SIGNALING
@@ -112,6 +124,16 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         const stream = await getMedia()
         if (stream)
             setIsMedia(await setTracks())
+
+        if (useTime) {
+            sendSignal ({
+                type: "start-time",
+                data: user,
+                sender: username,
+                target: ID,
+            })
+            setUseTimer(true)
+        }
     }
     //STOP
     const stopCall = useCallback( (id=null) => {
@@ -157,6 +179,9 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         remoteID.current = null
         setIsMedia(false)
         setInVideoCall(false)
+
+        setUseTimer(false)
+        setTimer(null)
 
         hangupButton.current.disabled = true
     }, [ID])
@@ -328,7 +353,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         try {
             localVideo.current.srcObject.getTracks().forEach(track => {
                 //pc.current.addTrack(track, stream)
-                pc.current.addTransceiver(track, {streams: [localVideo.current.srcObject]}) //TODO: TEST WHICH IS BETTER
+                pc.current.addTransceiver(track, {streams: [localVideo.current.srcObject]})
                 console.log(`[MEDIA]: Adding ${(track.kind === "video") ? "Video" : "Audio"} Track -> `, track)
             })
             console.log("[MEDIA]: User Media is Processed")

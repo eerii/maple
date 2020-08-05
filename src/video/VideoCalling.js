@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react"
 
 import Modal from "../components/Modal"
 
-const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, callingUser }) => { //TODO: Click outside cancel modal
+const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, callingUser }) => {
     const [callState, setCallState] = useState("Not initialized")
 
     useEffect(() => {

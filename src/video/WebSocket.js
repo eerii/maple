@@ -99,22 +99,28 @@ const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, mess
                 //SIGNALING
                 case "video-offer":
                     await handleVideoOfferMsg(data)
-                    break;
+                    break
                 case "video-received":
                     await handleVideoReceivedMsg(data)
-                    break;
+                    break
                 case "video-answer":
                     await handleVideoAnswerMsg(data)
-                    break;
+                    break
                 case "ice-candidate":
                     await handleICECandidateMsg(data)
-                    break;
+                    break
                 case "hang-up":
                     handleHangUpMsg(data)
-                    break;
+                    break
+                case "start-time":
+                    console.log("[TIME TRACKING]: Started time tracking " + message)
+                    break
+                case "add-time":
+                    console.log("[TIME TRACKING]: Added time " + message)
+                    break
                 case "close":
                     console.log("[MESSAGE]: Closed Old User Connection (Make sure you don't login in different browsers)")
-                    break;
+                    break
                 default:
                     console.log("[MESSAGE]: Unknown message -> " + message)
                     break
