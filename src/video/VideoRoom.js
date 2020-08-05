@@ -219,13 +219,13 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             case "closed":
             case "failed":
             case "disconnected":
-                console.log("[PC]: (ICE) Stopping Call Because of ICE State")
-                stopCall(remoteID.current)
+                console.log("[PC]: (ICE) Test: Would be Stopping Call Because of ICE State")
+                //stopCall(remoteID.current)
                 break
             default:
                 break
         }
-    }, [stopCall])
+    }, [])
     const handleICEGatheringStateChangeEvent = () => {
         // Handle the |icegatheringstatechange| event. This lets us know what the
         // ICE engine is currently working on: "new" means no networking has happened
