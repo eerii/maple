@@ -74,6 +74,7 @@ const ModalContent = styled.div`
 
 const ModalVideo = styled(ModalContent)`
   width: 90vw;
+  max-width: 90vw;
 `
 
 const ToggleDiv = styled.div`
@@ -188,6 +189,20 @@ const VideoDeclineButton = styled(VideoAcceptButton)`
   }
 `
 
+const VideoOverlay = styled.div`
+  position: fixed;
+  width: 90vw;
+  top: 0; 
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 100;
+  margin: 2em;
+  border: 2px solid ${props => props.theme.specialText};
+  border-radius: 12px;
+`
+
 const MessageBox = styled.div`
   background: ${props => props.theme.altBackground};
   border-radius: 16px;
@@ -245,4 +260,4 @@ const RegistrationTitles = styled.h4`
 `
 
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles}
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles}
