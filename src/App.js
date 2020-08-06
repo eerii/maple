@@ -8,10 +8,12 @@ import {
 import jwt from "jsonwebtoken"
 
 import Home from "./home/Home"
+import Toggles from "./home/Toggles"
 import Login from "./auth/Login"
+import Register from "./auth/Register"
+
 import VideoHub from "./video/VideoHub"
 import VideoRoom from "./video/VideoRoom"
-import Toggles from "./home/Toggles"
 
 import { ThemeProvider } from "styled-components"
 import GlobalStyle from "./config/GlobalStyles"
@@ -25,6 +27,9 @@ export default function App() {
     const [login, setLogin] = useState(false)
     const [loggedIn, setLoggedIn] = useState(false)
     const [logout, setLogout] = useState(false)
+
+    const [register, setRegister] = useState(false)
+
     const [goHome, setGoHome] = useState(false)
     const goHomeTimer = useRef(null)
 
@@ -40,14 +45,13 @@ export default function App() {
             const token = localStorage.getItem("Token")
 
             if(token) {
-                const decoded = await jwt.verify(token, process.env.REACT_APP_SECRET)
-                const time = new Date().getTime() / 1000
-
-                if(decoded.exp < time) {
-                    setLogout(true)
-                } else {
+                try {
+                    const decoded = await jwt.verify(token, process.env.REACT_APP_SECRET)
                     setLoggedIn(true)
                     setUsername(decoded.username)
+                } catch (e) {
+                    console.log("Token Expired... Please log in again")
+                    setLogout(true)
                 }
             }
         })()
@@ -94,7 +98,8 @@ export default function App() {
                     </Route>
                     <Route path="/">
                         <Home setGoHome={setGoHome}/>
-                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername}/>}
+                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setRegister={setRegister}/>}
+                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setLogin={setLogin}/>}
                         {showVideo && <VideoHub setShowVideo={setShowVideo} username={username}/>}
                     </Route>
                 </Switch>

@@ -23,16 +23,23 @@ const Toggles = ({theme, setTheme, setLogin, loggedIn, setLogout, setShowVideo, 
                 onClick={() => { loggedIn ?
                     ((location.pathname.startsWith("/video/")) ? setGoHome(true) : setShowVideo(true)) :
                     setLogin(true) }}>
-                <Emoji symbol="🙋🏽‍♀️" label="Video"/>
+                {(location.pathname.startsWith("/video/")) ?
+                    <p style={{margin: "0"}}>Home  <Emoji symbol="🏠️" label="Home"/></p> :
+                    <p style={{margin: "0"}}>Video  <Emoji symbol="🙋🏽‍♀️" label="Video"/></p>}
             </ToggleTheme>
 
             <ToggleTheme
                 onClick={() => { loggedIn ? setLogout(true) : setLogin(true) }}>
-                {loggedIn ? <Emoji symbol="🔓" label="Log Out"/> : <Emoji symbol="🔒" label="Login"/>}
+                {loggedIn ? <p style={{margin: "0"}}>Logout  <Emoji symbol="🔓" label="Log Out"/></p> : <p style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></p>}
             </ToggleTheme>
 
             <ToggleTheme
-                onClick={themeToggler}>{ theme === 'light' ? <Emoji symbol="☀️️" label="Light Mode"/> : (theme === 'moose' ? <Emoji symbol="✨️️" label="Colorful Mode"/> : <Emoji symbol="🌙" label="Dark Mode"/>)}
+                onClick={themeToggler}>
+                <p style={{margin: "0"}}>Theme  { theme === 'light' ?
+                    <Emoji symbol="☀️️" label="Light Mode"/> :
+                    (theme === 'moose' ?
+                        <Emoji symbol="✨️️" label="Colorful Mode"/> :
+                        <Emoji symbol="🌙" label="Dark Mode"/>)}</p>
             </ToggleTheme>
         </ToggleDiv>
     )

@@ -10,9 +10,9 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
         <Modal style={{display: (onVideoCall ? "" : "none")}}>
             <ModalVideo>
                 <div>
-                    <RemoteVideo ref={remoteVideo} autoPlay playsInLine/>
+                    <RemoteVideo ref={remoteVideo} autoPlay playsInline/>
                     <VideoBox>
-                        <LocalVideo ref={localVideo} muted autoPlay playsInLine/>
+                        <LocalVideo ref={localVideo} muted autoPlay playsInline/>
                     </VideoBox>
                 </div>
 
