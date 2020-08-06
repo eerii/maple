@@ -41,7 +41,6 @@ const mediaConstraints = {
 const useWS = true
 const useTime = true
 
-//TODO: Handle ICE Disconnect, start timer to cancel call and show disconnected.
 //TODO: What happens when a 3rd one tries to call? Handle that.
 
 const VideoRoom = ({ username, ID, setID, loggedIn }) => {
@@ -54,6 +53,8 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     //const [volume, setVolume] = useState(80)
 
     const [onVideoCall, setInVideoCall] = useState(false)
+    const [showDisconnected, setShowDisconnected] = useState(false)
+
     const [showVideoAccept, setShowVideoAccept] = useState(false)
     const [showVideoCallingUI, setShowVideoCallingUI] = useState(false)
     const [continueVideoAccept, setContinueVideoAccept] = useState(0)
@@ -223,9 +224,11 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             case "failed":
             case "disconnected":
                 console.log("[PC]: (ICE) Test: Would be Stopping Call Because of ICE State")
+                setTimeout(() => setShowDisconnected(true), 1500)
                 //stopCall(remoteID.current)
                 break
             default:
+                setShowDisconnected(false)
                 break
         }
     }, [])
@@ -521,7 +524,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
-            <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall}/>
+            <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall} showDisconnected={showDisconnected}/>
             {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
             {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept} caller={remoteUser}/>}
         </Background>
