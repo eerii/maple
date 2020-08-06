@@ -7,7 +7,7 @@ import Modal from "../components/Modal"
 import styles from "../config/Styles"
 const { FormError, RegistrationInput, RegistrationTitles: Title } = styles
 
-const Register = ({setRegister, setLoggedIn, setUsername}) => {
+const Register = ({setRegister, setLoggedIn, setUsername, setLogin}) => {
     const { register, handleSubmit, errors, setError, clearErrors, reset } = useForm({ mode: "onBlur" })
 
     const [buttonText, setButtonText] = useState("Register")
@@ -114,6 +114,7 @@ const Register = ({setRegister, setLoggedIn, setUsername}) => {
                 <div>
                     <Title>Username</Title>
                     <RegistrationInput
+                        type="text"
                         name="Username"
                         placeholder="awesomeusername"
                         onChange={() => clearErrors("Username")}
@@ -163,6 +164,7 @@ const Register = ({setRegister, setLoggedIn, setUsername}) => {
                 <div>
                     <Title>Name</Title>
                     <RegistrationInput
+                        type="text"
                         name="Name"
                         placeholder="Jenny Moose"
                         onChange={() => clearErrors("Name")}
@@ -182,6 +184,7 @@ const Register = ({setRegister, setLoggedIn, setUsername}) => {
                 <div>
                     <Title>Registration Code</Title>
                     <RegistrationInput
+                        type="text"
                         name="Code"
                         placeholder="Code"
                         onChange={() => clearErrors("Code")}
@@ -199,8 +202,13 @@ const Register = ({setRegister, setLoggedIn, setUsername}) => {
                     placeholder="I accept the Terms of Service."
                     ref={register}
                 />
-                <div style={{paddingTop: "20px"}}>
-                    {/*<button style={{margin: "10px"}} onClick={() => {}}>Register</button>*/}
+                <p>Only MOOSE beta users can register at this time.</p>
+                <p>Sign up on the homepage to be the first to try MOOSE.</p>
+                <div>
+                    <button style={{margin: "10px"}} onClick={() => {
+                        setLogin(true)
+                        setRegister(false)
+                    }}>Login</button>
                     <button style={{margin: "10px"}} type="submit">{buttonText}</button>
                 </div>
             </form>

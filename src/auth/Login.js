@@ -3,7 +3,7 @@ import axios from "axios"
 
 import Modal from "../components/Modal"
 
-const Login = ({setLogin, setLoggedIn, setUsername}) => {
+const Login = ({setLogin, setLoggedIn, setUsername, setRegister}) => {
     const [user, setUser] = useState("")
     const [pass, setPass] = useState("")
     const [accept, setAccept] = useState(false) //Honeypot
@@ -68,10 +68,12 @@ const Login = ({setLogin, setLoggedIn, setUsername}) => {
                     onChange={({ target }) => setAccept(target.checked)}
                     placeholder="I accept the Terms of Service."
                 />
-                <p>Registration is restricted at the moment.</p>
-                <p>Join MOOSE beta to try this service.</p>
+                <p>Only MOOSE beta users can register at this time.</p>
                 <div>
-                    {/*<button style={{margin: "10px"}} onClick={() => {}}>Register</button>*/}
+                    <button style={{margin: "10px"}} onClick={() => {
+                        setRegister(true)
+                        setLogin(false)
+                    }}>Register</button>
                     <button style={{margin: "10px"}} type="submit">{buttonText}</button>
                 </div>
             </form>
