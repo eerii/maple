@@ -59,9 +59,6 @@ const GlobalStyle = createGlobalStyle`
     font-size: 18px;
     font-weight: bold;
     padding: 10px 20px;
-    margin-right: 20px;
-    max-width: 30vw;
-    min-width: 20vw;
   
     ::placeholder {
       color: ${props => props.theme.placeholder};

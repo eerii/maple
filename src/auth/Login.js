@@ -38,7 +38,6 @@ const Login = ({setLogin, setLoggedIn, setUsername}) => {
             setPass("")
             setButtonText("Done!")
             setLogin(false)
-            setLoggedIn(true)
         }
     }
 

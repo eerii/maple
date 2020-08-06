@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from "react"
 import styles from "../config/Styles"
 const { Modal: ModalStyle, ModalContent } = styles
 
-const Modal = ({children, setVisible}) => {
+const Modal = ({children, setVisible, width="400px"}) => {
     const modalRef = useRef(null)
 
     useEffect(() => {
@@ -21,7 +21,7 @@ const Modal = ({children, setVisible}) => {
 
     return (
         <ModalStyle>
-            <ModalContent ref={modalRef}>
+            <ModalContent ref={modalRef} style={{width: width}}>
                 {children}
             </ModalContent>
         </ModalStyle>

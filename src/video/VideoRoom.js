@@ -41,6 +41,9 @@ const mediaConstraints = {
 const useWS = true
 const useTime = true
 
+//TODO: Handle ICE Disconnect, start timer to cancel call and show disconnected.
+//TODO: What happens when a 3rd one tries to call? Handle that.
+
 const VideoRoom = ({ username, ID, setID, loggedIn }) => {
     const { room } = useParams()
 

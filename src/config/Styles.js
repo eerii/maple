@@ -62,6 +62,7 @@ const Modal = styled.div`
 
 const ModalContent = styled.div`
   width: 400px;
+  max-width: 80vw;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -158,7 +159,7 @@ const VideoAcceptButton = styled.button`
   border-radius: 32px;
   fill: white;
   padding: 14px 16px 12px 16px;
-  margin: 0px 10px;
+  margin: 0 10px;
   
   &:hover {
     fill: #234a2b;
@@ -218,5 +219,30 @@ const ReplyMessage = styled(Message)`
   float: right;
 `
 
+const FormError = styled.p`
+  display: inline-block;
+  width: 80%;
+  font-size: 13px;
+  text-align: left;
+  margin-bottom: 0;
+  margin-top: 4px;
+`
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, Message, ReplyMessage, MessageBox}
+const RegistrationInput = styled.input`
+  display: inline-block;
+  width: 80%;
+`
+
+const RegistrationTitles = styled.h4`
+  display: inline-block;
+  font-size: 18px;
+  width: 80%;
+  margin-bottom: 4px;
+  margin-top: 16px;
+  padding-top: 0;
+  text-align: left;
+  color: ${props => props.theme.text};
+`
+
+
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles}
