@@ -25,12 +25,18 @@
 
 # Always redirect any request to our index.html
 # and return the status code 200.
+
 [[redirects]]
     from    = "*moosehour.com/*"
     to      = "https://moose.exchange/index.html"
     status  = 301
 
 [[redirects]]
-    from    = "/*"
-    to      = "/index.html"
+    from    = "*maple-frontend.netlify.app/*"
+    to      = "https://moose.exchange/index.html"
+    status  = 301
+
+[[redirects]]
+    from    = "*moose.exchange/*"
+    to      = "https://moose.exchange/index.html"
     status  = 200
