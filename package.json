@@ -9,6 +9,7 @@
     "axios": "^0.19.2",
     "human-readable-ids": "^1.0.4",
     "jsonwebtoken": "^8.5.1",
+    "lodash.times": "^4.3.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.3.0",
