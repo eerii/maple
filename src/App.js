@@ -99,7 +99,7 @@ export default function App() {
                 {goHome && <Redirect push to="/"/>}
                 <Switch>
                     <Route exact path="/video/:room">
-                        {loggedIn && <VideoRoom username={username} ID={ID} setID={setID} loggedIn={loggedIn}/>}
+                        {loggedIn && <VideoRoom username={username} name={name} ID={ID} setID={setID} loggedIn={loggedIn}/>}
                         {!loggedIn && <Background/>}
                     </Route>
                     <Route path="/">

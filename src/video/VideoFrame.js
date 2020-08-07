@@ -40,9 +40,13 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
     const [showCancel, setShowCancel] = useState(false)
 
     useEffect(() => {
+        let disconnectedTimer
         if (showDisconnected) {
             setShowCancel(false)
-            setTimeout(() => setShowCancel(true), 10000)
+            disconnectedTimer = setTimeout(() => setShowCancel(true), 10000)
+        }
+        return () => {
+            clearTimeout(disconnectedTimer)
         }
     }, [showDisconnected])
 
@@ -53,7 +57,6 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
     useEffect(() => {
         if (!timer) {
             setTimer(setTimeout(() => {
-                clearTimeout(timer)
                 setTimer(null)
                 if (tokenPercent >= 90) {
                     setTokenPercent(0)
@@ -63,6 +66,10 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
                 }
             }, 60 * 1000)) //1 minute
         }
+        return () => {
+            clearTimeout(timer)
+        }
+
     }, [timer, tokenPercent, tokensSpent])
 
     return (
