@@ -7,7 +7,7 @@ import styles from "../config/Styles"
 const { ToggleTheme, ToggleDiv } = styles
 const themes = ["light", "moose", "dark"]
 
-const Toggles = ({theme, setTheme, setLogin, loggedIn, setLogout, setShowVideo, setGoHome}) => {
+const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProfile, setGoHome, name}) => {
     const location = useLocation()
 
     const themeToggler = () => {
@@ -25,21 +25,21 @@ const Toggles = ({theme, setTheme, setLogin, loggedIn, setLogout, setShowVideo, 
                     setLogin(true) }}>
                 {(location.pathname.startsWith("/video/")) ?
                     <p style={{margin: "0"}}>Home  <Emoji symbol="🏠️" label="Home"/></p> :
-                    <p style={{margin: "0"}}>Video  <Emoji symbol="🙋🏽‍♀️" label="Video"/></p>}
+                    <p style={{margin: "0"}}>Video  <Emoji symbol="🧑🏽‍💻️" label="Video"/></p>}
             </ToggleTheme>
 
             <ToggleTheme
-                onClick={() => { loggedIn ? setLogout(true) : setLogin(true) }}>
-                {loggedIn ? <p style={{margin: "0"}}>Logout  <Emoji symbol="🔓" label="Log Out"/></p> : <p style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></p>}
+                onClick={() => { loggedIn ? setShowProfile(true) : setLogin(true) }}>
+                {loggedIn ? <p style={{margin: "0"}}>{name}  <Emoji symbol="🙋🏽" label="Profile"/></p> : <p style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></p>}
             </ToggleTheme>
 
             <ToggleTheme
                 onClick={themeToggler}>
-                <p style={{margin: "0"}}>Theme  { theme === 'light' ?
+                { theme === 'light' ?
                     <Emoji symbol="☀️️" label="Light Mode"/> :
                     (theme === 'moose' ?
                         <Emoji symbol="✨️️" label="Colorful Mode"/> :
-                        <Emoji symbol="🌙" label="Dark Mode"/>)}</p>
+                        <Emoji symbol="🌙" label="Dark Mode"/>)}
             </ToggleTheme>
         </ToggleDiv>
     )

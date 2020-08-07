@@ -18,6 +18,9 @@ const GlobalStyle = createGlobalStyle`
   h2 {
     color: ${props => props.theme.text};
   }
+  h4 {
+    color: ${props => props.theme.text};
+  }
   a {
     color: ${props => props.theme.specialText};
   }
