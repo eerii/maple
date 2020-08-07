@@ -1,6 +1,6 @@
 import React, {useEffect} from "react"
 
-const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
+const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
 
     //WEBSOCKET
     //---------
@@ -82,12 +82,13 @@ const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, mess
                     }
                     break
                 case "username":
-                    console.log(`[MESSAGE]: User ${message} has logged in at ${time}`)
-                    if (!userlist.find(({ username: u }) => u === message)) {
-                        setUserlist([...userlist, {connectionID: sender, username: message, time: (new Date(data.date).getTime() / 1000)}])
+                    const [ user, name ] = message.split(":")
+                    console.log(`[MESSAGE]: User ${user} has logged in at ${time}`)
+                    if (!userlist.find(({ username: u }) => u === user)) {
+                        setUserlist([...userlist, {connectionID: sender, username: user, name: name, time: (new Date(data.date).getTime() / 1000)}])
                     } else if (!userlist.find(({ connectionID }) => connectionID === sender)) {
-                        const tempList = userlist.filter(({ username }) => username !== message)
-                        setUserlist([...tempList, {connectionID: sender, username: message, time: (new Date(data.date).getTime() / 1000)}])
+                        const tempList = userlist.filter(({ username }) => username !== user)
+                        setUserlist([...tempList, {connectionID: sender, username: user, name: name, time: (new Date(data.date).getTime() / 1000)}])
                     }
                     break
                 //MESSAGES
@@ -137,14 +138,14 @@ const WS = ({ ws, ID, setID, username, userlist, setUserlist, messageInput, mess
         if (ID) {
             const data = {
                 action: "sendMessage",
-                data: username,
+                data: username + ":" + name,
                 type: "username",
                 date: Date.now(),
                 sender: ID
             }
             ws.current.send(JSON.stringify(data))
         }
-    }, [ID, username, ws])
+    }, [ID, username, name, ws])
     //---------
 
 
