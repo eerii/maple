@@ -62,6 +62,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
     const [useTimer, setUseTimer] = useState(false)
     const [timer, setTimer] = useState(null)
+    const [isMaster, setIsMaster] = useState(false)
 
     const ws = useRef(null)
     const pc = useRef(null)
@@ -130,6 +131,8 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         const stream = await getMedia()
         if (stream)
             setIsMedia(await setTracks())
+
+        setIsMaster(true)
     }
     //STOP
     const stopCall = useCallback( async (id=null) => {
@@ -175,6 +178,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         remoteID.current = null
         setIsMedia(false)
         setInVideoCall(false)
+        setIsMaster(false)
 
         try {
             clearTimeout(timer)
@@ -527,7 +531,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
 
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
-            <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall} showDisconnected={showDisconnected}/>
+            <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall} showDisconnected={showDisconnected} isMaster={isMaster}/>
             {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
             {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept} caller={remoteUser}/>}
         </Background>

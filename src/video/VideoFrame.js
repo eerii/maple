@@ -3,13 +3,13 @@ import React, {useEffect, useState} from "react"
 import HangupIcon from "../icons/Hangup.js"
 
 import styles from "../config/Styles"
-const { RemoteVideo, LocalVideo, Modal, ModalVideo, VideoBox, VideoDeclineButton, VideoOverlay } = styles
+const { RemoteVideo, LocalVideo, Modal, ModalVideo, VideoBox, VideoDeclineButton, VideoOverlay, VideoTag, VideoTagAlt } = styles
 
 const catUrl = "https://cataas.com/cat/gif"
 
 //TODO: Ask if they like dogs or cats
 
-const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID, onVideoCall, showDisconnected }) => {
+const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID, onVideoCall, showDisconnected, isMaster }) => {
     const [showCancel, setShowCancel] = useState(false)
 
     useEffect(() => {
@@ -39,6 +39,9 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
                             </div>}
                         </div>
                     </VideoOverlay>
+                    {isMaster ?
+                        <VideoTag>Obtaining Time Tokens</VideoTag> :
+                        <VideoTagAlt>Spending Time Tokens</VideoTagAlt>}
                 </div>
 
                 <VideoDeclineButton style={{position: "fixed", right: "30px", bottom: "45px", zIndex: "900"}} ref={hangupButton} onClick={() => { stopCall(remoteID.current) }}><HangupIcon width="32px" height="32px"/></VideoDeclineButton>
