@@ -32,7 +32,7 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
                             <h2>Trying to reconnect...</h2>
                             <p>The call has temporarily disconnected. It should come back in a second!</p>
                             <p>Meanwhile, don't worry, we got you covered. Enjoy this cute cat :3</p>
-                            <img src={catUrl} alt={"Cute Cat Gif"} style={{borderRadius: "12px"}}/>
+                            <img src={catUrl} alt={"Cute Cat Gif"} style={{borderRadius: "12px", maxHeight: "400px", width: "400px"}}/>
                             {showCancel && <div>
                                 <p>This is taking more than we planned. Do you want to cancel the call?</p>
                                 <button onClick={() => { console.log("Stop"); stopCall(remoteID) }}>Cancel Call</button>

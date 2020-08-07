@@ -38,8 +38,8 @@ const mediaConstraints = {
     }
 }
 
-const useWS = true
-const useTime = true
+const useWS = false //TODO CHANGE THIS
+const useTime = false
 
 //TODO: What happens when a 3rd one tries to call? Handle that.
 
@@ -221,11 +221,12 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         console.log("[PC]: (ICE) Connection State Changed to " + pc.current.iceConnectionState)
         switch(pc.current.iceConnectionState) {
             case "closed":
+                stopCall(remoteID.current)
+                break
             case "failed":
             case "disconnected":
                 console.log("[PC]: (ICE) Test: Would be Stopping Call Because of ICE State")
                 setTimeout(() => setShowDisconnected(true), 1500)
-                //stopCall(remoteID.current)
                 break
             default:
                 setShowDisconnected(false)

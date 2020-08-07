@@ -145,6 +145,7 @@ const LocalVideo = styled.video`
 const RemoteVideo = styled.video`
   float: left;
   width: 100%;
+  max-height: 90vh;
 `
 
 const VideoBox = styled.div`

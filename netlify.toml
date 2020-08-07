@@ -26,6 +26,11 @@
 # Always redirect any request to our index.html
 # and return the status code 200.
 [[redirects]]
+    from    = "*moosehour.com/*"
+    to      = "https://moose.exchange/index.html"
+    status  = 301
+
+[[redirects]]
     from    = "/*"
     to      = "/index.html"
     status  = 200
