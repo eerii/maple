@@ -27,16 +27,6 @@
 # and return the status code 200.
 
 [[redirects]]
-    from    = "*moosehour.com/*"
-    to      = "https://moose.exchange/index.html"
-    status  = 301
-
-[[redirects]]
-    from    = "*maple-frontend.netlify.app/*"
-    to      = "https://moose.exchange/index.html"
-    status  = 301
-
-[[redirects]]
-    from    = "*moose.exchange/*"
-    to      = "https://moose.exchange/index.html"
+    from    = "/*"
+    to      = "/index.html"
     status  = 200
