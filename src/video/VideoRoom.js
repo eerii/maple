@@ -60,6 +60,9 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
     const [continueVideoAccept, setContinueVideoAccept] = useState(0)
     const [videoCallStartStatus, setVideoCallStartStatus] = useState(0)
 
+    const [description, setDescription] = useState(null)
+    const [handleContinueVideoOffer, setHandleContinueVideoOffer] = useState(false)
+
     const [useTimer, setUseTimer] = useState(false)
     const [timer, setTimer] = useState(null)
     const [isMaster, setIsMaster] = useState(false)
@@ -68,7 +71,6 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
     const pc = useRef(null)
     const remoteID = useRef(null)
     const remoteUser = useRef(null)
-    const description = useRef(null)
 
     const localVideo = useRef(null)
     const remoteVideo = useRef(null)
@@ -176,6 +178,8 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
 
         remoteUser.current = null
         remoteID.current = null
+        setDescription(null)
+        setHandleContinueVideoOffer(false)
         setIsMedia(false)
         setInVideoCall(false)
         setIsMaster(false)
@@ -410,7 +414,8 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
 
         remoteID.current = id
         remoteUser.current = user
-        description.current = new RTCSessionDescription(data.message)
+        if (!description)
+            setDescription(new RTCSessionDescription(data.message))
 
         if (!pc.current)
             await createPeerConnection()
@@ -424,54 +429,59 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
 
             setShowVideoAccept(true)
         } else {
-            await handleContinueVideoOfferMsg()
+            setHandleContinueVideoOffer(true)
         }
     }
-    const handleContinueVideoOfferMsg = useCallback( async () => {
-        if (pc.current.signalingState !== "stable") {
-            console.log("[PC]: (ANSWER) Signaling isn't Stable... Rolling back")
-            await pc.current.setLocalDescription({type: "rollback"})
-            await pc.current.setRemoteDescription(description.current)
-            return
-        } else {
-            console.log("[PC]: (ANSWER) Setting Remote Description")
-            await pc.current.setRemoteDescription(description.current)
-        }
+    useEffect(() => {
+        (async () => {
+            if (handleContinueVideoOffer && description) {
+                setHandleContinueVideoOffer(false)
 
-        if(!isMedia) {
-            const stream = await getMedia()
-            if (stream)
-                setIsMedia(await setTracks(stream))
-        }
+                console.log("DESCRIPTION " + description)
+                if (pc.current.signalingState !== "stable") {
+                    console.log("[PC]: (ANSWER) Signaling isn't Stable... Rolling back")
+                    await pc.current.setLocalDescription({type: "rollback"})
+                    await pc.current.setRemoteDescription(description)
+                    return
+                } else {
+                    console.log("[PC]: (ANSWER) Setting Remote Description")
+                    await pc.current.setRemoteDescription(description)
+                }
 
-        console.log("[PC]: (ANSWER) Creating and Sending Answer")
-        const answer = await pc.current.createAnswer()
-        await pc.current.setLocalDescription(answer)
+                if(!isMedia) {
+                    const stream = await getMedia()
+                    if (stream)
+                        setIsMedia(await setTracks(stream))
+                }
 
-        sendSignal({
-            sender: ID,
-            target: remoteID.current,
-            type: "video-answer",
-            data: pc.current.localDescription
-        })
+                console.log("[PC]: (ANSWER) Creating and Sending Answer")
+                const answer = await pc.current.createAnswer()
+                await pc.current.setLocalDescription(answer)
 
-        console.log("[PC]: (ANSWER) Answer Sent Successfully")
-    }, [ID, getMedia, isMedia, setTracks])
+                sendSignal({
+                    sender: ID,
+                    target: remoteID.current,
+                    type: "video-answer",
+                    data: pc.current.localDescription
+                })
+
+                console.log("[PC]: (ANSWER) Answer Sent Successfully")
+            }
+        })()
+    }, [ID, getMedia, isMedia, setTracks, description, handleContinueVideoOffer])
     useEffect(() => {
         (async () => {
             if (continueVideoAccept === 1) {
-                console.log("Continue")
                 setShowVideoAccept(false)
                 setContinueVideoAccept(0)
-                await handleContinueVideoOfferMsg()
+                setHandleContinueVideoOffer(true)
             } else if (continueVideoAccept === 2) {
-                console.log("Cancel")
                 setShowVideoAccept(false)
                 setContinueVideoAccept(0)
                 await stopCall(remoteID.current)
             }
         })()
-    }, [continueVideoAccept, handleContinueVideoOfferMsg, stopCall])
+    }, [continueVideoAccept, stopCall])
     const handleVideoReceivedMsg = () => {
         if (showVideoCallingUI)
             setVideoCallStartStatus(2)
