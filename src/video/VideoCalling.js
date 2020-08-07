@@ -25,10 +25,10 @@ const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, call
         }
     }, [status, setShowVideoCallingUI])
 
-    const stopCallClickOutside = () => {
+    const stopCallClickOutside = async () => {
         // eslint-disable-next-line no-restricted-globals
         if (confirm("Are you sure you want to stop the call?"))
-            stopCall(callingID)
+            await stopCall(callingID)
     }
 
     return (

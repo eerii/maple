@@ -260,5 +260,70 @@ const RegistrationTitles = styled.h4`
   color: ${props => props.theme.text};
 `
 
+const VideoTag = styled.p`
+  position: fixed;
+  left: 45px;
+  bottom: 30px;
+  z-index: 500;
+  border-radius: 8px;
+  padding: 6px 20px;
+  color: #f8f8f8;
+  background: #4960F9;
+`
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles}
+const VideoTagAlt = styled(VideoTag)`
+  color: #09183e;
+  background: #FAC172;
+`
+
+const TimeTokenBar = styled.div`
+  position: fixed;
+  left: 45px;
+  bottom: 68px;
+  z-index: 500;
+  margin-bottom: 16px;
+`
+
+const TimeToken = styled.div`
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  border-radius: 28px;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+`
+
+const TimeTokenFill = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: #FAC172;
+  width: ${({ percent }) => percent}%;
+`
+
+const TooltipHover = styled.div`
+
+`
+
+const Tooltip = styled.div`
+  color: #fff;
+  background-color: rgba(73, 96, 249, 0.5);
+  padding: 6px 20px;
+  border-radius: 8px;
+  position: fixed;
+  left: ${({ left }) => left}px;
+  bottom: 46px;
+  z-index: 900;
+  opacity: 0;
+  transition: all 0.3s;
+`
+
+const TooltipContainer = styled.div`
+  & ${TooltipHover}:hover + ${Tooltip} {
+    opacity: 100%;
+  }
+`
+
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer}
