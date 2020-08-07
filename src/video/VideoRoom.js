@@ -232,7 +232,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
                 setShowDisconnected(false)
                 break
         }
-    }, [])
+    }, [stopCall])
     const handleICEGatheringStateChangeEvent = () => {
         // Handle the |icegatheringstatechange| event. This lets us know what the
         // ICE engine is currently working on: "new" means no networking has happened
