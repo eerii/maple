@@ -9,8 +9,9 @@ import jwt from "jsonwebtoken"
 
 import Home from "./home/Home"
 import Toggles from "./home/Toggles"
-import Login from "./auth/Login"
-import Register from "./auth/Register"
+import Login from "./users/Login"
+import Register from "./users/Register"
+import Profile from "./users/Profile"
 
 import VideoHub from "./video/VideoHub"
 import VideoRoom from "./video/VideoRoom"
@@ -33,11 +34,14 @@ export default function App() {
     const [goHome, setGoHome] = useState(false)
     const goHomeTimer = useRef(null)
 
-    const [username, setUsername] = useState()
     const [showVideo, setShowVideo] = useState(false)
 
-
+    const [username, setUsername] = useState()
+    const [name, setName] = useState("")
+    const [tokens, setTokens] = useState(0)
     const [ID, setID] = useState(null)
+
+    const [showProfile, setShowProfile] = useState(false)
 
     //VERIFY TOKEN
     useEffect(() => {
@@ -49,6 +53,8 @@ export default function App() {
                     const decoded = await jwt.verify(token, process.env.REACT_APP_SECRET)
                     setLoggedIn(true)
                     setUsername(decoded.username)
+                    setName(decoded.name)
+                    setTokens(decoded.tokens)
                 } catch (e) {
                     console.log("Token Expired... Please log in again")
                     setLogout(true)
@@ -89,7 +95,7 @@ export default function App() {
         <Router>
             <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
                 <GlobalStyle/>
-                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setLogout={setLogout} setShowVideo={setShowVideo} setGoHome={setGoHome}/>
+                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name}/>
                 {goHome && <Redirect push to="/"/>}
                 <Switch>
                     <Route exact path="/video/:room">
@@ -98,8 +104,11 @@ export default function App() {
                     </Route>
                     <Route path="/">
                         <Home setGoHome={setGoHome}/>
-                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setRegister={setRegister}/>}
-                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setLogin={setLogin}/>}
+                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setRegister={setRegister}/>}
+                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setLogin={setLogin}/>}
+
+                        {showProfile && <Profile username={username} name={name} tokens={tokens} setShowProfile={setShowProfile} setLogout={setLogout}/>}
+
                         {showVideo && <VideoHub setShowVideo={setShowVideo} username={username}/>}
                     </Route>
                 </Switch>

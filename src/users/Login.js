@@ -1,9 +1,10 @@
 import React, { useState } from "react"
 import axios from "axios"
+import jwt from "jsonwebtoken"
 
 import Modal from "../components/Modal"
 
-const Login = ({setLogin, setLoggedIn, setUsername, setRegister}) => {
+const Login = ({setLogin, setLoggedIn, setUsername, setName, setTokens, setRegister}) => {
     const [user, setUser] = useState("")
     const [pass, setPass] = useState("")
     const [accept, setAccept] = useState(false) //Honeypot
@@ -29,7 +30,11 @@ const Login = ({setLogin, setLoggedIn, setUsername, setRegister}) => {
                 setButtonText("Done!")
                 setLogin(false)
                 setLoggedIn(true)
-                setUsername(user)
+                setUsername(user.toLowerCase())
+
+                const decoded = await jwt.verify(login.data.token, process.env.REACT_APP_SECRET)
+                setName(decoded.name)
+                setTokens(decoded.tokens)
             } catch (e) {
                 setButtonText("Error")
             }

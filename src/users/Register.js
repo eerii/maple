@@ -7,7 +7,7 @@ import Modal from "../components/Modal"
 import styles from "../config/Styles"
 const { FormError, RegistrationInput, RegistrationTitles: Title } = styles
 
-const Register = ({setRegister, setLoggedIn, setUsername, setLogin}) => {
+const Register = ({setRegister, setLoggedIn, setUsername, setName, setTokens, setLogin}) => {
     const { register, handleSubmit, errors, setError, clearErrors, reset } = useForm({ mode: "onBlur" })
 
     const [buttonText, setButtonText] = useState("Register")
@@ -32,7 +32,11 @@ const Register = ({setRegister, setLoggedIn, setUsername, setLogin}) => {
                 setButtonText("Done!")
                 setRegister(false)
                 setLoggedIn(true)
-                setUsername(data.Username)
+                setUsername(data.Username.toLowerCase())
+
+                setName(data.Name)
+                const initialTokens = 3 //This is changed on the backend
+                setTokens(initialTokens)
             } catch (e) {
                 if (e.response.data.code) {
                     switch (e.response.data.code) {
