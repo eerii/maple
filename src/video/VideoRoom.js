@@ -525,10 +525,9 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
             <h1 style={{paddingTop: "15vh"}}>Video Room</h1>
             <p>Room Name: {room} - User Name: {username}</p>
 
-            <Userlist userlist={userlist} startCall={startCall}/>
-
             {(useWS && loggedIn) && <WS ws={ws} ID={ID} setID={setID} username={username} name={name} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleVideoReceivedMsg={handleVideoReceivedMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
 
+            <Userlist userlist={userlist} startCall={startCall}/>
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
             <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall} showDisconnected={showDisconnected} isMaster={isMaster}/>
