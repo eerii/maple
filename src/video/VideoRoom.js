@@ -38,8 +38,8 @@ const mediaConstraints = {
     }
 }
 
-const useWS = false //TODO CHANGE THIS
-const useTime = false
+const useWS = true //TODO CHANGE THIS
+const useTime = true
 
 //TODO: What happens when a 3rd one tries to call? Handle that.
 
@@ -88,6 +88,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
                     type: "add-time",
                     sender: username,
                     target: ID,
+                    data: remoteUser.current,
                 })
             }, 600 * 1000)) //10 minutes
         }
@@ -129,19 +130,9 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         const stream = await getMedia()
         if (stream)
             setIsMedia(await setTracks())
-
-        if (useTime) {
-            sendSignal ({
-                type: "start-time",
-                data: user,
-                sender: username,
-                target: ID,
-            })
-            setUseTimer(true)
-        }
     }
     //STOP
-    const stopCall = useCallback( (id=null) => {
+    const stopCall = useCallback( async (id=null) => {
         console.log(`[END]: Closing Peer Connection${id ? ` with ${id}` : ""}`)
 
         setShowVideoCallingUI(false)
@@ -149,7 +140,7 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         setShowVideoAccept(false)
 
         if (id) {
-            sendSignal ({
+            await sendSignal ({
                 sender: ID,
                 target: id,
                 type: "hang-up"
@@ -166,17 +157,17 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         }
 
         if (localVideo.current.srcObject) {
-            localVideo.current.srcObject.getTracks().forEach(track => { track.stop() })
-            localVideo.current.srcObject = null
+            await localVideo.current.srcObject.getTracks().forEach(track => { track.stop() })
+            //localVideo.current.srcObject = null
         }
 
         if (remoteVideo.current.srcObject) {
-            remoteVideo.current.srcObject.getTracks().forEach(track => { track.stop() })
-            remoteVideo.current.srcObject = null
+            await remoteVideo.current.srcObject.getTracks().forEach(track => { track.stop() })
+            //remoteVideo.current.srcObject = null
         }
 
         if (pc.current) {
-            pc.current.close()
+            await pc.current.close()
             pc.current = null
         }
 
@@ -221,9 +212,9 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
         console.log("[PC]: (ICE) Connection State Changed to " + pc.current.iceConnectionState)
         switch(pc.current.iceConnectionState) {
             case "closed":
+            case "failed":
                 stopCall(remoteID.current)
                 break
-            case "failed":
             case "disconnected":
                 console.log("[PC]: (ICE) Test: Would be Stopping Call Because of ICE State")
                 setTimeout(() => setShowDisconnected(true), 1500)
@@ -497,8 +488,19 @@ const VideoRoom = ({ username, ID, setID, loggedIn }) => {
             console.log("[PC]: (ANSWER) Setting Remote Description for Answer")
             await pc.current.setRemoteDescription(answer)
 
-            if (showVideoCallingUI)
+            if (showVideoCallingUI) {
                 setVideoCallStartStatus(3)
+
+                if (useTime) {
+                    sendSignal ({
+                        type: "start-time",
+                        data: remoteID.current,
+                        sender: username,
+                        target: ID,
+                    })
+                    setUseTimer(true)
+                }
+            }
         } catch (e) {
             console.log("[PC]: (ANSWER) Error Handling Answer")
             console.log(e)

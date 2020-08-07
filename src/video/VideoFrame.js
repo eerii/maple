@@ -35,13 +35,13 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
                             <img src={catUrl} alt={"Cute Cat Gif"} style={{borderRadius: "12px", maxHeight: "400px", width: "400px"}}/>
                             {showCancel && <div>
                                 <p>This is taking more than we planned. Do you want to cancel the call?</p>
-                                <button onClick={() => { console.log("Stop"); stopCall(remoteID) }}>Cancel Call</button>
+                                <button onClick={() => { stopCall(remoteID.current) }}>Cancel Call</button>
                             </div>}
                         </div>
                     </VideoOverlay>
                 </div>
 
-                <VideoDeclineButton style={{position: "fixed", right: "30px", bottom: "45px", zIndex: "900"}} ref={hangupButton} onClick={() => { stopCall(remoteID) }}><HangupIcon width="32px" height="32px"/></VideoDeclineButton>
+                <VideoDeclineButton style={{position: "fixed", right: "30px", bottom: "45px", zIndex: "900"}} ref={hangupButton} onClick={() => { stopCall(remoteID.current) }}><HangupIcon width="32px" height="32px"/></VideoDeclineButton>
             </ModalVideo>
         </Modal>
     )
