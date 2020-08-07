@@ -38,8 +38,8 @@ const mediaConstraints = {
     }
 }
 
-const useWS = false //TODO CHANGE THIS
-const useTime = false
+const useWS = true
+const useTime = true
 
 //TODO: What happens when a 3rd one tries to call? Handle that.
 
