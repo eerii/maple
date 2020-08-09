@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react"
 
 import Modal from "../components/Modal"
 
-const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, callingUser }) => {
+const CallingUI = ({ setShowVideoCallingUI, stopCall, status, callingID, callingUser }) => {
     const [callState, setCallState] = useState("Not initialized")
 
     useEffect(() => {
@@ -40,4 +40,4 @@ const VideoCalling = ({ setShowVideoCallingUI, stopCall, status, callingID, call
     )
 }
 
-export default VideoCalling
+export default CallingUI

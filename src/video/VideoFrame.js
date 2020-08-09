@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react"
-import times from "lodash.times"
 
 import HangupIcon from "../icons/Hangup.js"
+import TimeTokenBar from "./TimeToken"
 
 import styles from "../config/Styles"
-const { RemoteVideo, LocalVideo, Modal, ModalVideo, VideoBox, VideoDeclineButton, VideoOverlay: VideoOverlayStyle, VideoTag, VideoTagAlt, TimeTokenBar: TimeTokenBarStyle, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer } = styles
+const { RemoteVideo, LocalVideo, Modal, ModalVideo, VideoBox, VideoDeclineButton, VideoOverlay: VideoOverlayStyle, VideoTag, VideoTagAlt, Tooltip, TooltipHover, TooltipContainer } = styles
 
 const catUrl = "https://cataas.com/cat/gif"
 
@@ -27,15 +27,6 @@ const VideoOverlay = ({ showDisconnected, showCancel, stopCall, remoteID }) => {
     )
 }
 
-const TimeTokenBar = ({ percent, number }) => {
-    return (
-        <TimeTokenBarStyle>
-            {times(number, i => <TimeToken key={i}> <TimeTokenFill key={i} percent={100}/> </TimeToken>)}
-            <TimeToken key={"actual"}> <TimeTokenFill key={"actual"} percent={percent}/> </TimeToken>
-        </TimeTokenBarStyle>
-    )
-}
-
 const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID, onVideoCall, showDisconnected, isMaster }) => {
     const [showCancel, setShowCancel] = useState(false)
 
@@ -52,25 +43,6 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
 
     const [tokensSpent, setTokensSpent] = useState(0)
     const [tokenPercent, setTokenPercent] = useState(0)
-    const [timer, setTimer] = useState(null)
-
-    useEffect(() => {
-        if (!timer) {
-            setTimer(setTimeout(() => {
-                setTimer(null)
-                if (tokenPercent >= 90) {
-                    setTokenPercent(0)
-                    setTokensSpent(tokensSpent + 1)
-                } else {
-                    setTokenPercent(tokenPercent + 10)
-                }
-            }, 60 * 1000)) //1 minute
-        }
-        return () => {
-            clearTimeout(timer)
-        }
-
-    }, [timer, tokenPercent, tokensSpent])
 
     return (
         <Modal style={{display: (onVideoCall ? "" : "none")}}>
@@ -91,7 +63,7 @@ const VideoFrame = ({ remoteVideo, localVideo, hangupButton, stopCall, remoteID,
                             <VideoTag>Obtaining Time Tokens</VideoTag> :
                             <VideoTagAlt>Spending Time Tokens</VideoTagAlt>}
 
-                        <TimeTokenBar percent={tokenPercent} number={tokensSpent}/>
+                        <TimeTokenBar percent={tokenPercent} setTokenPercent={setTokenPercent} number={tokensSpent} setTokensSpent={setTokensSpent}/>
                     </TooltipHover>
                     <Tooltip left={isMaster ? "256" : "250"}>
                         {tokensSpent * 10 + tokenPercent / 10} minutes, {tokensSpent} tokens

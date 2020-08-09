@@ -5,10 +5,10 @@ import WS from "./WebSocket"
 import Userlist from "./Userlist"
 import MessageBox from "./Message"
 import VideoFrame from "./VideoFrame"
-import VideoAccept from "./VideoAccept"
+import AcceptUI from "./AcceptUI"
 
 import styles from "../config/Styles"
-import VideoCalling from "./VideoCalling";
+import CallingUI from "./CallingUI";
 const { Background } = styles
 
 const TurnConfig = {
@@ -38,7 +38,7 @@ const mediaConstraints = {
     }
 }
 
-const useWS = true
+const useWS = false //TODO CHANGE
 const useTime = true
 
 //TODO: What happens when a 3rd one tries to call? Handle that.
@@ -52,7 +52,7 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
 
-    const [onVideoCall, setInVideoCall] = useState(false)
+    const [onVideoCall, setInVideoCall] = useState(true)
     const [showDisconnected, setShowDisconnected] = useState(false)
 
     const [showVideoAccept, setShowVideoAccept] = useState(false)
@@ -451,7 +451,7 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
                 if(!isMedia) {
                     const stream = await getMedia()
                     if (stream)
-                        setIsMedia(await setTracks(stream))
+                        setIsMedia(await setTracks())
                 }
 
                 console.log("[PC]: (ANSWER) Creating and Sending Answer")
@@ -541,8 +541,8 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
             <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
 
             <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall} showDisconnected={showDisconnected} isMaster={isMaster}/>
-            {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
-            {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept} caller={remoteUser}/>}
+            {showVideoCallingUI && <CallingUI setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
+            {showVideoAccept && <AcceptUI setContinueVideoAccept={setContinueVideoAccept} caller={remoteUser}/>}
         </Background>
     )
 }

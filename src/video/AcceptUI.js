@@ -7,7 +7,7 @@ import Modal from "../components/Modal"
 import styles from "../config/Styles"
 const { VideoAcceptButton, VideoDeclineButton } = styles
 
-const VideoAccept = ({ setContinueVideoAccept, caller }) => {
+const AcceptUI = ({ setContinueVideoAccept, caller }) => {
     const stopCallClickOutside = () => {
         // eslint-disable-next-line no-restricted-globals
         if (confirm("Are you sure you want to stop the call?"))
@@ -26,4 +26,4 @@ const VideoAccept = ({ setContinueVideoAccept, caller }) => {
     )
 }
 
-export default VideoAccept
+export default AcceptUI

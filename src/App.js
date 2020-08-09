@@ -13,7 +13,7 @@ import Login from "./users/Login"
 import Register from "./users/Register"
 import Profile from "./users/Profile"
 
-import VideoHub from "./video/VideoHub"
+import EnterVideo from "./video/EnterVideo"
 import VideoRoom from "./video/VideoRoom"
 
 import { ThemeProvider } from "styled-components"
@@ -109,7 +109,7 @@ export default function App() {
 
                         {showProfile && <Profile username={username} name={name} tokens={tokens} setShowProfile={setShowProfile} setLogout={setLogout}/>}
 
-                        {showVideo && <VideoHub setShowVideo={setShowVideo} username={username}/>}
+                        {showVideo && <EnterVideo setShowVideo={setShowVideo} username={username}/>}
                     </Route>
                 </Switch>
             </ThemeProvider>
