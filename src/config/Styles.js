@@ -212,7 +212,7 @@ const MessageBox = styled.div`
   background: ${props => props.theme.altBackground};
   border-radius: 16px;
   border: 2px solid ${props => props.theme.specialText};
-  height: 400px;
+  height: 350px;
   padding: 20px;
   margin-top: 20px;
   overflow: scroll;

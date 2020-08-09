@@ -533,12 +533,18 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
             {(room !== "beta") && <Redirect to="/"/>}
 
             <h1 style={{paddingTop: "15vh"}}>Video Room</h1>
-            <p>Room Name: {room} - User Name: {username}</p>
+            {/*<p>Room Name: {room} - User Name: {username}</p>*/}
 
             {(useWS && loggedIn) && <WS ws={ws} ID={ID} setID={setID} username={username} name={name} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleVideoReceivedMsg={handleVideoReceivedMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
 
-            <Userlist userlist={userlist} startCall={startCall}/>
-            <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
+            <div style={{width: "100%", display: "flex"}}>
+                <div style={{width: "30%"}}>
+                    <Userlist userlist={userlist} startCall={startCall}/>
+                </div>
+                <div style={{flexGrow: "1"}}>
+                    <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
+                </div>
+            </div>
 
             <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall} showDisconnected={showDisconnected} isMaster={isMaster}/>
             {showVideoCallingUI && <CallingUI setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
