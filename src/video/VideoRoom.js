@@ -38,7 +38,7 @@ const mediaConstraints = {
     }
 }
 
-const useWS = false //TODO CHANGE
+const useWS = true //TODO CHANGE
 const useTime = true
 
 //TODO: What happens when a 3rd one tries to call? Handle that.
@@ -52,7 +52,7 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
     const [isMedia, setIsMedia] = useState(false)
     //const [volume, setVolume] = useState(80)
 
-    const [onVideoCall, setInVideoCall] = useState(true)
+    const [onVideoCall, setInVideoCall] = useState(false)
     const [showDisconnected, setShowDisconnected] = useState(false)
 
     const [showVideoAccept, setShowVideoAccept] = useState(false)
