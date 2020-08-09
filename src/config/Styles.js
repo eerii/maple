@@ -45,7 +45,10 @@ const Background = styled.div`
   padding-right: 10vw;
   transition: 0.2s;
   background: ${props => props.theme.background};
-  min-height: 100vh;
+`
+
+const AltBackground = styled(Background)`
+  background: ${props => props.theme.specialText};
 `
 
 const Modal = styled.div`
@@ -111,6 +114,7 @@ const FormSubtext = styled.p`
   color: #c7c7d9;
   opacity: ${props => props.theme.opacity};
   transition: 0.3s;
+  margin-bottom: 0;
 `
 
 const MOOSE = styled.h1`
@@ -330,4 +334,4 @@ const TooltipContainer = styled.div`
   }
 `
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer}
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, AltBackground, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer}

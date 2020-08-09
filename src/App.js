@@ -9,17 +9,19 @@ import jwt from "jsonwebtoken"
 
 import Home from "./home/Home"
 import Toggles from "./home/Toggles"
+
 import Login from "./users/Login"
 import Register from "./users/Register"
 import Profile from "./users/Profile"
+import CompleteProfile from "./users/CompleteProfile"
 
 import EnterVideo from "./video/EnterVideo"
 import VideoRoom from "./video/VideoRoom"
 
 import { ThemeProvider } from "styled-components"
 import GlobalStyle from "./config/GlobalStyles"
-import { mooseTheme, lightTheme, darkTheme } from "./config/Styles"
-import styles from "./config/Styles"
+import styles, { mooseTheme, lightTheme, darkTheme } from "./config/Styles"
+import FAQ from "./info/FAQ";
 const { Background } = styles
 
 export default function App() {
@@ -39,6 +41,7 @@ export default function App() {
     const [username, setUsername] = useState()
     const [name, setName] = useState("")
     const [tokens, setTokens] = useState(0)
+    const [userStatus, setUserStatus] = useState(null)
     const [ID, setID] = useState(null)
 
     const [showProfile, setShowProfile] = useState(false)
@@ -55,6 +58,7 @@ export default function App() {
                     setUsername(decoded.username)
                     setName(decoded.name)
                     setTokens(decoded.tokens)
+                    setUserStatus(decoded.status)
                 } catch (e) {
                     console.log("Token Expired... Please log in again")
                     setLogout(true)
@@ -97,15 +101,19 @@ export default function App() {
                 <GlobalStyle/>
                 <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name}/>
                 {goHome && <Redirect push to="/"/>}
+                {loggedIn && userStatus === 1 && <CompleteProfile/>}
                 <Switch>
                     <Route exact path="/video/:room">
                         {loggedIn && <VideoRoom username={username} name={name} ID={ID} setID={setID} loggedIn={loggedIn}/>}
                         {!loggedIn && <Background/>}
                     </Route>
+                    <Route exact path="/faq">
+                        <FAQ/>
+                    </Route>
                     <Route path="/">
                         <Home setGoHome={setGoHome}/>
-                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setRegister={setRegister}/>}
-                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setLogin={setLogin}/>}
+                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setUserStatus={setUserStatus} setRegister={setRegister}/>}
+                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setUserStatus={setUserStatus} setLogin={setLogin}/>}
 
                         {showProfile && <Profile username={username} name={name} tokens={tokens} setShowProfile={setShowProfile} setLogout={setLogout}/>}
 

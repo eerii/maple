@@ -508,7 +508,7 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
                 if (useTime) {
                     sendSignal ({
                         type: "start-time",
-                        data: remoteID.current,
+                        data: remoteUser.current,
                         sender: username,
                         target: ID,
                     })
@@ -529,7 +529,7 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
     //Audio: <input type="range" min="1" max="100" value={volume} onChange={(event) => {setVolume(parseInt(event.target.value))}}/> Volume: {volume}
 
     return (
-        <Background>
+        <Background style={{minHeight: "100vh"}}>
             {(room !== "beta") && <Redirect to="/"/>}
 
             <h1 style={{paddingTop: "15vh"}}>Video Room</h1>
@@ -537,8 +537,8 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
 
             {(useWS && loggedIn) && <WS ws={ws} ID={ID} setID={setID} username={username} name={name} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleVideoReceivedMsg={handleVideoReceivedMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
 
-            <div style={{width: "100%", display: "flex"}}>
-                <div style={{width: "30%"}}>
+            <div style={{width: "100%", display: "flex", flexWrap: "wrap"}}>
+                <div style={{width: "30%", minWidth: "300px"}}>
                     <Userlist userlist={userlist} startCall={startCall}/>
                 </div>
                 <div style={{flexGrow: "1"}}>

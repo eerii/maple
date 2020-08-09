@@ -4,11 +4,11 @@ import Form from "./Form"
 
 import styles from "../config/Styles"
 
-const { MOOSE, Subtitle, Text, Background} = styles
+const { MOOSE, Subtitle, Text, Background } = styles
 
 const Header = () => {
     return (
-        <Background>
+        <Background style={{minHeight: "98vh"}}>
             <MOOSE>MOOSE</MOOSE>
             <Subtitle>Bank time,<br/>Exchange purpose.</Subtitle>
 
