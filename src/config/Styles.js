@@ -10,7 +10,8 @@ export const lightTheme = {
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
     buttonAlpha: 'rgba(73, 96, 249, 0.5)',
-    chatBubbleBorder: '2px solid #4960F9'
+    chatBubbleBorder: '2px solid #4960F9',
+    bubbleBackground: '#09183e',
 }
 
 export const darkTheme = {
@@ -23,7 +24,8 @@ export const darkTheme = {
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
     buttonAlpha: 'rgba(73, 96, 249, 0.5)',
-    chatBubbleBorder: 'none'
+    chatBubbleBorder: 'none',
+    bubbleBackground: '#4960F9',
 }
 
 export const mooseTheme = {
@@ -36,7 +38,8 @@ export const mooseTheme = {
     buttonPressedRim: '#09183e',
     buttonPressedText: '#09183e',
     buttonAlpha: 'rgba(255, 255, 255, 0.3)',
-    chatBubbleBorder: 'none'
+    chatBubbleBorder: 'none',
+    bubbleBackground: '#09183e',
 }
 
 const Background = styled.div`
@@ -335,12 +338,15 @@ const TooltipContainer = styled.div`
 `
 
 const Circle = styled.div`
-  display: block;
-  position: absolute;
-  width: 50px;
-  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${({radius}) => radius * 2}px;
+  height: ${({radius}) => radius * 2}px;
   border-radius: 50%;
-  background-color: #00CFFF;
+  background-color: ${({color, active, theme}) => active ? color : theme.bubbleBackground};
+  transition: all 0.4s;
+  cursor: pointer;
 `
 
 export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, AltBackground, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer, Circle}
