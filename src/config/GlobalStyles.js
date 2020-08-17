@@ -69,6 +69,33 @@ const GlobalStyle = createGlobalStyle`
       opacity: 1;
     }
   }
+  textarea {
+    border-radius: 8px;
+    border: 2px solid #c7c7d9;
+    background-color: #f3f4f8;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+    font-family: Lato, Open-Sans, Helvetica, Sans-Serif, sans-serif;
+  
+    ::placeholder {
+      color: ${props => props.theme.placeholder};
+      opacity: 1;
+    }
+  }
+  select {
+    border-radius: 8px;
+    border: 2px solid #c7c7d9;
+    background-color: #f3f4f8;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+  
+    ::placeholder {
+      color: ${props => props.theme.placeholder};
+      opacity: 1;
+    }
+  }
   video {
     background: ${props => props.theme.altBackground};
     border: 2px solid ${props => props.theme.specialText};

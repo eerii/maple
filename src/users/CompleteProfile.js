@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form"
 
 import Modal from "../components/Modal"
 import CircleSelector from "../components/CircleSelector"
+import CountrySelector from "../components/CountrySelector";
 
 const categories = 10
 const startRadius = 72
@@ -13,7 +14,7 @@ const codes = ["A","C","K","S","M","L","F","Mf","J","T"]
 //STAGE 0
 const WhatINeed = ({ selected, setSelected, handleButton, setWarning }) => {
     return (
-        <div style={{maxHeight: "90vh", overflow: "scroll"}}>
+        <div>
             <h1 style={{marginBottom: "8px"}}>What do you need from MOOSE?</h1>
             <p style={{marginTop: "0"}}>Please select from 3 to 5 categories so we can recommend you profiles you will love.</p>
 
@@ -28,7 +29,7 @@ const WhatINeed = ({ selected, setSelected, handleButton, setWarning }) => {
 //STAGE 1
 const WhatIOffer = ({ selected, setSelected, handleButton, setWarning }) => {
     return (
-        <div style={{maxHeight: "90vh", overflow: "scroll"}}>
+        <div>
             <h1 style={{marginBottom: "8px"}}>What can you offer MOOSE?</h1>
             <p style={{marginTop: "0"}}>We encourage all our users to share their talents and passions. We are sure you have some!</p>
 
@@ -128,11 +129,66 @@ const Birthdate = ({ stage, setStage }) => {
 }
 
 //STAGE 3
-const ExtraInformation = () => {
+const ExtraInformation = ({ stage, setStage }) => {
+    const { register, handleSubmit, errors, clearErrors } = useForm({ mode: "onBlur" })
+
+    const handleNext = (data) => {
+        sessionStorage.setItem("ProfileCompletion" + stage, JSON.stringify(data))
+        setStage(stage + 1)
+    }
+
     return (
         <div>
             <h1 style={{marginBottom: "8px"}}>You're almost there!</h1>
             <p style={{marginTop: "0"}}>This is just optional information to complete your profile. Feel free to skip this section.</p>
+
+            <form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
+                <div style={{width: "600px", textAlign: "left"}}>
+                    <h4 style={{margin: "4px 0"}}>Fun fact about you</h4>
+                    <input
+                        type="text"
+                        name="FunFact"
+                        placeholder="I love koalas <3"
+                        onChange={() => clearErrors()}
+                        ref={register()}
+                        style={{borderColor: errors.FunFact && "#FA6B80", width: "calc(100% - 44px)", marginBottom: "16px"}}
+                        maxLength="128"
+                    />
+                    <h4 style={{margin: "4px 0"}}>Bio</h4>
+                    <textarea
+                        name="Bio"
+                        placeholder="My experience in cooking is..."
+                        rows="5"
+                        onChange={() => clearErrors()}
+                        ref={register()}
+                        style={{borderColor: errors.FunFact && "#FA6B80", width: "calc(100% - 44px)", size: "4", marginBottom: "16px", resize: "vertical", maxHeight: "400px"}}
+                        maxLength="2048"
+                    />
+                    <h4 style={{margin: "4px 0"}}>Country</h4>
+                    <select
+                        name="Country"
+                        defaultValue=""
+                        onChange={() => clearErrors()}
+                        ref={register()}
+                        style={{borderColor: errors.FunFact && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                    >
+                        <option value="">Select one...</option>
+                        <CountrySelector/>
+                    </select>
+                </div>
+                <div style={{width: "100%", marginBottom: "4px"}}>
+                    <button type="submit">Next</button>
+                </div>
+            </form>
+        </div>
+    )
+}
+
+//STAGE 4
+const SendToServer = () => {
+    return (
+        <div>
+            <h1>Saving...</h1>
         </div>
     )
 }
@@ -153,7 +209,7 @@ const Warning = ({ warning, setVisible }) => {
 }
 
 const CompleteProfile = () => {
-    const [stage, setStage] = useState(3)
+    const [stage, setStage] = useState(0)
     const [warning, setWarning] = useState(null)
 
     const [selectedNeed, setSelectedNeed] = useState(new Array(categories).fill(false))
@@ -182,10 +238,13 @@ const CompleteProfile = () => {
     return (
         <div>
             <Modal setVisible={() => {}} width="900px">
-                {stage === 0 && <WhatINeed selected={selectedNeed} setSelected={setSelectedNeed} handleButton={handleButton} setWarning={setWarning}/>}
-                {stage === 1 && <WhatIOffer selected={selectedOffer} setSelected={setSelectedOffer} handleButton={handleButton} setWarning={setWarning}/>}
-                {stage === 2 && <Birthdate stage={stage} setStage={setStage}/>}
-                {stage === 3 && <ExtraInformation/>}
+                <div style={{maxHeight: "90vh", overflow: "scroll"}}>
+                    {stage === 0 && <WhatINeed selected={selectedNeed} setSelected={setSelectedNeed} handleButton={handleButton} setWarning={setWarning}/>}
+                    {stage === 1 && <WhatIOffer selected={selectedOffer} setSelected={setSelectedOffer} handleButton={handleButton} setWarning={setWarning}/>}
+                    {stage === 2 && <Birthdate stage={stage} setStage={setStage}/>}
+                    {stage === 3 && <ExtraInformation stage={stage} setStage={setStage}/>}
+                    {stage === 4 && <SendToServer/>}
+                </div>
             </Modal>
             {warning && <Warning warning={warning} setVisible={setWarning}/>}
         </div>
