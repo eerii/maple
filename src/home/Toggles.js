@@ -20,12 +20,12 @@ const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProf
     return (
         <ToggleDiv>
             <ToggleTheme
-                onClick={() => { loggedIn ?
-                    ((location.pathname.startsWith("/video/")) ? setGoHome(true) : setShowVideo(true)) :
-                    setLogin(true) }}>
-                {(location.pathname.startsWith("/video/")) ?
-                    <p style={{margin: "0"}}>Home  <Emoji symbol="🏠️" label="Home"/></p> :
-                    <p style={{margin: "0"}}>Video  <Emoji symbol="🧑🏽‍💻️" label="Video"/></p>}
+                onClick={() => { (location.pathname === "/") ?
+                    (loggedIn ? setShowVideo(true) : setLogin(true)) :
+                    setGoHome(true)}}>
+                {(location.pathname === "/") ?
+                    <p style={{margin: "0"}}>Video  <Emoji symbol="🧑🏽‍💻️" label="Video"/></p> :
+                    <p style={{margin: "0"}}>Home  <Emoji symbol="🏠️" label="Home"/></p>}
             </ToggleTheme>
 
             <ToggleTheme

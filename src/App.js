@@ -3,7 +3,7 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Redirect
+    Redirect, useLocation
 } from "react-router-dom"
 import jwt from "jsonwebtoken"
 
@@ -46,6 +46,9 @@ export default function App() {
 
     const [showProfile, setShowProfile] = useState(false)
 
+    const location = useLocation()
+    const allowedLocations = ["/", "/faq"]
+
     //VERIFY TOKEN
     useEffect(() => {
         (async () => {
@@ -81,12 +84,13 @@ export default function App() {
 
     useEffect(() => {
         if (!loggedIn) {
-            goHomeTimer.current = setTimeout(() => setGoHome(true), 500)
+            if (!allowedLocations.every((l) => location.pathname.startsWith(l)))
+                goHomeTimer.current = setTimeout(() => setGoHome(true), 500)
         } else {
             clearTimeout(goHomeTimer.current)
             goHomeTimer.current = null
         }
-    }, [loggedIn])
+    }, [loggedIn, allowedLocations, location.pathname])
 
     //CLEAN WHEN GOING HOME
     useEffect(() => {
@@ -111,7 +115,7 @@ export default function App() {
                         <FAQ/>
                     </Route>
                     <Route path="/">
-                        <Home setGoHome={setGoHome}/>
+                        <Home/>
                         {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setUserStatus={setUserStatus} setRegister={setRegister}/>}
                         {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setUserStatus={setUserStatus} setLogin={setLogin}/>}
 

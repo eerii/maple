@@ -9,6 +9,7 @@ const GlobalStyle = createGlobalStyle`
   p {
     font-size: 16px;
     color: ${props => props.theme.text};
+    line-height: 1.6;
   }
   h1 {
     color: ${props => props.theme.text};
