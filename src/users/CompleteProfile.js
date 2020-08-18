@@ -1,9 +1,10 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import { useForm } from "react-hook-form"
 
 import Modal from "../components/Modal"
 import CircleSelector from "../components/CircleSelector"
 import CountrySelector from "../components/CountrySelector";
+import axios from "axios";
 
 const categories = 10
 const startRadius = 72
@@ -185,7 +186,63 @@ const ExtraInformation = ({ stage, setStage }) => {
 }
 
 //STAGE 4
-const SendToServer = () => {
+const SendToServer = ({ setUserStatus }) => {
+    useEffect(() => {
+        (async () => {
+            console.log("Updating User...")
+
+            //Get data from session
+            const need = sessionStorage.getItem("ProfileCompletion0")
+            const offer = sessionStorage.getItem("ProfileCompletion1")
+            const birthdate = sessionStorage.getItem("ProfileCompletion2")
+            const extra = JSON.parse(sessionStorage.getItem("ProfileCompletion3"))
+            let funfact, bio, country
+            if (extra){
+                funfact = extra.FunFact
+                bio = extra.Bio
+                country = extra.Country
+            }
+
+            if (need && offer && birthdate) {
+                const token = localStorage.getItem("Token")
+                if (token === null)
+                    console.log("ERROR: NOT AUTHORIZED")
+
+                const headers = {
+                    'Authorization': `Bearer ${token}`
+                }
+
+                try {
+                    const post = await axios.post(
+                        process.env.REACT_APP_URL + "/api/modifyUser", {
+                            need,
+                            offer,
+                            birthdate,
+                            funfact,
+                            bio,
+                            country,
+                            status: 2
+                        }, { headers: headers })
+
+                    localStorage.setItem("Token", post.data.token)
+
+                    sessionStorage.removeItem("ProfileCompletion0")
+                    sessionStorage.removeItem("ProfileCompletion1")
+                    sessionStorage.removeItem("ProfileCompletion2")
+                    sessionStorage.removeItem("ProfileCompletion3")
+
+                    setUserStatus(2)
+
+                    console.log("Done!")
+                } catch (e) {
+                    console.log("ERROR: " + e.message)
+                }
+            } else {
+                console.log("ERROR: Required data not found")
+            }
+        })()
+    }, [setUserStatus])
+
     return (
         <div>
             <h1>Saving...</h1>
@@ -208,7 +265,7 @@ const Warning = ({ warning, setVisible }) => {
     )
 }
 
-const CompleteProfile = () => {
+const CompleteProfile = ({ setUserStatus }) => {
     const [stage, setStage] = useState(0)
     const [warning, setWarning] = useState(null)
 
@@ -243,7 +300,7 @@ const CompleteProfile = () => {
                     {stage === 1 && <WhatIOffer selected={selectedOffer} setSelected={setSelectedOffer} handleButton={handleButton} setWarning={setWarning}/>}
                     {stage === 2 && <Birthdate stage={stage} setStage={setStage}/>}
                     {stage === 3 && <ExtraInformation stage={stage} setStage={setStage}/>}
-                    {stage === 4 && <SendToServer/>}
+                    {stage === 4 && <SendToServer setUserStatus={setUserStatus}/>}
                 </div>
             </Modal>
             {warning && <Warning warning={warning} setVisible={setWarning}/>}

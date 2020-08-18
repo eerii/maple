@@ -40,7 +40,6 @@ export default function App() {
 
     const [username, setUsername] = useState()
     const [name, setName] = useState("")
-    const [tokens, setTokens] = useState(0)
     const [userStatus, setUserStatus] = useState(null)
     const [ID, setID] = useState(null)
 
@@ -60,7 +59,6 @@ export default function App() {
                     setLoggedIn(true)
                     setUsername(decoded.username)
                     setName(decoded.name)
-                    setTokens(decoded.tokens)
                     setUserStatus(decoded.status)
                 } catch (e) {
                     console.log("Token Expired... Please log in again")
@@ -84,7 +82,7 @@ export default function App() {
 
     useEffect(() => {
         if (!loggedIn) {
-            if (!allowedLocations.every((l) => location.pathname.startsWith(l)))
+            if (!allowedLocations.every((l) => location.pathname.startsWith(l)) && goHomeTimer.current === null)
                 goHomeTimer.current = setTimeout(() => setGoHome(true), 500)
         } else {
             clearTimeout(goHomeTimer.current)
@@ -105,7 +103,7 @@ export default function App() {
                 <GlobalStyle/>
                 <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name}/>
                 {goHome && <Redirect push to="/"/>}
-                {loggedIn && userStatus === 0 && <CompleteProfile/>}
+                {loggedIn && userStatus === 1 && <CompleteProfile setUserStatus={setUserStatus}/>}
                 <Switch>
                     <Route exact path="/video/:room">
                         {loggedIn && <VideoRoom username={username} name={name} ID={ID} setID={setID} loggedIn={loggedIn}/>}
@@ -116,10 +114,10 @@ export default function App() {
                     </Route>
                     <Route path="/">
                         <Home/>
-                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setUserStatus={setUserStatus} setRegister={setRegister}/>}
-                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setTokens={setTokens} setUserStatus={setUserStatus} setLogin={setLogin}/>}
+                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/>}
+                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setLogin={setLogin}/>}
 
-                        {showProfile && <Profile username={username} name={name} tokens={tokens} setShowProfile={setShowProfile} setLogout={setLogout}/>}
+                        {showProfile && <Profile username={username} name={name} setShowProfile={setShowProfile} setLogout={setLogout}/>}
 
                         {showVideo && <EnterVideo setShowVideo={setShowVideo} username={username}/>}
                     </Route>

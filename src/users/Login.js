@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 
 import Modal from "../components/Modal"
 
-const Login = ({setLogin, setLoggedIn, setUsername, setName, setTokens, setUserStatus, setRegister}) => {
+const Login = ({setLogin, setLoggedIn, setUsername, setName, setUserStatus, setRegister}) => {
     const [user, setUser] = useState("")
     const [pass, setPass] = useState("")
     const [accept, setAccept] = useState(false) //Honeypot
@@ -34,7 +34,6 @@ const Login = ({setLogin, setLoggedIn, setUsername, setName, setTokens, setUserS
 
                 const decoded = await jwt.verify(login.data.token, process.env.REACT_APP_SECRET)
                 setName(decoded.name)
-                setTokens(decoded.tokens)
                 setUserStatus(decoded.status)
             } catch (e) {
                 setButtonText("Error")
