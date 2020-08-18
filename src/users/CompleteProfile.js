@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react"
 import { useForm } from "react-hook-form"
+import axios from "axios"
 
 import Modal from "../components/Modal"
 import CircleSelector from "../components/CircleSelector"
-import CountrySelector from "../components/CountrySelector";
-import axios from "axios";
+import CountrySelector from "../components/CountrySelector"
+
+import {getCategories} from "../config/Categories"
+const [codes, names, colors] = getCategories()
 
 const categories = 10
 const startRadius = 72
-const colors = ["#f33e7b","#f85a56","#ee8649","#FFC825","#5ABD5D","#3926c6","#2a45e3","#2e8bf8","#29bbff","#5cddb8"]
-const names = ["Arts", "Crafts and:Home", "Cooking", "Help with:School", "Music and:Movies", "Language:Learning", "Fitness", "Mindfulness", "Just for:Fun", "Technology"]
-const codes = ["A","C","K","S","M","L","F","Mf","J","T"]
 
 //STAGE 0
 const WhatINeed = ({ selected, setSelected, handleButton, setWarning }) => {
