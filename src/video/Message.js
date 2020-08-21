@@ -57,7 +57,7 @@ const MessageBox = ({ sendSignal, username, messageInput, messageButton, message
                     placeholder="Enter a message to send"
                     disabled
                 />
-                <button type="submit" ref={messageButton}>Send</button>
+                <button type="submit" ref={messageButton} disabled>Send</button>
             </form>
             <FormSubtext theme={showText ? {opacity: 100} : {opacity: 0}}>All the members of the room will be able to see this message.</FormSubtext>
             <br/>

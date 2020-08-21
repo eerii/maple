@@ -5,10 +5,10 @@ import WS from "./WebSocket"
 import Userlist from "./Userlist"
 import MessageBox from "./Message"
 import VideoFrame from "./VideoFrame"
-import VideoAccept from "./VideoAccept"
+import AcceptUI from "./AcceptUI"
 
 import styles from "../config/Styles"
-import VideoCalling from "./VideoCalling";
+import CallingUI from "./CallingUI";
 const { Background } = styles
 
 const TurnConfig = {
@@ -451,7 +451,7 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
                 if(!isMedia) {
                     const stream = await getMedia()
                     if (stream)
-                        setIsMedia(await setTracks(stream))
+                        setIsMedia(await setTracks())
                 }
 
                 console.log("[PC]: (ANSWER) Creating and Sending Answer")
@@ -508,7 +508,7 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
                 if (useTime) {
                     sendSignal ({
                         type: "start-time",
-                        data: remoteID.current,
+                        data: remoteUser.current,
                         sender: username,
                         target: ID,
                     })
@@ -529,20 +529,26 @@ const VideoRoom = ({ username, name, ID, setID, loggedIn }) => {
     //Audio: <input type="range" min="1" max="100" value={volume} onChange={(event) => {setVolume(parseInt(event.target.value))}}/> Volume: {volume}
 
     return (
-        <Background>
+        <Background style={{minHeight: "100vh"}}>
             {(room !== "beta") && <Redirect to="/"/>}
 
             <h1 style={{paddingTop: "15vh"}}>Video Room</h1>
-            <p>Room Name: {room} - User Name: {username}</p>
+            {/*<p>Room Name: {room} - User Name: {username}</p>*/}
 
             {(useWS && loggedIn) && <WS ws={ws} ID={ID} setID={setID} username={username} name={name} userlist={userlist} setUserlist={setUserlist} messageButton={messageButton} messageInput={messageInput} messageList={messageList} setMessageList={setMessageList} messageBox={messageBox} handleVideoOfferMsg={handleVideoOfferMsg} handleVideoReceivedMsg={handleVideoReceivedMsg} handleICECandidateMsg={handleICECandidateMsg} handleVideoAnswerMsg={handleVideoAnswerMsg} handleHangUpMsg={handleHangUpMsg}/>}
 
-            <Userlist userlist={userlist} startCall={startCall}/>
-            <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
+            <div style={{width: "100%", display: "flex", flexWrap: "wrap"}}>
+                <div style={{width: "30%", minWidth: "300px"}}>
+                    <Userlist userlist={userlist} startCall={startCall}/>
+                </div>
+                <div style={{flexGrow: "1"}}>
+                    <MessageBox sendSignal={sendSignal} username={username} messageInput={messageInput} messageButton={messageButton} messageList={messageList} messageBox={messageBox}/>
+                </div>
+            </div>
 
             <VideoFrame style={{zIndex: "1000"}} remoteID={remoteID} stopCall={stopCall} remoteVideo={remoteVideo} localVideo={localVideo} hangupButton={hangupButton} onVideoCall={onVideoCall} showDisconnected={showDisconnected} isMaster={isMaster}/>
-            {showVideoCallingUI && <VideoCalling setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
-            {showVideoAccept && <VideoAccept setContinueVideoAccept={setContinueVideoAccept} caller={remoteUser}/>}
+            {showVideoCallingUI && <CallingUI setShowVideoCallingUI={setShowVideoCallingUI} stopCall={stopCall} status={videoCallStartStatus} callingID={remoteID.current} callingUser={remoteUser}/>}
+            {showVideoAccept && <AcceptUI setContinueVideoAccept={setContinueVideoAccept} caller={remoteUser}/>}
         </Background>
     )
 }

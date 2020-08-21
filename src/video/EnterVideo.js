@@ -5,7 +5,7 @@ import Modal from "../components/Modal"
 
 import {isFirefox, isChrome, isEdge, isSafari} from "../components/DetectBrowser"
 
-const VideoHub = ({ setShowVideo, username }) => {
+const EnterVideo = ({ setShowVideo, username }) => {
     const [redirect, setRedirect] = useState(false)
     const [unsupported, setUnsupported] = useState(null)
 
@@ -57,4 +57,4 @@ const VideoHub = ({ setShowVideo, username }) => {
     )
 }
 
-export default VideoHub
+export default EnterVideo

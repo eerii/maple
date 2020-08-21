@@ -5,25 +5,29 @@ export const lightTheme = {
     text: '#09183e',
     background: '#f8f8f8',
     altBackground: '#f8f8f8',
+    togglesBackground: 'rgba(245,209,160,0.8)',
     placeholder: '#c7c7d9',
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
-    buttonAlpha: 'rgba(73, 96, 249, 0.5)',
-    chatBubbleBorder: '2px solid #4960F9'
+    buttonAlpha: 'rgba(255, 255, 255, 0.5)',
+    chatBubbleBorder: '2px solid #4960F9',
+    bubbleBackground: '#09183e',
 }
 
 export const darkTheme = {
     specialText: '#FAC172',
     text: '#FAFAFA',
     background: '#09183e',
-    altBackground: '#4960F9',
+    altBackground: '#4960f9',
+    togglesBackground: 'rgba(60,78,200,0.8)',
     placeholder: '#c7c7d9',
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
-    buttonAlpha: 'rgba(73, 96, 249, 0.5)',
-    chatBubbleBorder: 'none'
+    buttonAlpha: 'rgba(119,135,245,0.5)',
+    chatBubbleBorder: 'none',
+    bubbleBackground: '#4960F9',
 }
 
 export const mooseTheme = {
@@ -31,12 +35,14 @@ export const mooseTheme = {
     text: '#FAFAFA',
     background: '#4960F9',
     altBackground: '#09183e',
+    togglesBackground: 'rgba(60,78,200,0.8)',
     placeholder: '#c7c7d9',
     buttonPressed: '#fac172',
     buttonPressedRim: '#09183e',
     buttonPressedText: '#09183e',
     buttonAlpha: 'rgba(255, 255, 255, 0.3)',
-    chatBubbleBorder: 'none'
+    chatBubbleBorder: 'none',
+    bubbleBackground: '#09183e',
 }
 
 const Background = styled.div`
@@ -45,7 +51,10 @@ const Background = styled.div`
   padding-right: 10vw;
   transition: 0.2s;
   background: ${props => props.theme.background};
-  min-height: 100vh;
+`
+
+const AltBackground = styled(Background)`
+  background: ${props => props.theme.specialText};
 `
 
 const Modal = styled.div`
@@ -80,8 +89,15 @@ const ModalVideo = styled(ModalContent)`
 const ToggleDiv = styled.div`
   position: fixed;
   right: 10vw;
-  top: 40px;
+  top: 60px;
   z-index: 10;
+  border-radius: 32px;
+  padding: 4px;
+  background: ${props => props.theme.togglesBackground};
+`
+
+const ToggleText = styled.span`
+  color: ${props => props.theme.text};
 `
 
 const ToggleTheme = styled.button`
@@ -89,7 +105,6 @@ const ToggleTheme = styled.button`
   border: none;
   padding:12px 12px;
   transition: 0.3s;
-  margin-top: 20px;
   border-radius: 24px;
   box-shadow: none;
   transform: translateY(0px);
@@ -111,6 +126,7 @@ const FormSubtext = styled.p`
   color: #c7c7d9;
   opacity: ${props => props.theme.opacity};
   transition: 0.3s;
+  margin-bottom: 0;
 `
 
 const MOOSE = styled.h1`
@@ -140,10 +156,14 @@ const Warning = styled.p`
   margin: 0;
 `
 
+const BottomBar = styled(Warning)`
+  background: ${props => props.theme.altBackground};
+  color: ${props => props.theme.text};
+`
+
 const LocalVideo = styled.video`
   width: 20vw;
   transform: scale(-1, 1);
-  
 `
 
 const RemoteVideo = styled.video`
@@ -212,7 +232,7 @@ const MessageBox = styled.div`
   background: ${props => props.theme.altBackground};
   border-radius: 16px;
   border: 2px solid ${props => props.theme.specialText};
-  height: 400px;
+  height: 350px;
   padding: 20px;
   margin-top: 20px;
   overflow: scroll;
@@ -330,4 +350,22 @@ const TooltipContainer = styled.div`
   }
 `
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer}
+const Circle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${({radius}) => radius * 2}px;
+  height: ${({radius}) => radius * 2}px;
+  border-radius: 50%;
+  background-color: ${({color, active, theme}) => active ? color : theme.bubbleBackground};
+  transition: all 0.4s;
+  cursor: pointer;
+`
+
+const LinkText = styled.span`
+  text-decoration: underline;
+  cursor: pointer;
+  color: ${props => props.theme.specialText};
+`
+
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, AltBackground, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, ToggleText, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer, Circle, BottomBar, LinkText}

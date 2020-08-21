@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom"
 import Emoji from "../components/Emoji"
 import styles from "../config/Styles"
 
-const { ToggleTheme, ToggleDiv } = styles
+const { ToggleTheme, ToggleDiv, ToggleText } = styles
 const themes = ["light", "moose", "dark"]
 
 const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProfile, setGoHome, name}) => {
@@ -20,17 +20,17 @@ const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProf
     return (
         <ToggleDiv>
             <ToggleTheme
-                onClick={() => { loggedIn ?
-                    ((location.pathname.startsWith("/video/")) ? setGoHome(true) : setShowVideo(true)) :
-                    setLogin(true) }}>
-                {(location.pathname.startsWith("/video/")) ?
-                    <p style={{margin: "0"}}>Home  <Emoji symbol="🏠️" label="Home"/></p> :
-                    <p style={{margin: "0"}}>Video  <Emoji symbol="🧑🏽‍💻️" label="Video"/></p>}
+                onClick={() => { (location.pathname === "/") ?
+                    (loggedIn ? setShowVideo(true) : setLogin(true)) :
+                    setGoHome(true)}}>
+                {(location.pathname === "/") ?
+                    <ToggleText style={{margin: "0"}}>Video  <Emoji symbol="🧑🏽‍💻️" label="Video"/></ToggleText> :
+                    <ToggleText style={{margin: "0"}}>Home  <Emoji symbol="🏠️" label="Home"/></ToggleText>}
             </ToggleTheme>
 
             <ToggleTheme
                 onClick={() => { loggedIn ? setShowProfile(true) : setLogin(true) }}>
-                {loggedIn ? <p style={{margin: "0"}}>{name}  <Emoji symbol="🙋🏽" label="Profile"/></p> : <p style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></p>}
+                {loggedIn ? <ToggleText style={{margin: "0"}}>{name}  <Emoji symbol="🙋🏽" label="Profile"/></ToggleText> : <p style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></p>}
             </ToggleTheme>
 
             <ToggleTheme

@@ -56,7 +56,7 @@ const Form = () => {
                     onChange={({ target }) => setAccept(target.checked)}
                     placeholder="I accept the Terms of Service."
                 />
-                <button style={{marginRight: "16px"}} type="submit">{buttonText}</button>
+                <button style={{marginLeft: "16px"}} type="submit">{buttonText}</button>
             </form>
 
             {error}

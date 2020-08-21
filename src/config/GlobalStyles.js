@@ -9,6 +9,7 @@ const GlobalStyle = createGlobalStyle`
   p {
     font-size: 16px;
     color: ${props => props.theme.text};
+    line-height: 1.6;
   }
   h1 {
     color: ${props => props.theme.text};
@@ -62,6 +63,20 @@ const GlobalStyle = createGlobalStyle`
     font-size: 18px;
     font-weight: bold;
     padding: 10px 20px;
+  
+    ::placeholder {
+      color: ${props => props.theme.placeholder};
+      opacity: 1;
+    }
+  }
+  textarea {
+    border-radius: 8px;
+    border: 2px solid #c7c7d9;
+    background-color: #f3f4f8;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+    font-family: Lato, Open-Sans, Helvetica, Sans-Serif, sans-serif;
   
     ::placeholder {
       color: ${props => props.theme.placeholder};
