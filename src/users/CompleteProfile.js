@@ -4,7 +4,8 @@ import axios from "axios"
 
 import Modal from "../components/Modal"
 import CircleSelector from "../components/CircleSelector"
-import CountrySelector from "../components/CountrySelector"
+
+import MapSelector from "../components/MapSelector.js"
 
 import {getCategories} from "../config/Categories"
 const [codes, names, colors] = getCategories()
@@ -130,6 +131,55 @@ const Birthdate = ({ stage, setStage }) => {
 }
 
 //STAGE 3
+const Locale = ({ stage, setStage }) => {
+
+    /*const handleNext = (data) => {
+        sessionStorage.setItem("ProfileCompletion" + stage, JSON.stringify(data))
+        setStage(stage + 1)
+    }*/
+
+    return (
+        <div>
+            <h1 style={{marginBottom: "8px"}}>Country and Languages</h1>
+            <p style={{marginTop: "0"}}>This is just optional information to complete your profile. Feel free to skip this section.</p>
+
+            {/*<form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
+                <div style={{width: "600px", textAlign: "left"}}>
+                    <h4 style={{margin: "4px 0"}}>First Language</h4>
+                    <select
+                        name="Language"
+                        defaultValue=""
+                        onChange={() => clearErrors()}
+                        ref={register()}
+                        style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                    >
+                        <option value="">Select one...</option>
+                        <LanguageSelector/>
+                    </select>
+
+                    <h4 style={{margin: "4px 0"}}>Other Languages</h4>
+                    <select
+                        name="OtherLanguages"
+                        defaultValue=""
+                        onChange={() => clearErrors()}
+                        ref={register()}
+                        style={{borderColor: errors.OtherLanguages && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                    >
+                        <option value="">Select one...</option>
+                        <LanguageSelector/>
+                    </select>
+                </div>
+                <div style={{width: "100%", marginBottom: "4px"}}>
+                    <button type="submit">Next</button>
+                </div>
+            </form>*/}
+
+            <MapSelector/>
+        </div>
+    )
+}
+
+//STAGE 4
 const ExtraInformation = ({ stage, setStage }) => {
     const { register, handleSubmit, errors, clearErrors } = useForm({ mode: "onBlur" })
 
@@ -162,20 +212,9 @@ const ExtraInformation = ({ stage, setStage }) => {
                         rows="5"
                         onChange={() => clearErrors()}
                         ref={register()}
-                        style={{borderColor: errors.FunFact && "#FA6B80", width: "calc(100% - 44px)", size: "4", marginBottom: "16px", resize: "vertical", maxHeight: "400px"}}
+                        style={{borderColor: errors.Bio && "#FA6B80", width: "calc(100% - 44px)", size: "4", marginBottom: "16px", resize: "vertical", maxHeight: "400px"}}
                         maxLength="2048"
                     />
-                    <h4 style={{margin: "4px 0"}}>Country</h4>
-                    <select
-                        name="Country"
-                        defaultValue=""
-                        onChange={() => clearErrors()}
-                        ref={register()}
-                        style={{borderColor: errors.FunFact && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
-                    >
-                        <option value="">Select one...</option>
-                        <CountrySelector/>
-                    </select>
                 </div>
                 <div style={{width: "100%", marginBottom: "4px"}}>
                     <button type="submit">Next</button>
@@ -185,7 +224,7 @@ const ExtraInformation = ({ stage, setStage }) => {
     )
 }
 
-//STAGE 4
+//STAGE 5
 const SendToServer = ({ setUserStatus }) => {
     useEffect(() => {
         (async () => {
@@ -195,12 +234,18 @@ const SendToServer = ({ setUserStatus }) => {
             const need = sessionStorage.getItem("ProfileCompletion0")
             const offer = sessionStorage.getItem("ProfileCompletion1")
             const birthdate = sessionStorage.getItem("ProfileCompletion2")
-            const extra = JSON.parse(sessionStorage.getItem("ProfileCompletion3"))
-            let funfact, bio, country
+            const locale = JSON.parse(sessionStorage.getItem("ProfileCompletion3"))
+            const extra = JSON.parse(sessionStorage.getItem("ProfileCompletion4"))
+            let country, language, otherLanguages
+            if (locale){
+                country = locale.Country
+                language = locale.Language
+                otherLanguages = locale.OtherLanguages
+            }
+            let funfact, bio
             if (extra){
                 funfact = extra.FunFact
                 bio = extra.Bio
-                country = extra.Country
             }
 
             if (need && offer && birthdate) {
@@ -221,6 +266,8 @@ const SendToServer = ({ setUserStatus }) => {
                             funfact,
                             bio,
                             country,
+                            language,
+                            otherLanguages,
                             status: 2
                         }, { headers: headers })
 
@@ -266,7 +313,7 @@ const Warning = ({ warning, setVisible }) => {
 }
 
 const CompleteProfile = ({ setUserStatus }) => {
-    const [stage, setStage] = useState(0)
+    const [stage, setStage] = useState(3)
     const [warning, setWarning] = useState(null)
 
     const [selectedNeed, setSelectedNeed] = useState(new Array(categories).fill(false))
@@ -299,8 +346,9 @@ const CompleteProfile = ({ setUserStatus }) => {
                     {stage === 0 && <WhatINeed selected={selectedNeed} setSelected={setSelectedNeed} handleButton={handleButton} setWarning={setWarning}/>}
                     {stage === 1 && <WhatIOffer selected={selectedOffer} setSelected={setSelectedOffer} handleButton={handleButton} setWarning={setWarning}/>}
                     {stage === 2 && <Birthdate stage={stage} setStage={setStage}/>}
-                    {stage === 3 && <ExtraInformation stage={stage} setStage={setStage}/>}
-                    {stage === 4 && <SendToServer setUserStatus={setUserStatus}/>}
+                    {stage === 3 && <Locale stage={stage} setStage={setStage}/>}
+                    {stage === 4 && <ExtraInformation stage={stage} setStage={setStage}/>}
+                    {stage === 5 && <SendToServer setUserStatus={setUserStatus}/>}
                 </div>
             </Modal>
             {warning && <Warning warning={warning} setVisible={setWarning}/>}

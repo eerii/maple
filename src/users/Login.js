@@ -3,6 +3,8 @@ import axios from "axios"
 import jwt from "jsonwebtoken"
 
 import Modal from "../components/Modal"
+import styles from "../config/Styles"
+const { LinkText } = styles
 
 const Login = ({setLogin, setLoggedIn, setUsername, setName, setUserStatus, setRegister}) => {
     const [user, setUser] = useState("")
@@ -75,11 +77,11 @@ const Login = ({setLogin, setLoggedIn, setUsername, setName, setUserStatus, setR
                 />
                 <p>Only MOOSE beta users can register at this time.</p>
                 <div>
-                    <button style={{margin: "10px"}} onClick={() => {
+                    <button style={{margin: "10px"}} type="submit">{buttonText}</button>
+                    <LinkText onClick={() => {
                         setRegister(true)
                         setLogin(false)
-                    }}>Register</button>
-                    <button style={{margin: "10px"}} type="submit">{buttonText}</button>
+                    }}>or Register</LinkText>
                 </div>
             </form>
         </Modal>

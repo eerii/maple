@@ -10,6 +10,9 @@ import jwt from "jsonwebtoken"
 import Home from "./home/Home"
 import Toggles from "./home/Toggles"
 
+import FAQ from "./info/FAQ"
+import BottomBar from "./info/BottomBar"
+
 import Login from "./users/Login"
 import Register from "./users/Register"
 import Profile from "./users/Profile"
@@ -21,7 +24,6 @@ import VideoRoom from "./video/VideoRoom"
 import { ThemeProvider } from "styled-components"
 import GlobalStyle from "./config/GlobalStyles"
 import styles, { mooseTheme, lightTheme, darkTheme } from "./config/Styles"
-import FAQ from "./info/FAQ";
 const { Background } = styles
 
 export default function App() {
@@ -103,7 +105,7 @@ export default function App() {
                 <GlobalStyle/>
                 <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name}/>
                 {goHome && <Redirect push to="/"/>}
-                {loggedIn && userStatus === 1 && <CompleteProfile setUserStatus={setUserStatus}/>}
+                {loggedIn && userStatus === 2 && <CompleteProfile setUserStatus={setUserStatus}/>}
                 <Switch>
                     <Route exact path="/video/:room">
                         {loggedIn && <VideoRoom username={username} name={name} ID={ID} setID={setID} loggedIn={loggedIn}/>}
@@ -122,6 +124,7 @@ export default function App() {
                         {showVideo && <EnterVideo setShowVideo={setShowVideo} username={username}/>}
                     </Route>
                 </Switch>
+                <BottomBar/>
             </ThemeProvider>
         </Router>
     )

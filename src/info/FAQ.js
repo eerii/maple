@@ -22,7 +22,7 @@ const FAQ = () => {
     return (
         <Background style={{padding: "15vh 48px", display: "flex", justifyContent: "center"}}>
             <div style={{maxWidth: "900px"}}>
-                <h1>Frequent Asked Questions</h1>
+                <h1>Frequently Asked Questions</h1>
 
                 <Question title={"What is MOOSE?"} number={1}>
                     MOOSE is a global community of people who share their <Link smooth to={"/faq#question" + 2}><b>skills</b></Link> in exchange for <Link smooth to={"/faq#question" + 3}><b>Time Tokens</b></Link>. At MOOSE, we believe that when you share, it should be fair. This philosophy simply means that you can redeem your Time Tokens for absolutely any skill on offer that you might need in return!

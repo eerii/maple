@@ -156,6 +156,11 @@ const Warning = styled.p`
   margin: 0;
 `
 
+const BottomBar = styled(Warning)`
+  background: ${props => props.theme.altBackground};
+  color: ${props => props.theme.text};
+`
+
 const LocalVideo = styled.video`
   width: 20vw;
   transform: scale(-1, 1);
@@ -357,4 +362,10 @@ const Circle = styled.div`
   cursor: pointer;
 `
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, AltBackground, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, ToggleText, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer, Circle}
+const LinkText = styled.span`
+  text-decoration: underline;
+  cursor: pointer;
+  color: ${props => props.theme.specialText};
+`
+
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, AltBackground, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, ToggleText, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer, Circle, BottomBar, LinkText}
