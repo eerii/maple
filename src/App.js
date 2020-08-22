@@ -17,6 +17,7 @@ import Login from "./users/Login"
 import Register from "./users/Register"
 import Profile from "./users/Profile"
 import CompleteProfile from "./users/CompleteProfile"
+import Verify from "./users/Verify"
 
 import EnterVideo from "./video/EnterVideo"
 import VideoRoom from "./video/VideoRoom"
@@ -48,7 +49,7 @@ export default function App() {
     const [showProfile, setShowProfile] = useState(false)
 
     const location = useLocation()
-    const allowedLocations = ["/", "/faq"]
+    const allowedLocations = ["/", "/faq", "/verify/:"]
 
     //VERIFY TOKEN
     useEffect(() => {
@@ -79,12 +80,19 @@ export default function App() {
             setUsername(null)
             setID(null)
             setShowVideo(false)
+            setUserStatus(null)
         }
     }, [logout])
 
     useEffect(() => {
         if (!loggedIn) {
-            if (!allowedLocations.every((l) => location.pathname.startsWith(l)) && goHomeTimer.current === null)
+            if (!allowedLocations.some((l) => {
+                if (l.includes(":")) {
+                    return location.pathname.startsWith(l.slice(0, -2))
+                } else {
+                    return location.pathname === (l)
+                }
+            }) && goHomeTimer.current === null)
                 goHomeTimer.current = setTimeout(() => setGoHome(true), 500)
         } else {
             clearTimeout(goHomeTimer.current)
@@ -105,21 +113,28 @@ export default function App() {
                 <GlobalStyle/>
                 <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name}/>
                 {goHome && <Redirect push to="/"/>}
+
+                {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/>}
+                {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setLogin={setLogin}/>}
+
+                {showProfile && <Profile username={username} name={name} setShowProfile={setShowProfile} setLogout={setLogout}/>}
+
                 {loggedIn && userStatus === 1 && <CompleteProfile setUserStatus={setUserStatus}/>} {/*TODO: CHANGE, DISABLED NOW*/}
                 <Switch>
                     <Route exact path="/video/:room">
                         {loggedIn && <VideoRoom username={username} name={name} ID={ID} setID={setID} loggedIn={loggedIn}/>}
                         {!loggedIn && <Background/>}
                     </Route>
+                    <Route exact path="/verify/:hash">
+                        { (userStatus === 0 || userStatus === null) ?
+                            <Verify loggedIn={loggedIn} userStatus={userStatus} setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/> :
+                            <Redirect push to="/"/>}
+                    </Route>
                     <Route exact path="/faq">
                         <FAQ/>
                     </Route>
                     <Route path="/">
                         <Home/>
-                        {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/>}
-                        {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setLogin={setLogin}/>}
-
-                        {showProfile && <Profile username={username} name={name} setShowProfile={setShowProfile} setLogout={setLogout}/>}
 
                         {showVideo && <EnterVideo setShowVideo={setShowVideo} username={username}/>}
                     </Route>
