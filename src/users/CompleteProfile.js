@@ -393,7 +393,7 @@ const Warning = ({ warning, setVisible }) => {
 }
 
 const CompleteProfile = ({ setUserStatus }) => {
-    const [stage, setStage] = useState(5)
+    const [stage, setStage] = useState(0)
     const [warning, setWarning] = useState(null)
 
     const [selectedNeed, setSelectedNeed] = useState(new Array(categories).fill(false))
