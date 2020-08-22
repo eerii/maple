@@ -43,7 +43,7 @@ export default function App() {
 
     const [username, setUsername] = useState()
     const [name, setName] = useState("")
-    const [userStatus, setUserStatus] = useState(0)
+    const [userStatus, setUserStatus] = useState(null)
     const [ID, setID] = useState(null)
 
     const [showProfile, setShowProfile] = useState(false)
@@ -80,7 +80,7 @@ export default function App() {
             setUsername(null)
             setID(null)
             setShowVideo(false)
-            setUserStatus(0)
+            setUserStatus(null)
         }
     }, [logout])
 
@@ -126,8 +126,8 @@ export default function App() {
                         {!loggedIn && <Background/>}
                     </Route>
                     <Route exact path="/verify/:hash">
-                        { userStatus === 0 ?
-                            <Verify loggedIn={loggedIn} setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/> :
+                        { (userStatus === 0 || userStatus === null) ?
+                            <Verify loggedIn={loggedIn} userStatus={userStatus} setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/> :
                             <Redirect push to="/"/>}
                     </Route>
                     <Route exact path="/faq">

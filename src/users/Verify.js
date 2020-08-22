@@ -6,13 +6,13 @@ import styles from "../config/Styles"
 import Login from "./Login";
 const { Background } = styles
 
-const Verify = ({ loggedIn, setUserStatus, setLogin, setLoggedIn, setUsername, setName, setRegister }) => {
+const Verify = ({ loggedIn, userStatus, setUserStatus, setLogin, setLoggedIn, setUsername, setName, setRegister }) => {
     const { hash } = useParams()
     const [error, setError] = useState(null)
 
     useEffect(() => {
         (async () => {
-            if (loggedIn) {
+            if (loggedIn && userStatus===0) {
                 try {
                     const token = localStorage.getItem("Token")
 
@@ -34,7 +34,7 @@ const Verify = ({ loggedIn, setUserStatus, setLogin, setLoggedIn, setUsername, s
                 }
             }
         })()
-    }, [loggedIn, setUserStatus, hash])
+    }, [loggedIn, userStatus, setUserStatus, hash])
 
     return (
         <div>
@@ -43,7 +43,10 @@ const Verify = ({ loggedIn, setUserStatus, setLogin, setLoggedIn, setUsername, s
                     <div>
                         <h1>Verifying User...</h1>
                         <h4>{error}</h4>
-                        {error !== null && <p>Please make sure you are using the correct URL and contact us at <a href="mailto:hello@moose.exchange">hello@moose.exchange</a></p>}
+                        {error !== null && <div>
+                            <p>Please make sure you are using the correct URL!</p>
+                            <p>Contact us at <a href="mailto:hello@moose.exchange">hello@moose.exchange</a> if you encounter any problem.</p>
+                        </div>}
                     </div> :
                     <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/>}
             </Background>
