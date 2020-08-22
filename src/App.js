@@ -105,7 +105,7 @@ export default function App() {
                 <GlobalStyle/>
                 <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name}/>
                 {goHome && <Redirect push to="/"/>}
-                {loggedIn && userStatus === 2 && <CompleteProfile setUserStatus={setUserStatus}/>}
+                {loggedIn && userStatus === 1 && <CompleteProfile setUserStatus={setUserStatus}/>} {/*TODO: CHANGE, DISABLED NOW*/}
                 <Switch>
                     <Route exact path="/video/:room">
                         {loggedIn && <VideoRoom username={username} name={name} ID={ID} setID={setID} loggedIn={loggedIn}/>}

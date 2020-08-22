@@ -30,7 +30,7 @@ const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProf
 
             <ToggleTheme
                 onClick={() => { loggedIn ? setShowProfile(true) : setLogin(true) }}>
-                {loggedIn ? <ToggleText style={{margin: "0"}}>{name}  <Emoji symbol="🙋🏽" label="Profile"/></ToggleText> : <p style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></p>}
+                {loggedIn ? <ToggleText style={{margin: "0"}}>{name}  <Emoji symbol="🙋🏽" label="Profile"/></ToggleText> : <ToggleText style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></ToggleText>}
             </ToggleTheme>
 
             <ToggleTheme

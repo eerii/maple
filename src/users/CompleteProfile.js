@@ -4,10 +4,15 @@ import axios from "axios"
 
 import Modal from "../components/Modal"
 import CircleSelector from "../components/CircleSelector"
-
 import MapSelector from "../components/MapSelector.js"
 
+import CountryList from "../config/locale/CountryList"
+import LanguageList from "../config/locale/LanguageList"
+
+import styles from "../config/Styles"
 import {getCategories} from "../config/Categories"
+
+const { LinkText } = styles
 const [codes, names, colors] = getCategories()
 
 const categories = 10
@@ -132,19 +137,93 @@ const Birthdate = ({ stage, setStage }) => {
 
 //STAGE 3
 const Locale = ({ stage, setStage }) => {
+    const { register, handleSubmit, errors, clearErrors } = useForm({ mode: "onBlur" })
 
-    /*const handleNext = (data) => {
-        sessionStorage.setItem("ProfileCompletion" + stage, JSON.stringify(data))
+    const [selectionType, setSelectionType] = useState(0)
+
+    const [country, setCountry] = useState(null)
+    const [countryName, setCountryName] = useState(null)
+
+    const handleNext = (data) => {
+        let jsonData = data
+        if (country)
+            jsonData = {Country: country, ...data}
+        sessionStorage.setItem("ProfileCompletion" + stage, JSON.stringify(jsonData))
         setStage(stage + 1)
-    }*/
+    }
 
     return (
         <div>
             <h1 style={{marginBottom: "8px"}}>Country and Languages</h1>
             <p style={{marginTop: "0"}}>This is just optional information to complete your profile. Feel free to skip this section.</p>
 
-            {/*<form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
+            {selectionType === 0 && <div>
+                <button style={{margin: "8px"}} onClick={() => setSelectionType(1)}>Interactive Map</button> <span>,</span>
+                <button style={{margin: "8px"}} onClick={() => setSelectionType(3)}>List</button> <span>or</span>
+                <LinkText style={{margin: "8px"}} onClick={() => handleNext({Country: "", Language: "", OtherLanguages: ""})}>Skip</LinkText>
+            </div>}
+
+            {selectionType === 1 && (!country ? <MapSelector setCountry={setCountry} setCountryName={setCountryName}/> :
+                <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                    <div style={{marginRight: "16px"}}>
+                        <h4 style={{marginBottom: "0"}}>You have selected:</h4>
+                        <h2 style={{margin: "8px"}}>{`${countryName} (${country})`}</h2>
+                        <p style={{marginTop: "0"}}>Is this correct?</p>
+                    </div>
+                    <div style={{marginLeft: "16px"}}>
+                        <button onClick={() => setSelectionType(2)}>Continue</button> <br/>
+                        <LinkText onClick={() => setCountry(null)}>or Go Back</LinkText>
+                    </div>
+                </div>)}
+
+            {selectionType === 2 && <div>
+                <form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
+                    <div style={{width: "600px", textAlign: "left"}}>
+                        <h4 style={{margin: "4px 0"}}>First Language</h4>
+                        <select
+                            name="Language"
+                            defaultValue=""
+                            onChange={() => clearErrors()}
+                            ref={register()}
+                            style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                        >
+                            <option value="">Select one...</option>
+                            <LanguageList/>
+                        </select>
+
+                        <h4 style={{margin: "4px 0"}}>Other Languages</h4>
+                        <select
+                            name="OtherLanguages"
+                            defaultValue={[""]}
+                            onChange={() => clearErrors()}
+                            multiple
+                            ref={register()}
+                            style={{borderColor: errors.OtherLanguages && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                        >
+                            <option value="">Select multiple...</option>
+                            <LanguageList/>
+                        </select>
+                    </div>
+                    <div style={{width: "100%", marginBottom: "4px"}}>
+                        <button type="submit">Next</button>
+                    </div>
+                </form>
+            </div>}
+
+            {selectionType === 3 && <form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
                 <div style={{width: "600px", textAlign: "left"}}>
+                    <h4 style={{margin: "4px 0"}}>Country</h4>
+                    <select
+                        name="Country"
+                        defaultValue=""
+                        onChange={() => clearErrors()}
+                        ref={register()}
+                        style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                    >
+                        <option value="">Select one...</option>
+                        <CountryList/>
+                    </select>
+
                     <h4 style={{margin: "4px 0"}}>First Language</h4>
                     <select
                         name="Language"
@@ -154,27 +233,28 @@ const Locale = ({ stage, setStage }) => {
                         style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
                     >
                         <option value="">Select one...</option>
-                        <LanguageSelector/>
+                        <LanguageList/>
                     </select>
 
                     <h4 style={{margin: "4px 0"}}>Other Languages</h4>
                     <select
                         name="OtherLanguages"
-                        defaultValue=""
+                        defaultValue={[""]}
                         onChange={() => clearErrors()}
+                        multiple
                         ref={register()}
                         style={{borderColor: errors.OtherLanguages && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
                     >
-                        <option value="">Select one...</option>
-                        <LanguageSelector/>
+                        <option value="">Select multiple...</option>
+                        <LanguageList/>
                     </select>
                 </div>
                 <div style={{width: "100%", marginBottom: "4px"}}>
                     <button type="submit">Next</button>
                 </div>
-            </form>*/}
+            </form>}
 
-            <MapSelector/>
+
         </div>
     )
 }
@@ -313,7 +393,7 @@ const Warning = ({ warning, setVisible }) => {
 }
 
 const CompleteProfile = ({ setUserStatus }) => {
-    const [stage, setStage] = useState(3)
+    const [stage, setStage] = useState(5)
     const [warning, setWarning] = useState(null)
 
     const [selectedNeed, setSelectedNeed] = useState(new Array(categories).fill(false))

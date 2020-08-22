@@ -1,9 +1,10 @@
 import React, {useState} from "react"
-import {ComposableMap, Geographies, Geography, Marker} from "react-simple-maps"
+import {ComposableMap, Geographies, Geography} from "react-simple-maps"
+import ReactTooltip from "react-tooltip"
 
 import geoURL from "./geo.json"
 
-const MapSelector = () => {
+const MapSelector = ({ setCountry, setCountryName }) => {
     const [scale, setScale] = useState(230);
     const [center, setCenter] = useState([10, 0])
 
@@ -12,27 +13,20 @@ const MapSelector = () => {
     const [highlighted, setHighlighted] = useState(null)
     const [hover, setHover] = useState(false)
 
-    const [buttonCenter, setButtonCenter] = useState([0, 0])
-    const [buttonText, setButtonText] = useState(null)
-    const [buttonCode, setButtonCode] = useState(null)
-    const [buttonHover, setButtonHover] = useState(false)
+    const [tooltipContent, setTooltipContent] = useState("")
 
-    const handleMove = (geo, proj, path, e) => {
-        if (hover)
+    const handleEnter = (geo) => {
+        if (zoomed)
+            setTooltipContent(geo.properties.NAME)
+        if (hover === geo.properties.NAME)
             return
-        setHover(true)
+        setHover(geo.properties.NAME)
         setHighlighted(geo.properties.CONTINENT)
-
-        if (zoomed !== null) {
-            const centroid = proj.invert(path.centroid(geo))
-            setButtonCenter(centroid)
-            setButtonText(geo.properties.NAME)
-            setButtonCode(geo.properties.ISO_A2)
-        }
     }
 
     const handleLeave = () => {
         setHover(false)
+        setTooltipContent("")
         if (!zoomed)
             setHighlighted(null)
     }
@@ -41,29 +35,19 @@ const MapSelector = () => {
         setCenter([10,0])
         setScale(230)
         setZoomed(null)
-        setButtonCenter([0,0])
-        setButtonText(null)
-        setButtonCode(null)
         setHighlighted(null)
     }
 
     const handleClick = (geo, proj, path) => {
-        if (zoomed === geo.properties.NAME) {
-            goBack()
+        if (zoomed) {
+            setCountry(geo.properties.ISO_A2)
+            setCountryName(geo.properties.NAME)
         } else {
             const centroid = proj.invert(path.centroid(geo))
             setCenter(centroid)
             setScale(500)
             setZoomed(geo.properties.NAME)
-
-            setButtonCenter(centroid)
-            setButtonText(geo.properties.NAME)
-            setButtonCode(geo.properties.ISO_A2)
         }
-    }
-
-    const handleButton = () => {
-        console.log(buttonCode)
     }
 
     return (
@@ -71,8 +55,13 @@ const MapSelector = () => {
             <button onClick={() => goBack()} style={{position: "fixed", bottom: "42px", left: "42px", display: `${zoomed === null ? "none" : "block"}`}}>Back</button>
 
             <div style={{display: "flex", justifyContent: "center"}}>
+                <div style={{position: "fixed", bottom: "48px", background: "rgba(9,24,62,0.8)", borderRadius: "16px"}}>
+                    <p style={{margin: "4px 10px"}}>{zoomed ? "Click to select" : "Click to zoom"}</p>
+                </div>
+
                 <ComposableMap
                     projection="geoEqualEarth"
+                    data-tip=""
                     projectionConfig={{ scale, center }}
                     style={{
                         width: "100%",
@@ -87,7 +76,8 @@ const MapSelector = () => {
                                 <Geography
                                     key={geo.rsmKey}
                                     geography={geo}
-                                    onMouseMove={(e) => handleMove(geo, projection, path, e)}
+                                    data-tip={geo.properties.NAME}
+                                    onMouseEnter={() => handleEnter(geo)}
                                     onMouseLeave={() => handleLeave()}
                                     onClick={() => handleClick(geo, projection, path)}
                                     style={{
@@ -124,17 +114,10 @@ const MapSelector = () => {
                                 />)
                         }
                     </Geographies>
-                    <Marker key="marker" coordinates={buttonCenter} onMouseEnter={() => setButtonHover(true)} onMouseLeave={() => {setButtonHover(false)}} onMouseDown={() => handleButton()}>
-                        <rect rx="16" height="48" width={zoomed === null ? "0" : "300"} x={-150} y={-32} stroke="#ffffff" strokeWidth={2} fill={buttonHover ? "#09183e" : "#FAC172"}/>
-                        <text
-                            textAnchor="middle"
-                            style={{ fontSize: "24px", fontWeight: "bold", fill: `${buttonHover ? "#ffffff" : "#09183e"}`, display: `${zoomed === null ? "none" : "block"}` }}
-                        >
-                            {buttonText}
-                        </text>
-                    </Marker>
                 </ComposableMap>
             </div>
+
+            <ReactTooltip>{tooltipContent}</ReactTooltip>
         </div>
     )
 }
