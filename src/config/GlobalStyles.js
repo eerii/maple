@@ -11,6 +11,9 @@ const GlobalStyle = createGlobalStyle`
     color: ${props => props.theme.text};
     line-height: 1.6;
   }
+  span {
+    color: ${props => props.theme.text};
+  }
   h1 {
     color: ${props => props.theme.text};
     font-size: 50px;
@@ -87,6 +90,29 @@ const GlobalStyle = createGlobalStyle`
     background: ${props => props.theme.altBackground};
     border: 2px solid ${props => props.theme.specialText};
     border-radius: 12px;
+  }
+  .wsdm-tooltip {
+      display: none;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 3px;
+      pointer-events: none;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      z-index: 8000;
+      
+      &:after {
+          content: "";
+          position: absolute;
+          width: 0;
+          height: 0;
+          top: 100%;
+          left: 50%;
+          margin-left: -0.5rem;
+          border-left: 0.5rem solid transparent;
+          border-right: 0.5rem solid transparent;
+          border-top: 0.5rem solid rgba(255, 255, 255, 0.95);
+      }
   }
 `
 
