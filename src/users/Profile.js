@@ -33,8 +33,6 @@ const Profile = ({ username, name, setShowProfile, setLogout }) => {
             try {
                 const get = await axios.get(process.env.REACT_APP_URL + "/api/me", { headers: headers })
 
-                console.log(get.data)
-
                 setTokens(get.data.tokens)
                 setNeed(get.data.need)
                 setOffer(get.data.offer)
