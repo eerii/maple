@@ -4,7 +4,7 @@ import times from "lodash.times"
 import styles from "../config/Styles"
 const { Circle: CircleStyle } = styles
 
-const Circle = ({i, active, selected, color, radius, startRadius, number, name, setActive, setSelected, setMaxError}) => {
+const Circle = ({i, active, selected, color, radius, startRadius, number, name, setActive, setSelected, max, setMaxError}) => {
     const handleMouse = (over) => {
         if (over)
             setActive(new Array(number).fill(false).map((n, ind) => (ind === i) ? true : n))
@@ -17,7 +17,7 @@ const Circle = ({i, active, selected, color, radius, startRadius, number, name, 
         if (!selected[i]) {
             len += 1
         }
-        if (len > 5) {
+        if (len > max) {
             setMaxError()
         } else {
             setSelected(selected.map((n, ind) => (ind === i) ? !selected[i] : n))
@@ -40,7 +40,7 @@ const Circle = ({i, active, selected, color, radius, startRadius, number, name, 
     )
 }
 
-const CircleSelector = ({ startRadius, number, colors, names, selected, setSelected, setMaxError }) => {
+const CircleSelector = ({ startRadius, number, colors, names, selected, setSelected, max, setMaxError }) => {
     const [radius, setRadius] = useState(new Array(number).fill(startRadius))
     const [active, setActive] = useState(new Array(number).fill(false))
 
@@ -79,7 +79,7 @@ const CircleSelector = ({ startRadius, number, colors, names, selected, setSelec
 
     return (
         <div style={{display: "flex", justifyContent: "space-around", alignItems: "center", flexWrap: "wrap", marginBottom: "8px"}}>
-            {times(number, i => <Circle key={i} i={i} color={colors[i]} radius={radius[i]} name={names[i]} active={active[i]} selected={selected} setActive={setActive} setSelected={setSelected} startRadius={startRadius} number={number} setMaxError={setMaxError}/>)}
+            {times(number, i => <Circle key={i} i={i} color={colors[i]} radius={radius[i]} name={names[i]} active={active[i]} selected={selected} setActive={setActive} setSelected={setSelected} startRadius={startRadius} number={number} max={max} setMaxError={setMaxError}/>)}
         </div>
     )
 }

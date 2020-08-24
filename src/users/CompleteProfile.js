@@ -1,18 +1,20 @@
-import React, {useEffect, useState} from "react"
-import { useForm } from "react-hook-form"
+import React, {useEffect, useState, useRef} from "react"
 import axios from "axios"
+
+import { useForm, Controller } from "react-hook-form"
+import Select from 'react-select'
 
 import Modal from "../components/Modal"
 import CircleSelector from "../components/CircleSelector"
 import MapSelector from "../components/MapSelector.js"
 
 import CountryList from "../config/locale/CountryList"
-import LanguageList from "../config/locale/LanguageList"
+import {languageList} from "../config/locale/LanguageList"
 
 import styles from "../config/Styles"
 import {getCategories} from "../config/Categories"
 
-const { LinkText } = styles
+const { LinkText, Modal: ModalStyle, ModalContent } = styles
 const [codes, names, colors] = getCategories()
 
 const categories = 10
@@ -22,13 +24,12 @@ const startRadius = 72
 const WhatINeed = ({ selected, setSelected, handleButton, setWarning }) => {
     return (
         <div>
-            <h1 style={{marginBottom: "8px"}}>What do you need from MOOSE?</h1>
-            <p style={{marginTop: "0"}}>Please select from 3 to 5 categories so we can recommend you profiles you will love.</p>
+            <h1 style={{marginBottom: "8px", padding: "0 5vw"}}>What can MOOSE interest you in at the moment?</h1>
 
-            <CircleSelector startRadius={startRadius} selected={selected} setSelected={setSelected} number={categories} colors={colors} names={names} setMaxError={() => setWarning("high")}/>
+            <CircleSelector startRadius={startRadius} selected={selected} setSelected={setSelected} number={categories} colors={colors} names={names} max={5} setMaxError={() => setWarning("high")}/>
 
             <p style={{marginTop: "0"}}>Don't worry, you can change these at any time from your profile.</p>
-            <button onClick={() => handleButton()}>Continue</button>
+            <button onClick={() => handleButton(3, 5)}>Continue</button>
         </div>
     )
 }
@@ -40,10 +41,10 @@ const WhatIOffer = ({ selected, setSelected, handleButton, setWarning }) => {
             <h1 style={{marginBottom: "8px"}}>What can you offer MOOSE?</h1>
             <p style={{marginTop: "0"}}>We encourage all our users to share their talents and passions. We are sure you have some!</p>
 
-            <CircleSelector startRadius={startRadius} selected={selected} setSelected={setSelected} number={categories} colors={colors} names={names} setMaxError={() => setWarning("high")}/>
+            <CircleSelector startRadius={startRadius} selected={selected} setSelected={setSelected} number={categories} colors={colors} names={names} max={5} setMaxError={() => setWarning("high")}/>
 
             <p style={{marginTop: "0"}}>Don't worry, you can change these at any time from your profile.</p>
-            <button onClick={() => handleButton()}>Continue</button>
+            <button onClick={() => handleButton(0, 5)}>Continue</button>
         </div>
     )
 }
@@ -135,9 +136,49 @@ const Birthdate = ({ stage, setStage }) => {
     )
 }
 
+const LanguageSelector = ({ register, clearErrors, errors, control, modalRef }) => {
+    return (
+        <>
+            <h4 style={{margin: "4px 0"}}>First Language</h4>
+            <Controller
+                //rules={{ required: true }}
+                name="Language"
+                onChange={() => clearErrors()}
+                defaultValue=""
+                render={(props) => {
+                    return (
+                        <Select
+                            style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                            options={languageList}
+                            menuPortalTarget={modalRef.current}
+                            menuPosition="fixed"
+                            menuPlacement="auto"
+                            {...props}
+                        />
+                    );
+                }}
+                control={control}
+            />
+
+            <h4 style={{margin: "4px 0"}}>Other Languages</h4>
+            <select
+                name="OtherLanguages"
+                defaultValue={[""]}
+                onChange={() => clearErrors()}
+                multiple
+                ref={register()}
+                style={{borderColor: errors.OtherLanguages && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+            >
+                <option value="">Select multiple...</option>
+            </select>
+        </>
+    )
+}
+
 //STAGE 3
-const Locale = ({ stage, setStage }) => {
-    const { register, handleSubmit, errors, clearErrors } = useForm({ mode: "onBlur" })
+const Locale = ({ stage, setStage, modalRef }) => {
+    const { register, handleSubmit, errors, clearErrors, control } = useForm({ mode: "onBlur" })
 
     const [selectionType, setSelectionType] = useState(0)
 
@@ -145,9 +186,8 @@ const Locale = ({ stage, setStage }) => {
     const [countryName, setCountryName] = useState(null)
 
     const handleNext = (data) => {
-        let jsonData = data
-        if (country)
-            jsonData = {Country: country, ...data}
+        let jsonData = {Country: (country ? country : data.Country), Language: (data.Language.value ? data.Language.value : ""), OtherLanguages: data.OtherLanguages}
+        console.log(jsonData)
         sessionStorage.setItem("ProfileCompletion" + stage, JSON.stringify(jsonData))
         setStage(stage + 1)
     }
@@ -179,30 +219,7 @@ const Locale = ({ stage, setStage }) => {
             {selectionType === 2 && <div>
                 <form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
                     <div style={{width: "600px", textAlign: "left"}}>
-                        <h4 style={{margin: "4px 0"}}>First Language</h4>
-                        <select
-                            name="Language"
-                            defaultValue=""
-                            onChange={() => clearErrors()}
-                            ref={register()}
-                            style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
-                        >
-                            <option value="">Select one...</option>
-                            <LanguageList/>
-                        </select>
-
-                        <h4 style={{margin: "4px 0"}}>Other Languages</h4>
-                        <select
-                            name="OtherLanguages"
-                            defaultValue={[""]}
-                            onChange={() => clearErrors()}
-                            multiple
-                            ref={register()}
-                            style={{borderColor: errors.OtherLanguages && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
-                        >
-                            <option value="">Select multiple...</option>
-                            <LanguageList/>
-                        </select>
+                        <LanguageSelector clearErrors={clearErrors} errors={errors} register={register} control={control} modalRef={modalRef}/>
                     </div>
                     <div style={{width: "100%", marginBottom: "4px"}}>
                         <button type="submit">Next</button>
@@ -224,30 +241,7 @@ const Locale = ({ stage, setStage }) => {
                         <CountryList/>
                     </select>
 
-                    <h4 style={{margin: "4px 0"}}>First Language</h4>
-                    <select
-                        name="Language"
-                        defaultValue=""
-                        onChange={() => clearErrors()}
-                        ref={register()}
-                        style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
-                    >
-                        <option value="">Select one...</option>
-                        <LanguageList/>
-                    </select>
-
-                    <h4 style={{margin: "4px 0"}}>Other Languages</h4>
-                    <select
-                        name="OtherLanguages"
-                        defaultValue={[""]}
-                        onChange={() => clearErrors()}
-                        multiple
-                        ref={register()}
-                        style={{borderColor: errors.OtherLanguages && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
-                    >
-                        <option value="">Select multiple...</option>
-                        <LanguageList/>
-                    </select>
+                    <LanguageSelector clearErrors={clearErrors} errors={errors} register={register} control={control} modalRef={modalRef}/>
                 </div>
                 <div style={{width: "100%", marginBottom: "4px"}}>
                     <button type="submit">Next</button>
@@ -383,8 +377,8 @@ const Warning = ({ warning, setVisible }) => {
             {warning === "low" ?
                 <h2>Please, select at least 3 categories</h2> :
                 <div>
-                    <h2>We love to see that you are eager to test MOOSE!</h2>
-                    <p>However, please try to choose your 5 favourite categories. This way, we can better recommend you profiles you will love. Don't worry, you can change this at any time and you can still browse every category.</p>
+                    <h2>We love how eager you are to try all of MOOSE’s features!</h2>
+                    <p>That said, to give you a truly personal experience, please only choose up to 5 categories. Don’t worry, you can edit your choices at any time via the link in your profile.</p>
                 </div>
             }
             <button onClick={() => setVisible(null)}>Try Again</button>
@@ -393,23 +387,25 @@ const Warning = ({ warning, setVisible }) => {
 }
 
 const CompleteProfile = ({ setUserStatus }) => {
-    const [stage, setStage] = useState(0)
+    const [stage, setStage] = useState(0) //TODO: CHANGEEEEE
     const [warning, setWarning] = useState(null)
 
     const [selectedNeed, setSelectedNeed] = useState(new Array(categories).fill(false))
     const [selectedOffer, setSelectedOffer] = useState(new Array(categories).fill(false))
 
-    const checkValid = (cat) => {
-        if (cat.length < 3)
+    const modalRef = useRef(null)
+
+    const checkValid = (cat, min, max) => {
+        if (cat.length < min)
             return "low"
-        if (cat.length > 5)
+        if (cat.length > max)
             return "high"
         return null
     }
 
-    const handleButton = () => {
+    const handleButton = (min, max) => {
         const cat = codes.filter((a, i) => stage === 0 ? selectedNeed[i] : selectedOffer[i])
-        const notValid = checkValid(cat)
+        const notValid = checkValid(cat, min, max)
         if (notValid) {
             setWarning(notValid)
         } else {
@@ -420,19 +416,19 @@ const CompleteProfile = ({ setUserStatus }) => {
     }
 
     return (
-        <div>
-            <Modal setVisible={() => {}} width="900px">
+        <ModalStyle ref={modalRef}>
+            <ModalContent style={{width: "700px"}}>
                 <div style={{maxHeight: "90vh", overflow: "scroll"}}>
                     {stage === 0 && <WhatINeed selected={selectedNeed} setSelected={setSelectedNeed} handleButton={handleButton} setWarning={setWarning}/>}
                     {stage === 1 && <WhatIOffer selected={selectedOffer} setSelected={setSelectedOffer} handleButton={handleButton} setWarning={setWarning}/>}
                     {stage === 2 && <Birthdate stage={stage} setStage={setStage}/>}
-                    {stage === 3 && <Locale stage={stage} setStage={setStage}/>}
+                    {stage === 3 && <Locale stage={stage} setStage={setStage} modalRef={modalRef}/>}
                     {stage === 4 && <ExtraInformation stage={stage} setStage={setStage}/>}
                     {stage === 5 && <SendToServer setUserStatus={setUserStatus}/>}
                 </div>
-            </Modal>
+            </ModalContent>
             {warning && <Warning warning={warning} setVisible={setWarning}/>}
-        </div>
+        </ModalStyle>
     )
 }
 
