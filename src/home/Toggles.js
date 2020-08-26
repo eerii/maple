@@ -7,7 +7,7 @@ import styles from "../config/Styles"
 const { ToggleTheme, ToggleDiv, ToggleText } = styles
 const themes = ["light", "moose", "dark"]
 
-const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProfile, setGoHome, name}) => {
+const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProfile, setGoHome, name }) => {
     const location = useLocation()
 
     const themeToggler = () => {
@@ -32,6 +32,11 @@ const Toggles = ({theme, setTheme, setLogin, loggedIn, setShowVideo, setShowProf
                 onClick={() => { loggedIn ? setShowProfile(true) : setLogin(true) }}>
                 {loggedIn ? <ToggleText style={{margin: "0"}}>{name}  <Emoji symbol="🙋🏽" label="Profile"/></ToggleText> : <ToggleText style={{margin: "0"}}>Log In  <Emoji symbol="🔒" label="Login"/></ToggleText>}
             </ToggleTheme>
+
+            {/*loggedIn && <ToggleTheme
+                onClick={() => { setShowSearch(true) }}>
+                <ToggleText><Emoji symbol="🔍" label="Search"/></ToggleText>
+            </ToggleTheme>*/}
 
             <ToggleTheme
                 onClick={themeToggler}>

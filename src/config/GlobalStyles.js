@@ -29,12 +29,12 @@ const GlobalStyle = createGlobalStyle`
     color: ${props => props.theme.specialText};
   }
   button {
-    background: #f3f4f8;
+    background: ${props => props.theme.buttonBackground};
     border: none;
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
-    color: #09183e;
+    color: ${props => props.theme.buttonText};
     padding: 10px 20px;
     text-align: center;
     transition: 0.3s;
