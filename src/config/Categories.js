@@ -1,19 +1,19 @@
 const categories = [
-    "A-Arts-#f6457b",
-    "C-Crafts and:Home-#f85353",
+    "A-Arts and:Crafts-#f6457b",
+    "O-Home-#f85353",
     "K-Cooking-#ff7f38",
-    "S-Help with:School-#ffa433",
-    "M-Music and:Movies-#55ca58",
-    "L-Language:Learning-#39c19f",
-    "F-Fitness-#2eadf1",
-    "Mf-Mindfulness-#5190fa",
-    "J-Just for:Fun-#837df8",
-    "T-Technology-#9f76ea"
+    "L-Learn-#ffa433",
+    "G-Languages-#55ca58",
+    "T-Technology-#39c19f",
+    "C-Consulting-#2eadf1",
+    "H-Health-#5190fa",
+    "P-Parenthood-#908bff",
+    "J-Just for:Fun-#bd82ef"
 ]
 
 /*const newColors = ["#f6457b", "#f85353", "#ff7f38", "#ffa433",
                 "#55ca58", "#39c19f", "#2eadf1", "#5190fa",
-                "#837df8", "#9f76ea"]*/
+                "#908bff", "#bd82ef"]*/
 
 export const getCategories = () => {
     const codes = categories.map(a => a.split("-")[0])
