@@ -7,6 +7,8 @@ export const lightTheme = {
     altBackground: '#f8f8f8',
     togglesBackground: 'rgba(245,209,160,0.8)',
     placeholder: '#c7c7d9',
+    buttonBackground: '#09183e',
+    buttonText: '#f3f4f8',
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
@@ -22,6 +24,8 @@ export const darkTheme = {
     altBackground: '#4960f9',
     togglesBackground: 'rgba(60,78,200,0.8)',
     placeholder: '#c7c7d9',
+    buttonBackground: '#f3f4f8',
+    buttonText: '#09183e',
     buttonPressed: '#4960F9',
     buttonPressedRim: '#2d2d58',
     buttonPressedText: '#f3f4f8',
@@ -37,6 +41,8 @@ export const mooseTheme = {
     altBackground: '#09183e',
     togglesBackground: 'rgba(60,78,200,0.8)',
     placeholder: '#c7c7d9',
+    buttonBackground: '#f3f4f8',
+    buttonText: '#09183e',
     buttonPressed: '#fac172',
     buttonPressedRim: '#09183e',
     buttonPressedText: '#09183e',
@@ -362,10 +368,65 @@ const Circle = styled.div`
   cursor: pointer;
 `
 
+const CategoryStyle = styled.div`
+  background-color: ${({color, active, theme}) => active ? color : theme.bubbleBackground};
+  border-radius: 32px;
+  white-space: nowrap;
+  transition: all 0.4s;
+  padding: ${({radius}) => radius}px ${({radius}) => radius * 2}px;
+  cursor: pointer;
+`
+
+const CardStyle = styled.div`
+  background: #f3f4f8;
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  text-align: center;
+  transition: 0.3s;
+  box-shadow: 0 4px #c7c7d9;
+  transform: translateY(-2px);
+  width: 300px;
+  height: 350px;
+  
+  scroll-snap-align: start;
+  
+  h2, p {
+    color: #09183e;
+  }
+  h4 {
+    color: #4960F9;
+  }
+`
+
+const CardSlider = styled.div`
+  display: flex;
+  
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  
+  &::-webkit-scrollbar {
+      color: ${props => props.theme.togglesBackground};
+      height: 0;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+      background: ${props => props.theme.togglesBackground};
+      border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-track {
+      background: transparent;
+  }
+`
+
 const LinkText = styled.span`
   text-decoration: underline;
   cursor: pointer;
   color: ${props => props.theme.specialText};
 `
 
-export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, AltBackground, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, ToggleText, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer, Circle, BottomBar, LinkText}
+export default {lightTheme, darkTheme, mooseTheme, FormSubtext, MOOSE, Subtitle, SpecialText, Text, Warning, Background, AltBackground, Modal, ModalContent, ModalVideo, ToggleTheme, ToggleDiv, ToggleText, LocalVideo, RemoteVideo, VideoBox, VideoAcceptButton, VideoDeclineButton, VideoOverlay, Message, ReplyMessage, MessageBox, FormError, RegistrationInput, RegistrationTitles, VideoTag, VideoTagAlt, TimeTokenBar, TimeToken, TimeTokenFill, Tooltip, TooltipHover, TooltipContainer, Circle, BottomBar, LinkText, CategoryStyle, CardStyle, CardSlider}

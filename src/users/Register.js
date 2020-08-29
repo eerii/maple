@@ -125,12 +125,12 @@ const Register = ({setRegister, setLoggedIn, setUsername, setName, setUserStatus
                             ref={register({
                                 required: "A valid username is required.",
                                 pattern: {
-                                    value: /[a-zA-Z0-9._]{3,}/,
+                                    value: /[a-zA-Z0-9._]{6,}/,
                                     message: `The username can only contain letters, numbers, dots (.) and underscores (_).`
                                 },
                                 minLength: {
-                                    value: 3,
-                                    message: "The username has to be at least 3 characters long."
+                                    value: 6, //On the server side the limit is 3
+                                    message: "The username has to be at least 6 characters long."
                                 },
                                 maxLength: {
                                     value: 20,

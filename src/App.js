@@ -19,6 +19,9 @@ import Profile from "./users/Profile"
 import CompleteProfile from "./users/CompleteProfile"
 import Verify from "./users/Verify"
 
+import Discover from "./search/Discover"
+//import SearchBar from "./search/SearchBar"
+
 import EnterVideo from "./video/EnterVideo"
 import VideoRoom from "./video/VideoRoom"
 
@@ -48,6 +51,8 @@ export default function App() {
 
     const [showProfile, setShowProfile] = useState(false)
 
+    //const [showSearch, setShowSearch] = useState(false)
+
     const location = useLocation()
     const allowedLocations = ["/", "/faq", "/verify/:"]
 
@@ -75,6 +80,8 @@ export default function App() {
     useEffect(() => {
         if(logout) {
             localStorage.removeItem("Token")
+            localStorage.removeItem("DiscoverUsers")
+            localStorage.removeItem("DiscoverNeed")
             setLoggedIn(false)
             setLogout(false)
             setUsername(null)
@@ -111,15 +118,18 @@ export default function App() {
         <Router>
             <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
                 <GlobalStyle/>
-                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name}/>
+
+                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name} /*setShowSearch={setShowSearch}*//>
                 {goHome && <Redirect push to="/"/>}
 
                 {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/>}
                 {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setLogin={setLogin}/>}
 
                 {showProfile && <Profile username={username} name={name} setShowProfile={setShowProfile} setLogout={setLogout}/>}
-
                 {loggedIn && userStatus === 1 && <CompleteProfile setUserStatus={setUserStatus}/>} {/*TODO: CHANGE, DISABLED NOW*/}
+
+                {/*loggedIn && showSearch && <SearchBar setShowSearch={setShowSearch}/>*/}
+
                 <Switch>
                     <Route exact path="/video/:room">
                         {loggedIn && <VideoRoom username={username} name={name} ID={ID} setID={setID} loggedIn={loggedIn}/>}
@@ -129,6 +139,9 @@ export default function App() {
                         { (userStatus === 0 || userStatus === null) ?
                             <Verify loggedIn={loggedIn} userStatus={userStatus} setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/> :
                             <Redirect push to="/"/>}
+                    </Route>
+                    <Route exact path="/discover">
+                        <Discover loggedIn={loggedIn}/>
                     </Route>
                     <Route exact path="/faq">
                         <FAQ/>
