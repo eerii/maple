@@ -126,7 +126,7 @@ export default function App() {
                 {(register && !loggedIn) && <Register setRegister={setRegister} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setLogin={setLogin}/>}
 
                 {showProfile && <Profile username={username} name={name} setShowProfile={setShowProfile} setLogout={setLogout}/>}
-                {loggedIn && userStatus === 1 && <CompleteProfile setUserStatus={setUserStatus}/>} {/*TODO: CHANGE, DISABLED NOW*/}
+                {loggedIn && userStatus === 2 /*TODO CHANGEEEE*/ && <CompleteProfile setUserStatus={setUserStatus}/>} {/*TODO: CHANGE, DISABLED NOW*/}
 
                 {/*loggedIn && showSearch && <SearchBar setShowSearch={setShowSearch}/>*/}
 

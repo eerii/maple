@@ -8,8 +8,7 @@ import Modal from "../components/Modal"
 import CircleSelector from "../components/CircleSelector"
 import MapSelector from "../components/MapSelector.js"
 
-import CountryList from "../config/locale/CountryList"
-import {languageList} from "../config/locale/LanguageList"
+import {getLanguageList, countryList} from "../config/Locale"
 
 import styles from "../config/Styles"
 import {getCategories} from "../config/Categories"
@@ -136,7 +135,13 @@ const Birthdate = ({ stage, setStage }) => {
     )
 }
 
-const LanguageSelector = ({ register, clearErrors, errors, control, modalRef }) => {
+const LanguageSelector = ({ clearErrors, errors, control, modalRef, country }) => {
+    const [languageList, setLanguageList] = useState(null)
+
+    useEffect(() => {
+        setLanguageList(getLanguageList(country))
+    }, [country])
+
     return (
         <>
             <h4 style={{margin: "4px 0"}}>First Language</h4>
@@ -162,16 +167,27 @@ const LanguageSelector = ({ register, clearErrors, errors, control, modalRef }) 
             />
 
             <h4 style={{margin: "4px 0"}}>Other Languages</h4>
-            <select
+            <Controller
+                //rules={{ required: true }}
                 name="OtherLanguages"
-                defaultValue={[""]}
                 onChange={() => clearErrors()}
-                multiple
-                ref={register()}
-                style={{borderColor: errors.OtherLanguages && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
-            >
-                <option value="">Select multiple...</option>
-            </select>
+                defaultValue=""
+                render={(props) => {
+                    return (
+                        <Select
+                            style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                            isMulti
+                            options={languageList}
+                            menuPortalTarget={modalRef.current}
+                            menuPosition="fixed"
+                            menuPlacement="auto"
+                            {...props}
+                        />
+                    );
+                }}
+                control={control}
+            />
         </>
     )
 }
@@ -182,11 +198,11 @@ const Locale = ({ stage, setStage, modalRef }) => {
 
     const [selectionType, setSelectionType] = useState(0)
 
-    const [country, setCountry] = useState(null)
+    const [country, setCountry] = useState("")
     const [countryName, setCountryName] = useState(null)
 
     const handleNext = (data) => {
-        let jsonData = {Country: (country ? country : data.Country), Language: (data.Language.value ? data.Language.value : ""), OtherLanguages: data.OtherLanguages}
+        let jsonData = {Country: country, Language: (data.Language.value ? data.Language.value : ""), OtherLanguages: data.OtherLanguages.map((l) => l.value)}
         console.log(jsonData)
         sessionStorage.setItem("ProfileCompletion" + stage, JSON.stringify(jsonData))
         setStage(stage + 1)
@@ -219,7 +235,7 @@ const Locale = ({ stage, setStage, modalRef }) => {
             {selectionType === 2 && <div>
                 <form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
                     <div style={{width: "600px", textAlign: "left"}}>
-                        <LanguageSelector clearErrors={clearErrors} errors={errors} register={register} control={control} modalRef={modalRef}/>
+                        <LanguageSelector clearErrors={clearErrors} errors={errors} register={register} control={control} modalRef={modalRef} country={country}/>
                     </div>
                     <div style={{width: "100%", marginBottom: "4px"}}>
                         <button type="submit">Next</button>
@@ -230,18 +246,31 @@ const Locale = ({ stage, setStage, modalRef }) => {
             {selectionType === 3 && <form style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}} onSubmit={handleSubmit(handleNext)}>
                 <div style={{width: "600px", textAlign: "left"}}>
                     <h4 style={{margin: "4px 0"}}>Country</h4>
-                    <select
+                    <Controller
                         name="Country"
-                        defaultValue=""
-                        onChange={() => clearErrors()}
-                        ref={register()}
-                        style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
-                    >
-                        <option value="">Select one...</option>
-                        <CountryList/>
-                    </select>
+                        defaultValue={""}
+                        render={(props) => {
+                            return (
+                                <Select
+                                    style={{borderColor: errors.Language && "#FA6B80", width: "calc(100%)", marginBottom: "16px"}}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    options={countryList}
+                                    menuPortalTarget={modalRef.current}
+                                    menuPosition="fixed"
+                                    menuPlacement="auto"
+                                    {...props}
 
-                    <LanguageSelector clearErrors={clearErrors} errors={errors} register={register} control={control} modalRef={modalRef}/>
+                                    onChange={e => {
+                                        props.onChange(e)
+                                        setCountry(e.value)
+                                    }}
+                                />
+                            );
+                        }}
+                        control={control}
+                    />
+
+                    <LanguageSelector clearErrors={clearErrors} errors={errors} register={register} control={control} modalRef={modalRef} country={country}/>
                 </div>
                 <div style={{width: "100%", marginBottom: "4px"}}>
                     <button type="submit">Next</button>
@@ -387,7 +416,7 @@ const Warning = ({ warning, setVisible }) => {
 }
 
 const CompleteProfile = ({ setUserStatus }) => {
-    const [stage, setStage] = useState(0) //TODO: CHANGEEEEE
+    const [stage, setStage] = useState(3) //TODO: CHANGEEEEE
     const [warning, setWarning] = useState(null)
 
     const [selectedNeed, setSelectedNeed] = useState(new Array(categories).fill(false))
