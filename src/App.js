@@ -51,10 +51,10 @@ export default function App() {
 
     const [showProfile, setShowProfile] = useState(false)
 
-    const [showSearch, setShowSearch] = useState(false)
+    //const [showSearch, setShowSearch] = useState(false)
 
     const location = useLocation()
-    const allowedLocations = ["/", "/faq", "/verify/:", "/discover"]
+    const allowedLocations = ["/", "/faq", "/verify/:"]
 
     //VERIFY TOKEN
     useEffect(() => {
@@ -80,6 +80,8 @@ export default function App() {
     useEffect(() => {
         if(logout) {
             localStorage.removeItem("Token")
+            localStorage.removeItem("DiscoverUsers")
+            localStorage.removeItem("DiscoverNeed")
             setLoggedIn(false)
             setLogout(false)
             setUsername(null)
@@ -117,7 +119,7 @@ export default function App() {
             <ThemeProvider theme={theme === 'light' ? lightTheme : (theme === 'moose' ? mooseTheme : darkTheme)}>
                 <GlobalStyle/>
 
-                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name} setShowSearch={setShowSearch}/>
+                <Toggles theme={theme} setTheme={setTheme} setLogin={setLogin} loggedIn={loggedIn} setShowProfile={setShowProfile} setShowVideo={setShowVideo} setGoHome={setGoHome} name={name} /*setShowSearch={setShowSearch}*//>
                 {goHome && <Redirect push to="/"/>}
 
                 {(login && !loggedIn) && <Login setLogin={setLogin} setLoggedIn={setLoggedIn} setUsername={setUsername} setName={setName} setUserStatus={setUserStatus} setRegister={setRegister}/>}
@@ -139,7 +141,7 @@ export default function App() {
                             <Redirect push to="/"/>}
                     </Route>
                     <Route exact path="/discover">
-                        <Discover/>
+                        <Discover loggedIn={loggedIn}/>
                     </Route>
                     <Route exact path="/faq">
                         <FAQ/>

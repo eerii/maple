@@ -310,11 +310,11 @@ const SendToServer = ({ setUserStatus }) => {
             const birthdate = sessionStorage.getItem("ProfileCompletion2")
             const locale = JSON.parse(sessionStorage.getItem("ProfileCompletion3"))
             const extra = JSON.parse(sessionStorage.getItem("ProfileCompletion4"))
-            let country, language, otherLanguages
+            let country, language, otherlanguages
             if (locale){
                 country = locale.Country
                 language = locale.Language
-                otherLanguages = locale.OtherLanguages
+                otherlanguages = locale.OtherLanguages
             }
             let funfact, bio
             if (extra){
@@ -341,7 +341,7 @@ const SendToServer = ({ setUserStatus }) => {
                             bio,
                             country,
                             language,
-                            otherLanguages,
+                            otherlanguages,
                             status: 2
                         }, { headers: headers })
 
@@ -417,7 +417,7 @@ const CompleteProfile = ({ setUserStatus }) => {
 
     return (
         <ModalStyle ref={modalRef}>
-            <ModalContent style={{width: "700px"}}>
+            <ModalContent style={{width: "900px"}}>
                 <div style={{maxHeight: "90vh", overflow: "scroll"}}>
                     {stage === 0 && <WhatINeed selected={selectedNeed} setSelected={setSelectedNeed} handleButton={handleButton} setWarning={setWarning}/>}
                     {stage === 1 && <WhatIOffer selected={selectedOffer} setSelected={setSelectedOffer} handleButton={handleButton} setWarning={setWarning}/>}

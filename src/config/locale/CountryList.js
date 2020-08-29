@@ -166,7 +166,7 @@ const CountryList = () => {
             <option value="NE">Niger</option>
             <option value="NG">Nigeria</option>
             <option value="NU">Niue</option>
-            <option value="NF">Norfolk Island</option>
+            <option value="NF">ffolk Island</option>
             <option value="MP">Northern Mariana Islands</option>
             <option value="NO">Norway</option>
             <option value="OM">Oman</option>

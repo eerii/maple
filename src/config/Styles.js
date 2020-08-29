@@ -1,5 +1,4 @@
 import styled from "styled-components"
-import chroma from 'chroma-js'
 
 export const lightTheme = {
     specialText: '#4960F9',
@@ -411,8 +410,7 @@ const CardSlider = styled.div`
   
   &::-webkit-scrollbar {
       color: ${props => props.theme.togglesBackground};
-      width: 10px;
-      height: 10px;
+      height: 0;
   }
   
   &::-webkit-scrollbar-thumb {
@@ -423,17 +421,6 @@ const CardSlider = styled.div`
   &::-webkit-scrollbar-track {
       background: transparent;
   }
-  
-  /*&::after {
-    background: linear-gradient(to left, ${props => props.theme.background} 10%, ${props => chroma(props.theme.background).alpha(0)} 100%);
-    content: "";
-    height: 376px;
-    position: absolute;
-    width: 100px;
-    z-index: 2;
-    right: 0;
-    top: 0;
-  }*/
 `
 
 const LinkText = styled.span`
