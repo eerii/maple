@@ -30,18 +30,31 @@ const Profile = ({ username, name, setShowProfile, setLogout }) => {
                 console.log("ERROR: NOT AUTHORIZED")
             const headers = { 'Authorization': `Bearer ${token}` }
 
-            try {
-                const get = await axios.get(process.env.REACT_APP_URL + "/api/me", { headers: headers })
+            const localProfile = localStorage.getItem("LocalProfile")
 
-                setTokens(get.data.tokens)
-                setNeed(get.data.need)
-                setOffer(get.data.offer)
-                setBirthdate(get.data.birthdate)
-                setFunfact(get.data.funfact)
-                setBio(get.data.bio)
-                setCountry(get.data.country)
-            } catch (e) {
-                console.log("ERROR: " + e.message)
+            const setProfile = (profile) => {
+                setTokens(profile.tokens)
+                setNeed(profile.need)
+                setOffer(profile.offer)
+                setBirthdate(profile.birthdate)
+                setFunfact(profile.funfact)
+                setBio(profile.bio)
+                setCountry(profile.country)
+            }
+
+            if (localProfile !== null) {
+                setProfile(JSON.parse(localProfile))
+            } else {
+                try {
+                    console.log("Getting profile data...")
+
+                    const get = await axios.get(process.env.REACT_APP_URL + "/api/me", { headers: headers })
+
+                    setProfile(get.data)
+                    localStorage.setItem("LocalProfile", JSON.stringify(get.data))
+                } catch (e) {
+                    console.log("ERROR: " + e.message)
+                }
             }
         })()
     }, [])
