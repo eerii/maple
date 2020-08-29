@@ -159,7 +159,7 @@ const Discover = ({ loggedIn }) => {
                         }
                     )}
                     <Card show={true} name={"Test"} username={"test"}
-                          key={"cardtest"} offer={["C", "S", "M", "L"]}
+                          key={"cardtest"} offer={["A", "O", "K", "L"]}
                           language={"Test"} otherLanguages={[""]}
                           funfact={"I'm a test user!"} bio={"Bio"}/>
                     <div style={{paddingRight: "10vw"}}/>

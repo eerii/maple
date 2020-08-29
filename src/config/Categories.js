@@ -13,7 +13,7 @@ const categories = [
 
 /*const newColors = ["#f6457b", "#f85353", "#ff7f38", "#ffa433",
                 "#55ca58", "#39c19f", "#2eadf1", "#5190fa",
-                "#908bff", "#bd82ef"]*/
+                "#908bff", "#bd82efS"]*/
 
 export const getCategories = () => {
     const codes = categories.map(a => a.split("-")[0])
