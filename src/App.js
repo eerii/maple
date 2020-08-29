@@ -82,6 +82,7 @@ export default function App() {
             localStorage.removeItem("Token")
             localStorage.removeItem("DiscoverUsers")
             localStorage.removeItem("DiscoverNeed")
+            localStorage.removeItem("LocalProfile")
             setLoggedIn(false)
             setLogout(false)
             setUsername(null)
