@@ -1,6 +1,6 @@
 import React, {useEffect} from "react"
 
-const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg }) => {
+const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput, messageButton, messageList, setMessageList, messageBox, handleNewVideoCallMsg, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg, room }) => {
 
     //WEBSOCKET
     //---------
@@ -9,7 +9,7 @@ const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput
         (async () => {
             const token = localStorage.getItem("Token")
             if (token && !ws.current) {
-                const wsURL = process.env.REACT_APP_WSS + "?Auth=" + token
+                const wsURL = `${process.env.REACT_APP_WSS}?Auth=${token}&Room=${room}`
                 try {
                     ws.current = new WebSocket(wsURL)
                     console.log("[WS]: Connecting to WebSocket...")
@@ -18,7 +18,7 @@ const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput
                 }
             }
         })()
-    }, [ws])
+    }, [ws, room])
     //ADD PROPERTIES TO WEBSOCKET
     useEffect(() => {
         ws.current.onopen = () => {
@@ -54,6 +54,8 @@ const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput
                     let tempList = data.userlist
                     if(!ID){
                         try {
+                            console.log(data.room)
+
                             const userData = data.userlist.filter(({ username: u }) => u === username)
                             let latestUser
                             if (userData.length > 1) {
@@ -98,6 +100,9 @@ const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput
                     messageBox.current.scrollTo({top: messageBox.current.scrollHeight, behavior: "smooth"})
                     break
                 //SIGNALING
+                case "new-video":
+                    await handleNewVideoCallMsg(data)
+                    break
                 case "video-offer":
                     await handleVideoOfferMsg(data)
                     break
@@ -127,7 +132,7 @@ const WS = ({ ws, ID, setID, username, name, userlist, setUserlist, messageInput
                     break
             }
         }
-    }, [ws, ID, setID, username, userlist, setUserlist, messageList, setMessageList, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg, messageBox])
+    }, [ws, ID, setID, username, userlist, setUserlist, messageList, setMessageList, handleNewVideoCallMsg, handleVideoOfferMsg, handleVideoReceivedMsg, handleICECandidateMsg, handleVideoAnswerMsg, handleHangUpMsg, messageBox])
     //---------
 
 
